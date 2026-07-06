@@ -1,0 +1,756 @@
+/* =============================================
+   BOG26 — Comunicación Pública de la Ciencia
+   Design System
+   ============================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Archivo+Narrow:wght@400;500;600&display=swap');
+
+:root {
+  /* Palette */
+  --verde-oscuro:    #3d5c35;
+  --verde-medio:     #5c7a52;
+  --verde-claro:     #a8bc9e;
+  --verde-bg:        #e8ede6;
+  --dorado:          #b8965a;
+  --dorado-claro:    #d4b87a;
+  --dorado-bg:       #f5efd8;
+  --terracota:       #c47c35;
+  --terracota-claro: #e8cba8;
+  --terracota-bg:    #f7ece0;
+  --gris-nav:        #4a4a4a;
+  --gris-claro:      #f0efed;
+  --gris-medio:      #d6d4d0;
+  --gris-texto:      #555;
+  --blanco:          #ffffff;
+  --negro:           #1a1a1a;
+
+  /* Fase colors */
+  --fase1-bg:        #3d5c35;
+  --fase1-text:      #ffffff;
+  --fase2-bg:        #c4a96d;
+  --fase2-text:      #ffffff;
+  --fase3-bg:        #b8956a;
+  --fase3-text:      #ffffff;
+
+  /* Typography */
+  --font-display:    'Archivo', sans-serif;
+  --font-body:       'Archivo Narrow', sans-serif;
+
+  /* Spacing */
+  --section-pad:     5rem 0;
+  --radius:          6px;
+  --radius-lg:       12px;
+}
+
+/* ---- Reset & Base ---- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--negro);
+  background: var(--blanco);
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+p { line-height: 1.7; color: var(--gris-texto); }
+
+a { color: var(--terracota); text-decoration: none; }
+a:hover { color: var(--verde-oscuro); }
+
+/* ---- Navbar ---- */
+.navbar-bog26 {
+  background: var(--blanco);
+  border-radius: 50px;
+  padding: 0.5rem 1.5rem;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+  position: sticky;
+  top: 1rem;
+  z-index: 1000;
+  margin: 1rem auto;
+  max-width: 1200px;
+  width: calc(100% - 2rem);
+}
+
+.navbar-bog26 .nav-logo {
+  width: 36px;
+  height: 36px;
+  background: var(--verde-claro);
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.navbar-bog26 .nav-link {
+  color: var(--gris-nav);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.navbar-bog26 .nav-link:hover,
+.navbar-bog26 .nav-link.active {
+  background: var(--verde-bg);
+  color: var(--verde-oscuro);
+}
+
+.navbar-bog26 .nav-link.active {
+  font-weight: 700;
+}
+
+.navbar-bog26 .dropdown-menu {
+  border: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  border-radius: var(--radius);
+  padding: 0.5rem;
+  min-width: 220px;
+}
+
+.navbar-bog26 .dropdown-item {
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  color: var(--gris-nav);
+}
+
+.navbar-bog26 .dropdown-item:hover,
+.navbar-bog26 .dropdown-item.active {
+  background: var(--verde-bg);
+  color: var(--verde-oscuro);
+}
+
+/* ---- Page Hero ---- */
+.page-hero {
+  background: var(--gris-claro);
+  padding: 4rem 0 3rem;
+  border-bottom: 1px solid var(--gris-medio);
+}
+.page-heroDilemas {
+  background: var(--gris-claro);
+  padding: 4rem 0 3rem;
+  border-bottom: 1px solid var(--gris-medio);
+}
+
+.page-hero h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--negro);
+  margin-bottom: 1rem;
+}
+
+.page-hero p {
+  font-size: 1.1rem;
+  max-width: 680px;
+}
+.page-heroDilemas p {
+  font-size: 1.1rem;
+  max-width: 100%;
+}
+
+/* ---- Section ---- */
+.section { padding: var(--section-pad); }
+.section-alt { background: var(--gris-claro); }
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--negro);
+  margin-bottom: 0.5rem;
+}
+
+.section-lead {
+  font-size: 0.8rem;
+  color: var(--gris-texto);
+ 
+  max-width: 900px;
+}
+
+/* ---- Fase Badges ---- */
+.fase-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 50px;
+  padding: 0.5rem 1.25rem 0.5rem 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.fase-badge .dot {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  display: inline-block;
+}
+
+.fase1-badge { background: var(--fase1-bg); color: var(--fase1-text); }
+.fase2-badge { background: var(--fase2-bg); color: var(--fase2-text); }
+.fase3-badge { background: var(--fase3-bg); color: var(--fase3-text); }
+
+/* ---- Fase Timeline ---- */
+.fase-arrow {
+  display: flex;
+  align-items: stretch;
+  border-radius: 0;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.fase-step {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.9rem;
+  position: relative;
+  color: white;
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%, 16px 50%);
+}
+
+.fase-step:first-child {
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%);
+}
+
+.fase-step:last-child {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 16px 50%);
+}
+
+.fase-step.f1 { background: var(--fase1-bg); }
+.fase-step.f2 { background: var(--fase2-bg); }
+.fase-step.f3 { background: var(--fase3-bg); }
+
+/* ---- Cards ---- */
+.card-dilema {
+  border: none;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  transition: box-shadow 0.2s, transform 0.2s;
+  height: 100%;
+}
+
+.card-dilema:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.14);
+  transform: translateY(-2px);
+}
+
+.card-dilema .card-header {
+  background: var(--verde-medio);
+  color: white;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.6rem 1rem;
+  border: none;
+}
+
+.card-dilema .card-body {
+  padding: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--negro);
+  flex: 1;
+}
+
+.card-dilema .card-footer {
+  background: white;
+  border-top: 1px solid var(--gris-medio);
+  padding: 0.6rem 1rem;
+  text-align: center;
+}
+
+.card-dilema .card-footer .colegio-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--terracota);
+  font-size: 0.9rem;
+}
+
+.card-dilema .card-footer .meta {
+  font-size: 0.78rem;
+  color: var(--gris-texto);
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+
+/* ---- Cards Producto ---- */
+.card-producto {
+  border: none;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  transition: box-shadow 0.2s, transform 0.2s;
+  height: 100%;
+}
+
+.card-producto:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.14);
+  transform: translateY(-2px);
+}
+
+.card-producto .card-header {
+  background: var(--verde-medio);
+  color: white;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.6rem 1rem;
+}
+
+.card-producto .media-area {
+  background: var(--gris-claro);
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.card-producto .play-btn {
+  width: 52px; height: 52px;
+  border: 2px solid var(--gris-medio);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gris-texto);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.card-producto .play-btn:hover {
+  border-color: var(--verde-medio);
+  color: var(--verde-medio);
+}
+
+.card-producto .card-footer {
+  background: white;
+  border-top: 1px solid var(--gris-medio);
+  padding: 0.6rem 1rem;
+}
+
+.card-producto .card-footer .colegio-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--terracota);
+  font-size: 0.85rem;
+}
+
+.card-producto .card-footer .meta {
+  font-size: 0.75rem;
+  color: var(--gris-texto);
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+
+/* ---- Cards IED (Bitácoras) ---- */
+.card-ied {
+  border: none;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  transition: box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
+}
+
+.card-ied:hover {
+  box-shadow: 0 8px 28px rgba(0,0,0,0.14);
+  transform: translateY(-3px);
+}
+
+.card-ied img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  background: var(--gris-claro);
+}
+
+.card-ied .card-body {
+  padding: 0.75rem 1rem;
+}
+
+.card-ied .colegio-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--terracota);
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.card-ied .meta {
+  font-size: 0.78rem;
+  color: var(--gris-texto);
+  display: flex;
+  gap: 1rem;
+}
+
+/* ---- Stat Pills ---- */
+.stat-circle {
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  background: var(--verde-claro);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: var(--verde-oscuro);
+  border-bottom: 3px solid var(--verde-oscuro);
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--gris-texto);
+  text-align: center;
+  max-width: 110px;
+}
+
+/* ---- Filters ---- */
+.filter-bar {
+  background: var(--gris-claro);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.filter-label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.8rem;
+  background: var(--dorado-claro);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 50px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filter-bar .form-select {
+  border: 1px solid var(--gris-medio);
+  border-radius: 50px;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  padding: 0.35rem 2rem 0.35rem 0.9rem;
+  color: var(--negro);
+  background-color: white;
+  cursor: pointer;
+}
+
+.filter-bar .form-control {
+  border: 1px solid var(--gris-medio);
+  border-radius: 50px;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  padding: 0.35rem 0.9rem;
+  color: var(--negro);
+  background-color: white;
+}
+
+.filter-bar .form-control:focus {
+  border-color: var(--verde-medio);
+  box-shadow: 0 0 0 0.15rem rgba(92,122,82,0.2);
+}
+
+/* Contador de resultados de la grilla */
+.resultado-count {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--gris-texto);
+  margin-bottom: 1.5rem;
+}
+.resultado-count strong { color: var(--verde-oscuro); }
+
+/* Chips de filtros activos */
+.filtro-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--verde-bg);
+  color: var(--verde-oscuro);
+  border-radius: 50px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.78rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  margin: 0 0.35rem 0.35rem 0;
+}
+.filtro-chip button {
+  border: none;
+  background: none;
+  color: var(--verde-medio);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  font-size: 0.9rem;
+}
+.filtro-chip button:hover { color: var(--terracota); }
+
+.btn-limpiar {
+  background: var(--terracota-claro);
+  color: var(--negro);
+  border: none;
+  border-radius: 50px;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.35rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-limpiar:hover { background: var(--dorado-claro); }
+
+/* ---- Viz Placeholder ---- */
+.viz-placeholder {
+  background: var(--gris-claro);
+  border: 1px dashed var(--gris-medio);
+  border-radius: var(--radius-lg);
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--gris-texto);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.viz-placeholder .viz-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.4;
+}
+
+/* ---- Dilema box ---- */
+.dilema-box {
+  background: var(--dorado-bg);
+  border-left: 4px solid var(--dorado);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1rem 1.25rem;
+  font-style: italic;
+  color: var(--negro);
+  margin: 0.75rem 0;
+}
+
+/* ---- Actores box ---- */
+.actores-box {
+  background: var(--dorado-bg);
+  border-radius: var(--radius);
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9rem;
+  color: var(--negro);
+  margin: 0.5rem 0 1.25rem;
+}
+
+/* ---- Data rows ---- */
+.data-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+
+.data-row .arrow-icon {
+  color: var(--dorado);
+  font-size: 1.1rem;
+  margin-top: 0.1rem;
+  flex-shrink: 0;
+}
+
+.data-row .data-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--negro);
+  margin-bottom: 0.2rem;
+}
+
+.data-row .data-options {
+  font-size: 0.8rem;
+  color: var(--verde-medio);
+  font-style: italic;
+}
+
+/* ---- Scroll chevron ---- */
+.scroll-chevron {
+  text-align: center;
+  padding: 1rem 0 0.5rem;
+  color: var(--gris-medio);
+  font-size: 1.5rem;
+}
+
+/* ---- Table ---- */
+.tabla-formatos {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.tabla-formatos th {
+  background: var(--verde-medio);
+  color: white;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.75rem 1rem;
+}
+
+.tabla-formatos td {
+  padding: 0.65rem 1rem;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--gris-claro);
+}
+
+/* ---- Breadcrumb mini ---- */
+.mini-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--gris-texto);
+  margin-bottom: 0.75rem;
+}
+
+.mini-breadcrumb .sep { opacity: 0.4; }
+
+/* ---- IED Hero card ---- */
+.ied-hero-card {
+  background: var(--gris-claro);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  display: flex;
+  gap: 2.5rem;
+  align-items: center;
+  margin-bottom: 2.5rem;
+}
+
+.ied-hero-card .ied-name {
+  font-size: 2rem;
+  color: var(--terracota);
+  margin-bottom: 0.5rem;
+}
+
+.ied-hero-card .ied-meta {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.95rem;
+  color: var(--gris-texto);
+  align-items: center;
+}
+
+.ied-hero-card img {
+  width: 340px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+
+/* ---- Footer ---- */
+.footer-bog26 {
+  background: var(--negro);
+  color: rgba(255,255,255,0.6);
+  padding: 2.5rem 0;
+  font-size: 0.82rem;
+  margin-top: 4rem;
+}
+
+.footer-bog26 a { color: rgba(255,255,255,0.4); }
+.footer-bog26 a:hover { color: white; }
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .navbar-bog26 { top: 0.5rem; border-radius: 0; width: 100%; margin: 0; }
+  .ied-hero-card { flex-direction: column; }
+  .ied-hero-card img { width: 100%; height: 200px; }
+  .fase-step { font-size: 0.75rem; padding: 0.6rem 1rem; }
+}
+.modelo-pedagogico-img {
+  width: 100%;
+  max-width: 1100px;
+  display: block;
+  margin: 1rem auto 0 auto;
+}
+
+/* ===============================
+   Maqueta página Dilemas
+   Solo afecta esta sección
+   =============================== */
+
+.dilemas-maqueta {
+  padding-top: 1.5rem;
+}
+
+.dilemas-maqueta-grid {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 3.5rem;
+  align-items: start;
+}
+
+.dilemas-maqueta-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.dilemas-viz-bloque .section-title {
+  font-size: 1rem;
+  line-height: 1.25;
+  margin-bottom: 0.75rem;
+}
+
+.dilemas-viz-placeholder {
+  min-height: 85px;
+  width: 100%;
+}
+
+.dilemas-maqueta-content {
+  min-width: 0;
+}
+
+.dilemas-maqueta-content .filter-bar {
+  margin-bottom: 2rem;
+}
+
+/* Opcional: fuerza que las cards queden en 2 columnas solo en esta sección */
+.dilemas-maqueta #dilemas-container > .dilema-item {
+  flex: 0 0 50%;
+  max-width: 50%;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .dilemas-maqueta-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .dilemas-maqueta #dilemas-container > .dilema-item {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}

@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Datos descriptivos — BOG26</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<div class="container">
+  <nav class="navbar-bog26 d-flex align-items-center gap-2 px-3">
+    <span class="nav-logo me-1"></span>
+    <div class="d-flex flex-wrap align-items-center gap-1 flex-grow-1">
+      <a href="index.html" class="nav-link">Acerca de la estrategia</a>
+      <a href="dilemas.html" class="nav-link">Explora los dilemas</a>
+      <a href="productos.html" class="nav-link">Descubre los productos educomunicativos</a>
+      <div class="dropdown">
+        <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown">Conoce el proceso vivido</a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="bitacoras.html">Bitácoras de viaje</a></li>
+          <li><a class="dropdown-item active" href="datos.html">Datos descriptivos</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- ============ HERO ============ -->
+<section class="page-hero">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-7">
+        <p class="text-uppercase fw-bold mb-2" style="color:var(--verde-medio);font-size:.8rem;letter-spacing:.1em;">
+          Conoce el proceso vivido
+        </p>
+        <h1>Participación y desarrollo de la estrategia</h1>
+        <p class="section-lead mb-0">
+          En esta sección se presentan datos descriptivos sobre el desarrollo de la estrategia y la participación de las
+          Instituciones Educativas Distritales focalizadas durante la ruta pedagógica y metodológica.
+        </p>
+        <p class="mt-2 mb-0" style="color:var(--gris-texto);">
+          Estos datos permiten visualizar el nivel de involucramiento de estudiantes y docentes, así como algunos aspectos
+          generales del proceso pedagógico en las fases 2 "Comprensión" y 3 "Empoderamiento/acción".
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PARTICIPACIÓN ============ -->
+<section class="section">
+  <div class="container">
+
+    <!-- Subtabs de fases -->
+    <ul class="nav nav-pills mb-4" id="faseTabs" role="tablist" style="gap:.5rem;">
+      <li class="nav-item">
+        <button class="nav-link active px-4 py-2 rounded-pill fw-bold"
+                style="font-family:var(--font-display);font-size:.85rem;background:var(--verde-oscuro);color:white;"
+                id="tab-participacion" data-bs-toggle="pill" data-bs-target="#panel-participacion">
+          Participación
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link px-4 py-2 rounded-pill fw-bold"
+                style="font-family:var(--font-display);font-size:.85rem;"
+                id="tab-fase2" data-bs-toggle="pill" data-bs-target="#panel-fase2">
+          Fase 2 · Comprensión
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link px-4 py-2 rounded-pill fw-bold"
+                style="font-family:var(--font-display);font-size:.85rem;"
+                id="tab-fase3" data-bs-toggle="pill" data-bs-target="#panel-fase3">
+          Fase 3 · Empoderamiento/acción
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+
+      <!-- ---- PANEL PARTICIPACIÓN ---- -->
+      <div class="tab-pane fade show active" id="panel-participacion">
+
+        <!-- Nivel de participación cursos -->
+        <div class="row g-4 mb-5">
+          <div class="col-lg-6">
+            <h3 class="section-title">Nivel de participación de los cursos</h3>
+
+            <!-- Phase filter -->
+            <div class="filter-bar mb-3" style="padding:.6rem .75rem;">
+              <span class="filter-label" style="font-size:.72rem;">Filtrar por</span>
+              <select class="form-select" id="filtro-fase-cursos" style="width:auto;font-size:.8rem;">
+                <option value="">Fases</option>
+                <option value="1">Fase 1</option>
+                <option value="2">Fase 2</option>
+                <option value="3">Fase 3</option>
+              </select>
+              <button class="btn-limpiar" style="font-size:.75rem;">Limpiar filtros</button>
+            </div>
+
+            <div class="viz-placeholder" style="min-height:260px;" id="viz-participacion">
+              <div class="viz-icon"><i class="bi bi-bar-chart-fill"></i></div>
+              <strong>Distribución por nivel de participación</strong>
+              <small class="d-block mt-2 text-muted" style="max-width:280px;">
+                Opciones: no participó / solo estuvo presente / estuvo atento/a / intervino en algunos momentos / participó activamente
+              </small>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <h3 class="section-title">Nivel de participación de docentes</h3>
+            <p class="small mb-3" style="color:var(--verde-medio);font-style:italic;">
+              Opciones de respuesta: no participó, solo estuvo presente en el salón; estuvo atento/a, pero no intervino;
+              intervino en algunos momentos; participó activamente durante todo el encuentro.
+            </p>
+
+            <!-- Phase filter -->
+            <div class="filter-bar mb-3" style="padding:.6rem .75rem;">
+              <span class="filter-label" style="font-size:.72rem;">Filtrar por</span>
+              <select class="form-select" id="filtro-fase-docentes" style="width:auto;font-size:.8rem;">
+                <option value="">Fases</option>
+                <option value="1">Fase 1</option>
+                <option value="2">Fase 2</option>
+                <option value="3">Fase 3</option>
+              </select>
+              <button class="btn-limpiar" style="font-size:.75rem;">Limpiar filtros</button>
+            </div>
+
+            <div class="viz-placeholder" style="min-height:260px;">
+              <div class="viz-icon"><i class="bi bi-person-fill-check"></i></div>
+              <strong>Participación docente por fase</strong>
+              <small class="d-block mt-2 text-muted" style="max-width:280px;">
+                Visualización del nivel de involucramiento de docentes en cada encuentro
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---- PANEL FASE 2 ---- -->
+      <div class="tab-pane fade" id="panel-fase2">
+        <div class="fase-badge fase2-badge mb-4">
+          <span class="dot"></span>
+          Fase 2. Comprensión
+        </div>
+        <p class="section-lead">
+          En esta fase, las y los estudiantes se convirtieron en navegantes de dilemas. Exploraron páramos, humedales, ríos,
+          zonas verdes urbanas y otros ecosistemas de Bogotá para entender que una misma situación puede tener muchas perspectivas.
+        </p>
+
+        <!-- Exploración y elección del dilema -->
+        <div class="p-3 rounded-3 mb-4" style="background:var(--dorado-bg);border-left:4px solid var(--dorado);">
+          <h4 style="font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--dorado-claro);">Exploración y elección del dilema</h4>
+        </div>
+
+        <div class="row g-4 mb-5">
+
+          <div class="col-md-6 col-lg-4">
+            <div class="data-row">
+              <span class="arrow-icon"><i class="bi bi-chevron-double-right"></i></span>
+              <div>
+                <div class="data-title">Ecosistemas urbanos reconocidos por las y los estudiantes</div>
+                <div class="data-options">Opciones: parques urbanos, cerros orientales, ríos, humedales, embalses, páramos, otros.</div>
+              </div>
+            </div>
+            <div class="viz-placeholder">
+              <div class="viz-icon"><i class="bi bi-tree-fill"></i></div>
+              <strong>Ecosistemas reconocidos</strong>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4">
+            <div class="data-row">
+              <span class="arrow-icon"><i class="bi bi-chevron-double-right"></i></span>
+              <div>
+                <div class="data-title">Proporción de cursos que comprendieron que un dilema tiene múltiples respuestas posibles</div>
+                <div class="data-options">Opciones: Comprendieron claramente, Comprendieron parcialmente, No quedó claro.</div>
+              </div>
+            </div>
+            <div class="viz-placeholder">
+              <div class="viz-icon"><i class="bi bi-pie-chart-fill"></i></div>
+              <strong>Comprensión del dilema</strong>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4">
+            <div class="data-row">
+              <span class="arrow-icon"><i class="bi bi-chevron-double-right"></i></span>
+              <div>
+                <div class="data-title">Proporción de cursos en los que se generó debate al elegir el dilema</div>
+                <div class="data-options">Opciones: Sí, hubo debate rico; hubo algo de debate; no, eligieron rápido.</div>
+              </div>
+            </div>
+            <div class="viz-placeholder">
+              <div class="viz-icon"><i class="bi bi-chat-left-text-fill"></i></div>
+              <strong>Generación de debate</strong>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4">
+            <div class="data-row">
+              <span class="arrow-icon"><i class="bi bi-chevron-double-right"></i></span>
+              <div>
+                <div class="data-title">Nivel de reconocimiento de características y funciones de los ecosistemas</div>
+                <div class="data-options">Opciones: alto / medio / bajo.</div>
+              </div>
+            </div>
+            <div class="viz-placeholder">
+              <div class="viz-icon"><i class="bi bi-bar-chart-steps"></i></div>
+              <strong>Reconocimiento de ecosistemas</strong>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4">
+            <div class="data-row">
+              <span class="arrow-icon"><i class="bi bi-chevron-double-right"></i></span>
+              <div>
+                <div class="data-title">Problemáticas ambientales mencionadas</div>
+                <div class="data-options">Opciones: contaminación del agua, escasez de agua, pérdida de biodiversidad, generación de residuos, ruido, otro.</div>
+              </div>
+            </div>
+            <div class="viz-placeholder">
+              <div class="viz-icon"><i class="bi bi-cloud-rain-fill"></i></div>
+              <strong>Problemáticas mencionadas</strong>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Argumentación -->
+        <div class="p-3 rounded-3 mb-4" style="background:var(--dorado-bg);border-left:4px solid var(--dorado);">
+          <h4 style="font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--dorado-claro);">Argumentación</h4>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-md-6 col-lg-4">
+            <div class="data-row">
+              <span class="arrow-icon"><i class="bi bi-chevron-double-right"></i></span>
+              <div>
+                <div class="data-title">Actores definidos por el grupo durante los debates</div>
+                <div class="data-options">Respuesta abierta — agrupada por categorías.</div>
+              </div>
+            </div>
+            <div class="viz-placeholder">
+              <div class="viz-icon"><i class="bi bi-people-fill"></i></div>
+              <strong>Actores representados</strong>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4">
+            <div class="data-row">
+              <span class="arrow-icon"><i class="bi bi-chevron-double-right"></i></span>
+              <div>
+                <div class="data-title">Proporción de cursos que diferenciaron saber popular del saber científico</div>
+                <div class="data-options">Opciones: no lograron / diferenciaron sin diálogo / pusieron en diálogo en algunos momentos / articularon consistentemente.</div>
+              </div>
+            </div>
+            <div class="viz-placeholder">
+              <div class="viz-icon"><i class="bi bi-diagram-2-fill"></i></div>
+              <strong>Diálogo de saberes</strong>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4">
+            <div class="data-row">
+              <span class="arrow-icon"><i class="bi bi-chevron-double-right"></i></span>
+              <div>
+                <div class="data-title">Proporción de cursos con cambios de postura durante el debate</div>
+                <div class="data-options">Opciones: sin cambios / algunos matizaron / varios cambiaron claramente.</div>
+              </div>
+            </div>
+            <div class="viz-placeholder">
+              <div class="viz-icon"><i class="bi bi-arrow-left-right"></i></div>
+              <strong>Cambios de postura</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---- PANEL FASE 3 ---- -->
+      <div class="tab-pane fade" id="panel-fase3">
+        <div class="fase-badge fase3-badge mb-4">
+          <span class="dot"></span>
+          Fase 3. Empoderamiento/acción
+        </div>
+        <p class="section-lead">
+          En esta fase, que constó de seis sesiones, las y los estudiantes transformaron sus reflexiones y aprendizajes en
+          productos educomunicativos abordando sus ecosistemas cercanos y dilemas socioambientales del territorio.
+        </p>
+
+        <!-- Diseño del producto -->
+        <div class="p-3 rounded-3 mb-4" style="background:var(--terracota-bg);border-left:4px solid var(--terracota);">
+          <h4 style="font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--terracota);">Diseño del producto</h4>
+        </div>
+
+        <div class="row g-4 mb-5">
+          <div class="col-md-6">
+            <div class="data-row">
+              <span class="arrow-icon"><i class="bi bi-chevron-double-right"></i></span>
+              <div>
+                <div class="data-title">Temas abordados en los productos educomunicativos</div>
+                <div class="data-options">Respuesta abierta — agrupada por categorías.</div>
+              </div>
+            </div>
+            <div class="viz-placeholder" id="viz-tematicas">
+              <div class="viz-icon"><i class="bi bi-tags-fill"></i></div>
+              <strong>Temas abordados</strong>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="data-row">
+              <span class="arrow-icon"><i class="bi bi-chevron-double-right"></i></span>
+              <div>
+                <div class="data-title">Aprendizajes en Ciencias Naturales destacados en los productos</div>
+                <div class="data-options">Opciones: fenómenos naturales o problemáticas ambientales.</div>
+              </div>
+            </div>
+            <div class="viz-placeholder">
+              <div class="viz-icon"><i class="bi bi-book-fill"></i></div>
+              <strong>Aprendizajes destacados</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Producción y socialización -->
+        <div class="p-3 rounded-3 mb-4" style="background:var(--terracota-bg);border-left:4px solid var(--terracota);">
+          <h4 style="font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--terracota);">Producción y socialización</h4>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-md-6 col-lg-3">
+            <div class="data-row">
+              <span class="arrow-icon"><i class="bi bi-chevron-double-right"></i></span>
+              <div>
+                <div class="data-title">Formas de comunicar</div>
+                <div class="data-options">Audiovisual, sonoro o gráfico.</div>
+              </div>
+            </div>
+            <div class="viz-placeholder">
+              <div class="viz-icon"><i class="bi bi-pie-chart-fill"></i></div>
+              <strong>% por forma</strong>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="data-row">
+              <span class="arrow-icon"><i class="bi bi-chevron-double-right"></i></span>
+              <div>
+                <div class="data-title">Intención comunicativa</div>
+                <div class="data-options">Verbos: incentivar, reflexionar, incidir, etc.</div>
+              </div>
+            </div>
+            <div class="viz-placeholder" style="min-height:200px;">
+              <div class="viz-icon"><i class="bi bi-cloud-fill"></i></div>
+              <strong>Nube de palabras</strong>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="data-row">
+              <span class="arrow-icon"><i class="bi bi-chevron-double-right"></i></span>
+              <div>
+                <div class="data-title">Formatos desarrollados</div>
+                <div class="data-options">Entrevista, performance, radionovela, canción, línea de tiempo, historieta.</div>
+              </div>
+            </div>
+            <div class="viz-placeholder" id="viz-formatos">
+              <div class="viz-icon"><i class="bi bi-bar-chart-fill"></i></div>
+              <strong>% por formato</strong>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="data-row">
+              <span class="arrow-icon"><i class="bi bi-chevron-double-right"></i></span>
+              <div>
+                <div class="data-title">Públicos objetivos</div>
+                <div class="data-options">Agrupados por categorías según respuestas.</div>
+              </div>
+            </div>
+            <div class="viz-placeholder">
+              <div class="viz-icon"><i class="bi bi-people-fill"></i></div>
+              <strong>% de públicos</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /tab-content -->
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer-bog26">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6 mb-2 mb-md-0">
+        Convenio CO1.PCCNTR.9161370 de 2026 — Universidad EAFIT &amp; Secretaría de Educación del Distrito, Bogotá.
+      </div>
+      <div class="col-md-6 text-md-end">
+        <a href="https://www.eafit.edu.co" target="_blank">www.eafit.edu.co</a>
+        &nbsp;&nbsp;
+        <a href="https://www.educacionbogota.edu.co" target="_blank">www.educacionbogota.edu.co</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+  // Style active pill on click
+  document.querySelectorAll('#faseTabs .nav-link').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#faseTabs .nav-link').forEach(b => {
+        b.style.background = '';
+        b.style.color = '';
+      });
+      btn.style.background = 'var(--verde-oscuro)';
+      btn.style.color = 'white';
+    });
+  });
+</script>
+
+<!-- ============ GRÁFICAS DESDE SUPABASE ============ -->
+<script type="module">
+  import {
+    getDistribucionParticipacion,
+    getFormatosPopulares,
+    getTematicasEmergentes,
+    participacionLabel,
+    formatoLabel,
+  } from './assets/js/db.js'
+
+  const COLORES = ['#3d5c35', '#5c7a52', '#b8965a', '#c47c35', '#a8bc9e', '#d4b87a']
+
+  // Convierte un placeholder en un lienzo listo para Chart.js.
+  // Devuelve el <canvas> o null si el nodo no existe.
+  function prepararLienzo(id) {
+    const box = document.getElementById(id)
+    if (!box) return null
+    box.style.display = 'block'
+    box.style.padding = '1rem'
+    box.style.minHeight = '260px'
+    box.innerHTML = '<canvas></canvas>'
+    return box.querySelector('canvas')
+  }
+
+  function vacio(id, texto) {
+    const box = document.getElementById(id)
+    if (box) {
+      box.querySelector('strong')?.insertAdjacentHTML(
+        'afterend',
+        `<small class="d-block mt-2 text-muted">${texto}</small>`
+      )
+    }
+  }
+
+  // --- 1. Distribución de niveles de participación ---
+  async function graficaParticipacion() {
+    const { data, error } = await getDistribucionParticipacion()
+    if (error) return console.error('[participacion]', error)
+    if (!data || data.length === 0) return vacio('viz-participacion', 'Sin datos registrados aún.')
+
+    // Sumamos cantidades por nivel a través de todos los encuentros
+    const acc = {}
+    for (const r of data) {
+      const k = r.nivel_participacion
+      acc[k] = (acc[k] ?? 0) + Number(r.cantidad || 0)
+    }
+    const labels = Object.keys(acc).map(participacionLabel)
+    const valores = Object.values(acc)
+
+    const canvas = prepararLienzo('viz-participacion')
+    if (!canvas) return
+    new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{ label: 'Bitácoras', data: valores, backgroundColor: COLORES[1] }],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+      },
+    })
+  }
+
+  // --- 2. Formatos más populares ---
+  async function graficaFormatos() {
+    const { data, error } = await getFormatosPopulares()
+    if (error) return console.error('[formatos]', error)
+    if (!data || data.length === 0) return vacio('viz-formatos', 'Sin datos registrados aún.')
+
+    const labels = data.map((r) => formatoLabel(r.formato))
+    const valores = data.map((r) => Number(r.total_grupos || 0))
+
+    const canvas = prepararLienzo('viz-formatos')
+    if (!canvas) return
+    new Chart(canvas, {
+      type: 'doughnut',
+      data: {
+        labels,
+        datasets: [{ data: valores, backgroundColor: COLORES }],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } },
+      },
+    })
+  }
+
+  // --- 3. Temáticas emergentes (top 8) ---
+  async function graficaTematicas() {
+    const { data, error } = await getTematicasEmergentes()
+    if (error) return console.error('[tematicas]', error)
+    if (!data || data.length === 0) return vacio('viz-tematicas', 'Sin datos registrados aún.')
+
+    const top = data.slice(0, 8)
+    const labels = top.map((r) => r.tematica_normalizada)
+    const valores = top.map((r) => Number(r.veces_mencionada || 0))
+
+    const canvas = prepararLienzo('viz-tematicas')
+    if (!canvas) return
+    new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{ label: 'Menciones', data: valores, backgroundColor: COLORES[2] }],
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: { beginAtZero: true, ticks: { precision: 0 } } },
+      },
+    })
+  }
+
+  graficaParticipacion()
+  graficaFormatos()
+  graficaTematicas()
+</script>
+</body>
+</html>

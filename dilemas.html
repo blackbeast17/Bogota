@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explora los dilemas — BOG26</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/css/styles.css" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<div class="container">
+  <nav class="navbar-bog26 d-flex align-items-center gap-2 px-3">
+    <span class="nav-logo me-1"></span>
+
+    <div class="d-flex flex-wrap align-items-center gap-1 flex-grow-1">
+      <a href="index.html" class="nav-link">Acerca de la estrategia</a>
+      <a href="dilemas.html" class="nav-link active">Explora los dilemas</a>
+      <a href="productos.html" class="nav-link">Descubre los productos educomunicativos</a>
+
+      <div class="dropdown">
+        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+          Conoce el proceso vivido
+        </a>
+
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="bitacoras.html">Bitácoras de viaje</a></li>
+          <li><a class="dropdown-item" href="datos.html">Datos descriptivos</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- ============ HERO ============ -->
+<section class="page-heroDilemas">
+  <div class="container">
+    <h1>Dilemas abordados</h1>
+
+    <p class="section-lead mb-0">
+      En esta sección se presentan los dilemas construidos y seleccionados por las y los estudiantes durante el desarrollo de la estrategia.
+      Cada dilema refleja tensiones relacionadas con los ecosistemas de Bogotá. Estos dilemas surgieron a partir de la exploración de los territorios,
+      el análisis de distintos puntos de vista y las discusiones realizadas durante los encuentros.
+    </p>
+
+    <p class="mt-2 mb-0 hero-dilemas-text">
+      La sección permite conocer las categorías que más despertaron interés en los cursos y las maneras en que los y las estudiantes
+      formularon preguntas sobre la relación entre las personas, la naturaleza y el territorio.
+    </p>
+  </div>
+</section>
+
+<!-- ============ DILEMAS ABORDADOS ============ -->
+<section class="section dilemas-maqueta">
+  <div class="container">
+
+    <div class="dilemas-maqueta-grid">
+
+      <!-- COLUMNA IZQUIERDA: VISUALIZADORES -->
+      <aside class="dilemas-maqueta-sidebar">
+
+        <div class="dilemas-viz-bloque">
+          <h2 class="section-title">
+            Agrupación de los dilemas por categorías
+          </h2>
+
+          <div class="viz-placeholder dilemas-viz-placeholder">
+            Aquí irá una visualización acorde con la naturaleza de los datos
+          </div>
+        </div>
+
+        <div class="dilemas-viz-bloque">
+          <h2 class="section-title">
+            Visualización de los dilemas individuales
+          </h2>
+
+          <div class="viz-placeholder dilemas-viz-placeholder">
+            Aquí irá una visualización acorde con la naturaleza de los datos
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- COLUMNA DERECHA: FILTROS + TARJETAS -->
+      <main class="dilemas-maqueta-content">
+
+        <!-- FILTROS -->
+        <div class="filter-bar">
+          <span class="filter-label">Filtrar por</span>
+
+          <select class="form-select" id="filtro-categoria" style="width:auto;">
+            <option value="">Categoría</option>
+            <option value="humedal">Humedales</option>
+            <option value="paramo">Páramos</option>
+            <option value="rio">Ríos urbanos</option>
+            <option value="zona-verde">Zonas verdes</option>
+            <option value="biodiversidad">Biodiversidad</option>
+            <option value="residuos">Residuos sólidos</option>
+          </select>
+
+          <select class="form-select" id="filtro-localidad" style="width:auto;">
+            <option value="">Localidad</option>
+            <option value="usme">Usme</option>
+            <option value="kennedy">Kennedy</option>
+            <option value="suba">Suba</option>
+            <option value="bosa">Bosa</option>
+            <option value="rafael-uribe">Rafael Uribe Uribe</option>
+          </select>
+
+          <select class="form-select" id="filtro-colegio" style="width:auto;">
+            <option value="">Colegio</option>
+            <option value="juan-lozano">Juan Lozano</option>
+            <option value="rafael-uribe">Rafael Uribe</option>
+            <option value="rodrigo-lara">Rodrigo Lara</option>
+            <option value="liceo-femenino">Liceo Femenino</option>
+          </select>
+
+          <select class="form-select" id="filtro-curso" style="width:auto;">
+            <option value="">Cursos</option>
+            <option value="7">Séptimo</option>
+            <option value="8">Octavo</option>
+            <option value="9">Noveno</option>
+            <option value="10">Décimo</option>
+            <option value="11">Undécimo</option>
+          </select>
+
+          <button class="btn-limpiar ms-auto">Limpiar filtros</button>
+        </div>
+
+        <!-- CARDS -->
+        <div class="row g-3" id="dilemas-container">
+
+          <!-- Card 1 -->
+          <div class="col-md-6 col-lg-4 dilema-item"
+               data-categoria="humedal"
+               data-localidad="usme"
+               data-colegio="juan-lozano"
+               data-curso="7">
+
+            <div class="card card-dilema h-100 d-flex flex-column">
+              <div class="card-header">Categoría: Humedales</div>
+
+              <div class="card-body flex-grow-1">
+                ¿Cómo podríamos promover la conservación y recuperación del Humedal del Techo en Bogotá, para que se restaure la calidad del agua y se mejore el equilibrio del ecosistema, al tiempo que reducimos la pérdida de biodiversidad, para que se protejan las especies de flora y fauna y se mantenga la riqueza natural del humedal?
+              </div>
+
+              <div class="card-footer">
+                <div class="colegio-name">Colegio Juan Lozano</div>
+
+                <div class="meta">
+                  <span><i class="bi bi-mortarboard"></i> 7°-1</span>
+                  <span><i class="bi bi-geo-alt"></i> Usme</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="col-md-6 col-lg-4 dilema-item"
+               data-categoria="paramo"
+               data-localidad="usme"
+               data-colegio="rafael-uribe"
+               data-curso="8">
+
+            <div class="card card-dilema h-100 d-flex flex-column">
+              <div class="card-header">Categoría: Páramos</div>
+
+              <div class="card-body flex-grow-1">
+                ¿Cómo podríamos proteger el Páramo de Sumapaz —el más extenso del mundo— frente a la expansión agrícola y el cambio climático, garantizando el suministro hídrico de Bogotá y preservando la biodiversidad única de este ecosistema?
+              </div>
+
+              <div class="card-footer">
+                <div class="colegio-name">Colegio Rafael Uribe</div>
+
+                <div class="meta">
+                  <span><i class="bi bi-mortarboard"></i> 8°-3</span>
+                  <span><i class="bi bi-geo-alt"></i> Usme</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="col-md-6 col-lg-4 dilema-item"
+               data-categoria="rio"
+               data-localidad="usme"
+               data-colegio="rodrigo-lara"
+               data-curso="7">
+
+            <div class="card card-dilema h-100 d-flex flex-column">
+              <div class="card-header">Categoría: Ríos urbanos</div>
+
+              <div class="card-body flex-grow-1">
+                ¿Cómo podríamos recuperar el Río Tunjuelo para que los habitantes de Usme puedan acceder a espacios naturales limpios, reduciendo la contaminación industrial y doméstica que hoy impide que el río cumpla su función ecológica y cultural?
+              </div>
+
+              <div class="card-footer">
+                <div class="colegio-name">Colegio Rodrigo Lara</div>
+
+                <div class="meta">
+                  <span><i class="bi bi-mortarboard"></i> 7°-1</span>
+                  <span><i class="bi bi-geo-alt"></i> Usme</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="col-md-6 col-lg-4 dilema-item"
+               data-categoria="zona-verde"
+               data-localidad="usme"
+               data-colegio="rodrigo-lara"
+               data-curso="7">
+
+            <div class="card card-dilema h-100 d-flex flex-column">
+              <div class="card-header">Categoría: Zonas verdes</div>
+
+              <div class="card-body flex-grow-1">
+                ¿Cómo podríamos evitar la urbanización de los cerros orientales de Bogotá para que las comunidades cercanas conserven sus zonas verdes, el hábitat de aves endémicas y la recarga hídrica de los acuíferos que abastecen a la ciudad?
+              </div>
+
+              <div class="card-footer">
+                <div class="colegio-name">Colegio Rodrigo Lara</div>
+
+                <div class="meta">
+                  <span><i class="bi bi-mortarboard"></i> 7°-2</span>
+                  <span><i class="bi bi-geo-alt"></i> Usme</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="col-md-6 col-lg-4 dilema-item"
+               data-categoria="biodiversidad"
+               data-localidad="usme"
+               data-colegio="liceo-femenino"
+               data-curso="9">
+
+            <div class="card card-dilema h-100 d-flex flex-column">
+              <div class="card-header">Categoría: Biodiversidad</div>
+
+              <div class="card-body flex-grow-1">
+                ¿Cómo podríamos detener la pérdida de especies de anfibios en los humedales bogotanos, cuando la contaminación del agua y la fragmentación del hábitat amenazan su supervivencia, sabiendo que son indicadores clave de la salud de los ecosistemas?
+              </div>
+
+              <div class="card-footer">
+                <div class="colegio-name">Colegio Liceo Femenino</div>
+
+                <div class="meta">
+                  <span><i class="bi bi-mortarboard"></i> 9°-4</span>
+                  <span><i class="bi bi-geo-alt"></i> Usme</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="col-md-6 col-lg-4 dilema-item"
+               data-categoria="residuos"
+               data-localidad="usme"
+               data-colegio="juan-lozano"
+               data-curso="10">
+
+            <div class="card card-dilema h-100 d-flex flex-column">
+              <div class="card-header">Categoría: Residuos sólidos</div>
+
+              <div class="card-body flex-grow-1">
+                ¿Cómo podríamos reducir la acumulación de residuos sólidos en los cuerpos de agua de Usme, cuando la falta de infraestructura y cultura ambiental resulta en la contaminación de quebradas y zonas verdes que son patrimonio del territorio?
+              </div>
+
+              <div class="card-footer">
+                <div class="colegio-name">Colegio Juan Lozano</div>
+
+                <div class="meta">
+                  <span><i class="bi bi-mortarboard"></i> 10°-1</span>
+                  <span><i class="bi bi-geo-alt"></i> Usme</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </main>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer-bog26">
+  <div class="container">
+    <div class="row align-items-center">
+
+      <div class="col-md-6 mb-2 mb-md-0">
+        Convenio CO1.PCCNTR.9161370 de 2026 — Universidad EAFIT &amp; Secretaría de Educación del Distrito, Bogotá.
+      </div>
+
+      <div class="col-md-6 text-md-end">
+        <a href="https://www.eafit.edu.co" target="_blank">www.eafit.edu.co</a>
+        &nbsp;&nbsp;
+        <a href="https://www.educacionbogota.edu.co" target="_blank">www.educacionbogota.edu.co</a>
+      </div>
+
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/main.js"></script>
+
+<script>
+  initFilters({
+    containerSelector: '#dilemas-container',
+    itemSelector: '.dilema-item',
+    filters: [
+      { selectId: 'filtro-categoria', attribute: 'categoria' },
+      { selectId: 'filtro-localidad', attribute: 'localidad' },
+      { selectId: 'filtro-colegio', attribute: 'colegio' },
+      { selectId: 'filtro-curso', attribute: 'curso' }
+    ],
+    noResultsMsg: 'No se encontraron dilemas con los filtros seleccionados.'
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bitácora — BOG26</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<div class="container">
+  <nav class="navbar-bog26 d-flex align-items-center gap-2 px-3">
+    <span class="nav-logo me-1"></span>
+    <div class="d-flex flex-wrap align-items-center gap-1 flex-grow-1">
+      <a href="index.html" class="nav-link">Acerca de la estrategia</a>
+      <a href="dilemas.html" class="nav-link">Explora los dilemas</a>
+      <a href="productos.html" class="nav-link">Descubre los productos educomunicativos</a>
+      <div class="dropdown">
+        <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown">Conoce el proceso vivido</a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item active" href="bitacoras.html">Bitácoras de viaje</a></li>
+          <li><a class="dropdown-item" href="datos.html">Datos descriptivos</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- ============ BREADCRUMB + MINI THUMB ============ -->
+<div class="container mt-3">
+  <div class="d-flex align-items-center gap-3">
+    <a href="bitacoras.html" class="text-decoration-none">
+      <div style="background:var(--gris-claro);border-radius:var(--radius);padding:.4rem .75rem;display:flex;align-items:center;gap:.4rem;">
+        <div style="background:var(--verde-bg);width:36px;height:36px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;">
+          <i class="bi bi-people-fill" style="color:var(--verde-medio);font-size:1rem;"></i>
+        </div>
+        <div>
+          <div id="thumb-colegio" style="font-family:var(--font-display);font-size:.75rem;color:var(--terracota);font-weight:700;">—</div>
+          <div id="thumb-meta" style="font-size:.68rem;color:var(--gris-texto);">—</div>
+        </div>
+      </div>
+    </a>
+    <div class="mini-breadcrumb">
+      <a href="bitacoras.html" style="color:var(--verde-medio);">Bitácoras de viaje</a>
+      <span class="sep">/</span>
+      <span id="breadcrumb-curso">Bitácora</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CONTENIDO (se llena desde Supabase) ============ -->
+<section class="section" style="padding-top:2rem;">
+  <div class="container" id="detalle-container">
+
+    <!-- Estado de carga -->
+    <div class="text-center py-5 text-muted" id="detalle-loading">
+      <div class="spinner-border text-secondary" role="status" aria-hidden="true"></div>
+      <p class="mt-3 mb-0">Cargando bitácora…</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer-bog26">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6 mb-2 mb-md-0">
+        Convenio CO1.PCCNTR.9161370 de 2026 — Universidad EAFIT &amp; Secretaría de Educación del Distrito, Bogotá.
+      </div>
+      <div class="col-md-6 text-md-end">
+        <a href="https://www.eafit.edu.co" target="_blank">www.eafit.edu.co</a>
+        &nbsp;&nbsp;
+        <a href="https://www.educacionbogota.edu.co" target="_blank">www.educacionbogota.edu.co</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/main.js"></script>
+
+<!-- ============ CARGA DEL DETALLE DESDE SUPABASE ============ -->
+<script type="module">
+  import {
+    getBitacorasDeCurso,
+    formatoLabel,
+    participacionLabel,
+    esc,
+  } from './assets/js/db.js'
+
+  const params = new URLSearchParams(location.search)
+  const codigoCurso = params.get('curso')
+  const cont = document.getElementById('detalle-container')
+
+  function mensaje(html) {
+    cont.innerHTML = `<div class="text-center py-5 text-muted">${html}</div>`
+  }
+
+  // --- Bloques de render ---
+
+  function heroHtml(r) {
+    const nivelCurso = [r.nivel, r.curso].filter(Boolean).join('-')
+    return `
+      <div class="ied-hero-card">
+        <div class="flex-grow-1">
+          <h1 class="ied-name">${esc(r.colegio)}</h1>
+          <hr style="border-color:var(--terracota);opacity:1;margin:.75rem 0;">
+          <div class="ied-meta">
+            <span><i class="bi bi-mortarboard me-1" style="color:var(--terracota);"></i>${esc(nivelCurso)}</span>
+            <span><i class="bi bi-geo-alt-fill me-1" style="color:var(--terracota);"></i>${esc(r.localidad ?? '—')}</span>
+            <span><i class="bi bi-hash me-1" style="color:var(--terracota);"></i>${esc(r.codigo_curso)}</span>
+            ${r.tutor ? `<span><i class="bi bi-person-badge me-1" style="color:var(--terracota);"></i>${esc(r.tutor)}</span>` : ''}
+          </div>
+        </div>
+        <div style="background:var(--verde-bg);border-radius:var(--radius);width:340px;height:220px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+          <i class="bi bi-people-fill" style="font-size:5rem;color:var(--verde-medio);opacity:.4;"></i>
+        </div>
+      </div>`
+  }
+
+  // Tabla de formatos a partir de respuestas.formatos {slug:n} + formato_otro_detalle
+  function formatosHtml(resp) {
+    const base = Object.entries(resp?.formatos ?? {})
+      .filter(([, v]) => Number(v) > 0)
+      .map(([k, v]) => ({ nombre: formatoLabel(k), grupos: Number(v) }))
+    const otros = (resp?.formato_otro_detalle ?? [])
+      .filter((o) => o.formato)
+      .map((o) => ({ nombre: `${o.formato} (otro)`, grupos: Number(o.cantidad) || 0 }))
+    const filas = [...base, ...otros]
+    if (filas.length === 0) return ''
+    return `
+      <p class="fw-bold mt-3" style="color:var(--dorado);font-family:var(--font-display);">Formatos elegidos por los grupos</p>
+      <div class="table-responsive mb-4" style="max-width:460px;">
+        <table class="table tabla-formatos mb-0">
+          <thead><tr><th>Formato</th><th class="text-center">Grupos</th></tr></thead>
+          <tbody>
+            ${filas.map((f) => `<tr><td>${esc(f.nombre)}</td><td class="text-center">${f.grupos}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`
+  }
+
+  function tematicasHtml(resp) {
+    const t = (resp?.tematicas ?? []).filter(Boolean)
+    if (t.length === 0) return ''
+    return `
+      <p class="fw-bold mb-1" style="color:var(--dorado);font-family:var(--font-display);">Temáticas trabajadas</p>
+      <div class="actores-box"><ol class="mb-0 ps-3">${t.map((x) => `<li>${esc(x)}</li>`).join('')}</ol></div>`
+  }
+
+  function evolucionHtml(resp) {
+    const e = resp?.evolucion_participacion
+    if (!e || (!e.inicio && !e.final)) return ''
+    return `
+      <p class="fw-bold mb-1" style="color:var(--dorado);font-family:var(--font-display);">Evolución de la participación</p>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6"><div class="dilema-box mb-0"><strong>Al inicio:</strong> ${esc(e.inicio || '—')}</div></div>
+        <div class="col-md-6"><div class="dilema-box mb-0"><strong>Al final:</strong> ${esc(e.final || '—')}</div></div>
+      </div>`
+  }
+
+  function generalHtml(meta, r) {
+    const p = meta?.p6_nivel_participacion
+    const fecha = r.fecha_encuentro ? `<span><i class="bi bi-calendar3 me-1"></i>${esc(r.fecha_encuentro)}</span>` : ''
+    const part = p ? `<span><i class="bi bi-bar-chart-fill me-1"></i>Participación: <strong>${esc(participacionLabel(p))}</strong></span>` : ''
+    if (!fecha && !part) return ''
+    return `<div class="ied-meta mb-3" style="gap:1.5rem;">${fecha}${part}</div>`
+  }
+
+  // Tarjeta por encuentro registrado
+  function encuentroHtml(r) {
+    const resp = r.respuestas ?? {}
+    const meta = r.meta_general ?? {}
+    const cuerpo = [
+      generalHtml(meta, r),
+      tematicasHtml(resp),
+      formatosHtml(resp),
+      evolucionHtml(resp),
+      r.comentarios
+        ? `<p class="fw-bold mb-1" style="color:var(--dorado);font-family:var(--font-display);">Comentarios del tutor</p><p>${esc(r.comentarios)}</p>`
+        : '',
+    ].join('')
+
+    return `
+      <div class="mb-4">
+        <div class="fase-badge fase3-badge">
+          <span class="dot"></span>
+          Encuentro ${esc(r.encuentro_numero)} · ${esc(r.encuentro_nombre)}
+        </div>
+        ${cuerpo || '<p class="text-muted">Esta bitácora no tiene detalles adicionales registrados.</p>'}
+      </div>`
+  }
+
+  async function init() {
+    if (!codigoCurso) {
+      mensaje('<p>No se indicó qué bitácora abrir. Vuelve a <a href="bitacoras.html">Bitácoras de viaje</a> y elige una institución.</p>')
+      return
+    }
+
+    const { data, error } = await getBitacorasDeCurso(codigoCurso)
+
+    if (error) {
+      console.error('[detalle]', error)
+      mensaje('<p>No se pudo cargar la bitácora. Revisa la conexión con la base de datos.</p>')
+      return
+    }
+    if (!data || data.length === 0) {
+      mensaje(`<p>No hay bitácoras registradas para <strong>${esc(codigoCurso)}</strong> todavía.</p>`)
+      return
+    }
+
+    const primera = data[0]
+    document.title = `Bitácora ${primera.colegio} ${primera.codigo_curso} — BOG26`
+    document.getElementById('thumb-colegio').textContent = primera.colegio ?? '—'
+    document.getElementById('thumb-meta').textContent =
+      [[primera.nivel, primera.curso].filter(Boolean).join('-'), primera.localidad].filter(Boolean).join(' · ')
+    document.getElementById('breadcrumb-curso').textContent =
+      `${primera.colegio} — ${primera.codigo_curso}`
+
+    cont.innerHTML =
+      heroHtml(primera) +
+      `<p class="section-lead mb-4">Proceso registrado por el equipo tutor a lo largo de los encuentros de la estrategia.</p>` +
+      data.map(encuentroHtml).join('')
+  }
+
+  init()
+</script>
+</body>
+</html>

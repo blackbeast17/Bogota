@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Productos educomunicativos — BOG26</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/css/styles.css" rel="stylesheet">
+
+  <style>
+    /* ── Layout página ───────────────────────────────── */
+    .productos-maqueta {
+      padding: 3rem 0;
+      background: var(--blanco);
+    }
+
+    .productos-maqueta-grid {
+      display: grid;
+      grid-template-columns: 38% 62%;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    /* ── Columna izquierda ───────────────────────────── */
+    .productos-intro h1 {
+      font-size: 1.7rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .productos-intro p {
+      max-width: 100%;
+      line-height: 1.25;
+      margin-bottom: 1rem;
+      color: var(--gris-texto);
+    }
+
+    .productos-viz-placeholder {
+      margin-top: 1.5rem;
+      min-height: 170px;
+    }
+
+    /* ── Columna derecha ─────────────────────────────── */
+    .productos-derecha {
+      min-width: 0;
+    }
+
+    .productos-filtros {
+      margin-bottom: 1.25rem;
+    }
+
+    .productos-filtros .filter-bar {
+      margin-bottom: 0;
+    }
+
+    /* ── Cards: restaurar tamaño original ───────────── */
+    .card-producto .media-area {
+      height: 160px;
+    }
+
+    /* ── Panel preview (placeholder lateral) ────────── */
+    .producto-preview {
+      position: sticky;
+      top: 1.5rem;
+      min-height: 210px;
+      background: var(--gris-claro);
+      border: 1px dashed var(--gris-medio);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--gris-texto);
+      padding: 1.5rem;
+      font-size: 1rem;
+      font-family: var(--font-display);
+    }
+
+    /* ── Responsive ──────────────────────────────────── */
+    @media (max-width: 992px) {
+      .productos-maqueta-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<div class="container">
+  <nav class="navbar-bog26 d-flex align-items-center gap-2 px-3">
+    <span class="nav-logo me-1"></span>
+    <div class="d-flex flex-wrap align-items-center gap-1 flex-grow-1">
+      <a href="index.html" class="nav-link">Acerca de la estrategia</a>
+      <a href="dilemas.html" class="nav-link">Explora los dilemas</a>
+      <a href="productos.html" class="nav-link active">Descubre los productos educomunicativos</a>
+      <div class="dropdown">
+        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Conoce el proceso vivido</a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="bitacoras.html">Bitácoras de viaje</a></li>
+          <li><a class="dropdown-item" href="datos.html">Datos descriptivos</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- ============ PRODUCTOS EDUCOMUNICATIVOS ============ -->
+<section class="productos-maqueta">
+  <div class="container">
+    <div class="productos-maqueta-grid">
+
+      <!-- ── COLUMNA IZQUIERDA ── -->
+      <aside class="productos-intro">
+        <h1>Voces de los ecosistemas de Bogotá</h1>
+
+        <p class="section-lead mb-2">
+          Los productos educomunicativos hacen parte de un
+          <strong>universo transmedia</strong> construido colectivamente por las y los estudiantes.
+        </p>
+
+        <p>
+          Cada curso se dividió en grupos. Cada equipo eligió un formato distinto —sonoro, gráfico
+          o audiovisual— y desarrollaron productos que se conectan entre sí a partir de los dilemas
+          socioambientales relacionados con los ecosistemas trabajados durante la estrategia.
+          Aquí se presenta una selección de 4 productos de cada Institución Educativa.
+        </p>
+
+        <p>
+          Esta sección permite explorar las creaciones desde diferentes categorías: formas de
+          comunicar, formato y ecosistema abordado. Cada pieza puede entenderse de manera individual,
+          pero también como parte de una red de historias, preguntas, perspectivas y formas de
+          comunicar la ciencia desde múltiples lenguajes.
+        </p>
+
+        <div class="viz-placeholder productos-viz-placeholder">
+          <div>
+            Aquí irá una visualización acorde con la naturaleza de los datos
+            <br><br>
+            <a href="https://observablehq.com/@d3/orthographic-to-equirectangular" target="_blank">
+              https://observablehq.com/@d3/orthographic-to-equirectangular
+            </a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ── COLUMNA DERECHA ── -->
+      <main class="productos-derecha">
+
+        <!-- FILTROS -->
+        <div class="productos-filtros">
+          <div class="filter-bar">
+            <span class="filter-label">Filtrar por</span>
+
+            <select class="form-select" id="filtro-forma" style="width:auto;">
+              <option value="">Formas de comunicar</option>
+              <option value="audiovisual">Audiovisual</option>
+              <option value="sonoro">Sonoro</option>
+              <option value="grafico">Gráfico</option>
+            </select>
+
+            <select class="form-select" id="filtro-formato" style="width:auto;">
+              <option value="">Formatos</option>
+              <option value="entrevista">Entrevista audiovisual</option>
+              <option value="performance">Performance</option>
+              <option value="radionovela">Radionovela</option>
+              <option value="cancion">Canción</option>
+              <option value="historieta">Historieta</option>
+              <option value="linea-tiempo">Línea de tiempo</option>
+            </select>
+
+            <select class="form-select" id="filtro-ecosistema" style="width:auto;">
+              <option value="">Ecosistemas</option>
+              <option value="humedal">Humedal</option>
+              <option value="paramo">Páramo</option>
+              <option value="rio">Río</option>
+              <option value="cerros">Cerros orientales</option>
+              <option value="parque">Parque urbano</option>
+            </select>
+
+            <select class="form-select" id="filtro-localidad" style="width:auto;">
+              <option value="">Localidad</option>
+              <option value="usme">Usme</option>
+              <option value="kennedy">Kennedy</option>
+              <option value="suba">Suba</option>
+            </select>
+
+            <select class="form-select" id="filtro-colegio" style="width:auto;">
+              <option value="">Colegio</option>
+              <option value="juan-lozano">Juan Lozano</option>
+              <option value="rafael-uribe">Rafael Uribe</option>
+              <option value="rodrigo-lara">Rodrigo Lara</option>
+              <option value="liceo-femenino">Liceo Femenino</option>
+            </select>
+
+            <button class="btn-limpiar ms-auto">Limpiar filtros</button>
+          </div>
+        </div>
+
+        <!-- CARDS GRID -->
+        <div class="row g-3" id="productos-container" style="--bs-gutter-x:1rem;">
+
+          <!-- Producto 1 -->
+          <div class="col-6 col-xl-4 producto-item"
+               data-forma="audiovisual" data-formato="entrevista"
+               data-ecosistema="humedal" data-localidad="usme" data-colegio="juan-lozano">
+            <div class="card card-producto h-100 d-flex flex-column">
+              <div class="card-header">El agua tiene voz</div>
+              <div class="media-area">
+                <div class="play-btn"><i class="bi bi-play-fill"></i></div>
+                <span class="badge position-absolute top-0 end-0 m-2" style="background:var(--verde-oscuro);">Audiovisual</span>
+              </div>
+              <div class="p-2 flex-grow-1">
+                <small class="d-block" style="color:var(--gris-texto);">
+                  <span class="badge me-1" style="background:var(--gris-claro);color:var(--negro);font-size:.7rem;">Entrevista</span>
+                  <span class="badge" style="background:var(--verde-bg);color:var(--verde-oscuro);font-size:.7rem;">Humedal</span>
+                </small>
+              </div>
+              <div class="card-footer">
+                <div class="colegio-name">Colegio Juan Lozano</div>
+                <div class="meta">
+                  <span><i class="bi bi-mortarboard"></i> 7°-1</span>
+                  <span><i class="bi bi-geo-alt"></i> Usme</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Producto 2 -->
+          <div class="col-6 col-xl-4 producto-item"
+               data-forma="sonoro" data-formato="radionovela"
+               data-ecosistema="paramo" data-localidad="usme" data-colegio="rafael-uribe">
+            <div class="card card-producto h-100 d-flex flex-column">
+              <div class="card-header">El último páramo</div>
+              <div class="media-area">
+                <div class="play-btn"><i class="bi bi-volume-up-fill"></i></div>
+                <span class="badge position-absolute top-0 end-0 m-2" style="background:var(--dorado);">Sonoro</span>
+              </div>
+              <div class="p-2 flex-grow-1">
+                <small class="d-block" style="color:var(--gris-texto);">
+                  <span class="badge me-1" style="background:var(--gris-claro);color:var(--negro);font-size:.7rem;">Radionovela</span>
+                  <span class="badge" style="background:var(--verde-bg);color:var(--verde-oscuro);font-size:.7rem;">Páramo</span>
+                </small>
+              </div>
+              <div class="card-footer">
+                <div class="colegio-name">Colegio Rafael Uribe</div>
+                <div class="meta">
+                  <span><i class="bi bi-mortarboard"></i> 8°-3</span>
+                  <span><i class="bi bi-geo-alt"></i> Usme</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Producto 3 -->
+          <div class="col-6 col-xl-4 producto-item"
+               data-forma="grafico" data-formato="historieta"
+               data-ecosistema="rio" data-localidad="usme" data-colegio="rodrigo-lara">
+            <div class="card card-producto h-100 d-flex flex-column">
+              <div class="card-header">El Río que Habla</div>
+              <div class="media-area" style="background:var(--terracota-bg);">
+                <i class="bi bi-journal-richtext" style="font-size:2.5rem;color:var(--terracota);opacity:.6;"></i>
+                <span class="badge position-absolute top-0 end-0 m-2" style="background:var(--terracota);">Gráfico</span>
+              </div>
+              <div class="p-2 flex-grow-1">
+                <small class="d-block" style="color:var(--gris-texto);">
+                  <span class="badge me-1" style="background:var(--gris-claro);color:var(--negro);font-size:.7rem;">Historieta</span>
+                  <span class="badge" style="background:var(--verde-bg);color:var(--verde-oscuro);font-size:.7rem;">Río</span>
+                </small>
+              </div>
+              <div class="card-footer">
+                <div class="colegio-name">Colegio Rodrigo Lara</div>
+                <div class="meta">
+                  <span><i class="bi bi-mortarboard"></i> 7°-1</span>
+                  <span><i class="bi bi-geo-alt"></i> Usme</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Producto 4 -->
+          <div class="col-6 col-xl-4 producto-item"
+               data-forma="sonoro" data-formato="cancion"
+               data-ecosistema="cerros" data-localidad="usme" data-colegio="liceo-femenino">
+            <div class="card card-producto h-100 d-flex flex-column">
+              <div class="card-header">Canción de los Cerros</div>
+              <div class="media-area">
+                <div class="play-btn"><i class="bi bi-music-note-beamed"></i></div>
+                <span class="badge position-absolute top-0 end-0 m-2" style="background:var(--dorado);">Sonoro</span>
+              </div>
+              <div class="p-2 flex-grow-1">
+                <small class="d-block" style="color:var(--gris-texto);">
+                  <span class="badge me-1" style="background:var(--gris-claro);color:var(--negro);font-size:.7rem;">Canción</span>
+                  <span class="badge" style="background:var(--verde-bg);color:var(--verde-oscuro);font-size:.7rem;">Cerros orientales</span>
+                </small>
+              </div>
+              <div class="card-footer">
+                <div class="colegio-name">Colegio Liceo Femenino</div>
+                <div class="meta">
+                  <span><i class="bi bi-mortarboard"></i> 9°-4</span>
+                  <span><i class="bi bi-geo-alt"></i> Usme</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Producto 5 -->
+          <div class="col-6 col-xl-4 producto-item"
+               data-forma="audiovisual" data-formato="performance"
+               data-ecosistema="parque" data-localidad="usme" data-colegio="rodrigo-lara">
+            <div class="card card-producto h-100 d-flex flex-column">
+              <div class="card-header">La Marcha del Parque</div>
+              <div class="media-area">
+                <div class="play-btn"><i class="bi bi-camera-video-fill"></i></div>
+                <span class="badge position-absolute top-0 end-0 m-2" style="background:var(--verde-oscuro);">Audiovisual</span>
+              </div>
+              <div class="p-2 flex-grow-1">
+                <small class="d-block" style="color:var(--gris-texto);">
+                  <span class="badge me-1" style="background:var(--gris-claro);color:var(--negro);font-size:.7rem;">Performance</span>
+                  <span class="badge" style="background:var(--verde-bg);color:var(--verde-oscuro);font-size:.7rem;">Parque urbano</span>
+                </small>
+              </div>
+              <div class="card-footer">
+                <div class="colegio-name">Colegio Rodrigo Lara</div>
+                <div class="meta">
+                  <span><i class="bi bi-mortarboard"></i> 7°-2</span>
+                  <span><i class="bi bi-geo-alt"></i> Usme</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Producto 6 -->
+          <div class="col-6 col-xl-4 producto-item"
+               data-forma="grafico" data-formato="linea-tiempo"
+               data-ecosistema="humedal" data-localidad="usme" data-colegio="juan-lozano">
+            <div class="card card-producto h-100 d-flex flex-column">
+              <div class="card-header">Historia del Humedal Techo</div>
+              <div class="media-area" style="background:var(--verde-bg);">
+                <i class="bi bi-calendar3" style="font-size:2.5rem;color:var(--verde-medio);opacity:.6;"></i>
+                <span class="badge position-absolute top-0 end-0 m-2" style="background:var(--terracota);">Gráfico</span>
+              </div>
+              <div class="p-2 flex-grow-1">
+                <small class="d-block" style="color:var(--gris-texto);">
+                  <span class="badge me-1" style="background:var(--gris-claro);color:var(--negro);font-size:.7rem;">Línea de tiempo</span>
+                  <span class="badge" style="background:var(--verde-bg);color:var(--verde-oscuro);font-size:.7rem;">Humedal</span>
+                </small>
+              </div>
+              <div class="card-footer">
+                <div class="colegio-name">Colegio Juan Lozano</div>
+                <div class="meta">
+                  <span><i class="bi bi-mortarboard"></i> 10°-1</span>
+                  <span><i class="bi bi-geo-alt"></i> Usme</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Producto 7 -->
+          <div class="col-6 col-xl-4 producto-item"
+               data-forma="sonoro" data-formato="radionovela"
+               data-ecosistema="rio" data-localidad="usme" data-colegio="juan-lozano">
+            <div class="card card-producto h-100 d-flex flex-column">
+              <div class="card-header">Radio Tunjuelo</div>
+              <div class="media-area">
+                <div class="play-btn"><i class="bi bi-broadcast"></i></div>
+                <span class="badge position-absolute top-0 end-0 m-2" style="background:var(--dorado);">Sonoro</span>
+              </div>
+              <div class="p-2 flex-grow-1">
+                <small class="d-block" style="color:var(--gris-texto);">
+                  <span class="badge me-1" style="background:var(--gris-claro);color:var(--negro);font-size:.7rem;">Radionovela</span>
+                  <span class="badge" style="background:var(--verde-bg);color:var(--verde-oscuro);font-size:.7rem;">Río</span>
+                </small>
+              </div>
+              <div class="card-footer">
+                <div class="colegio-name">Colegio Juan Lozano</div>
+                <div class="meta">
+                  <span><i class="bi bi-mortarboard"></i> 10°-1</span>
+                  <span><i class="bi bi-geo-alt"></i> Usme</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Producto 8 -->
+          <div class="col-6 col-xl-4 producto-item"
+               data-forma="audiovisual" data-formato="entrevista"
+               data-ecosistema="paramo" data-localidad="usme" data-colegio="liceo-femenino">
+            <div class="card card-producto h-100 d-flex flex-column">
+              <div class="card-header">Voces del Sumapaz</div>
+              <div class="media-area">
+                <div class="play-btn"><i class="bi bi-play-fill"></i></div>
+                <span class="badge position-absolute top-0 end-0 m-2" style="background:var(--verde-oscuro);">Audiovisual</span>
+              </div>
+              <div class="p-2 flex-grow-1">
+                <small class="d-block" style="color:var(--gris-texto);">
+                  <span class="badge me-1" style="background:var(--gris-claro);color:var(--negro);font-size:.7rem;">Entrevista</span>
+                  <span class="badge" style="background:var(--verde-bg);color:var(--verde-oscuro);font-size:.7rem;">Páramo</span>
+                </small>
+              </div>
+              <div class="card-footer">
+                <div class="colegio-name">Colegio Liceo Femenino</div>
+                <div class="meta">
+                  <span><i class="bi bi-mortarboard"></i> 9°-4</span>
+                  <span><i class="bi bi-geo-alt"></i> Usme</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /row -->
+      </main>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer-bog26">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6 mb-2 mb-md-0">
+        Convenio CO1.PCCNTR.9161370 de 2026 — Universidad EAFIT &amp; Secretaría de Educación del Distrito, Bogotá.
+      </div>
+      <div class="col-md-6 text-md-end">
+        <a href="https://www.eafit.edu.co" target="_blank">www.eafit.edu.co</a>
+        &nbsp;&nbsp;
+        <a href="https://www.educacionbogota.edu.co" target="_blank">www.educacionbogota.edu.co</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+  initFilters({
+    containerSelector: '#productos-container',
+    itemSelector: '.producto-item',
+    filters: [
+      { selectId: 'filtro-forma',      attribute: 'forma'      },
+      { selectId: 'filtro-formato',    attribute: 'formato'    },
+      { selectId: 'filtro-ecosistema', attribute: 'ecosistema' },
+      { selectId: 'filtro-localidad',  attribute: 'localidad'  },
+      { selectId: 'filtro-colegio',    attribute: 'colegio'    }
+    ],
+    noResultsMsg: 'No se encontraron productos con los filtros seleccionados.'
+  });
+</script>
+</body>
+</html>

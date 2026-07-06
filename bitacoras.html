@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bitácoras de viaje — BOG26</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<div class="container">
+  <nav class="navbar-bog26 d-flex align-items-center gap-2 px-3">
+    <span class="nav-logo me-1"></span>
+    <div class="d-flex flex-wrap align-items-center gap-1 flex-grow-1">
+      <a href="index.html" class="nav-link">Acerca de la estrategia</a>
+      <a href="dilemas.html" class="nav-link">Explora los dilemas</a>
+      <a href="productos.html" class="nav-link">Descubre los productos educomunicativos</a>
+      <div class="dropdown">
+        <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown">Conoce el proceso vivido</a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item active" href="bitacoras.html">Bitácoras de viaje</a></li>
+          <li><a class="dropdown-item" href="datos.html">Datos descriptivos</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- ============ HERO ============ -->
+<section class="page-hero">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <p class="text-uppercase fw-bold mb-2" style="color:var(--verde-medio);font-size:.8rem;letter-spacing:.1em;">
+          Conoce el proceso vivido
+        </p>
+        <h1>Cada recorrido cuenta una historia</h1>
+        <p class="section-lead mb-0">
+          Las Instituciones Educativas participantes recorrieron un camino distinto a través de preguntas,
+          conversaciones y debates sobre dilemas relacionados con los ecosistemas de Bogotá.
+        </p>
+        <p class="mt-2 mb-0" style="color:var(--gris-texto);">
+          En esta sección podrás seguir su proceso, descubrir cómo vivieron cada fase de la estrategia
+          y explorar los productos educomunicativos que crearon.
+        </p>
+      </div>
+      <!-- Carousel area -->
+      <div class="col-lg-6 mt-4 mt-lg-0">
+        <div id="heroCarousel" class="carousel slide rounded-3 overflow-hidden shadow-sm" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <div style="background:var(--gris-claro);height:220px;display:flex;align-items:center;justify-content:center;">
+                <div class="text-center" style="color:var(--gris-medio);">
+                  <i class="bi bi-camera" style="font-size:3rem;display:block;"></i>
+                  <small>Fotografías de los encuentros</small>
+                </div>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <div style="background:var(--verde-bg);height:220px;display:flex;align-items:center;justify-content:center;">
+                <div class="text-center" style="color:var(--verde-medio);">
+                  <i class="bi bi-people-fill" style="font-size:3rem;display:block;"></i>
+                  <small>Talleres con los estudiantes</small>
+                </div>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <div style="background:var(--dorado-bg);height:220px;display:flex;align-items:center;justify-content:center;">
+                <div class="text-center" style="color:var(--dorado);">
+                  <i class="bi bi-lightbulb-fill" style="font-size:3rem;display:block;"></i>
+                  <small>Momentos de aprendizaje</small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GALERÍA IEDs ============ -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-title mb-1">Instituciones Educativas</h2>
+    <p class="section-lead">Selecciona una institución para explorar su bitácora completa.</p>
+
+    <!-- Filtros (las opciones se llenan con datos reales desde db.js) -->
+    <div class="filter-bar mb-2">
+      <span class="filter-label">Filtrar por</span>
+      <input type="search" class="form-control" id="filtro-busqueda"
+             placeholder="Buscar colegio o código…" style="max-width:230px;">
+      <select class="form-select" id="filtro-localidad" style="width:auto;">
+        <option value="">Localidad</option>
+      </select>
+      <select class="form-select" id="filtro-ied" style="width:auto;">
+        <option value="">IED</option>
+      </select>
+      <select class="form-select" id="filtro-grado" style="width:auto;">
+        <option value="">Grado</option>
+      </select>
+      <select class="form-select" id="filtro-encuentro" style="width:auto;">
+        <option value="">Encuentro</option>
+      </select>
+      <button class="btn-limpiar ms-auto">Limpiar filtros</button>
+    </div>
+
+    <!-- Contador + chips de filtros activos -->
+    <div class="resultado-count" id="resultado-count"></div>
+    <div id="filtro-chips" class="mb-3"></div>
+
+    <!-- IED Grid (se llena dinámicamente desde Supabase) -->
+    <div class="row g-3" id="ied-container">
+      <div class="col-12 text-center py-5 text-muted" id="ied-loading">
+        <div class="spinner-border text-secondary" role="status" aria-hidden="true"></div>
+        <p class="mt-3 mb-0">Cargando bitácoras…</p>
+      </div>
+    </div><!-- /row -->
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer-bog26">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6 mb-2 mb-md-0">
+        Convenio CO1.PCCNTR.9161370 de 2026 — Universidad EAFIT &amp; Secretaría de Educación del Distrito, Bogotá.
+      </div>
+      <div class="col-md-6 text-md-end">
+        <a href="https://www.eafit.edu.co" target="_blank">www.eafit.edu.co</a>
+        &nbsp;&nbsp;
+        <a href="https://www.educacionbogota.edu.co" target="_blank">www.educacionbogota.edu.co</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/main.js"></script>
+
+<!-- ============ CARGA DE BITÁCORAS DESDE SUPABASE ============ -->
+<script type="module">
+  import { getBitacorasUltimas, esc } from './assets/js/db.js'
+
+  const container = document.getElementById('ied-container')
+  const countEl   = document.getElementById('resultado-count')
+  const chipsEl   = document.getElementById('filtro-chips')
+  const inputs = {
+    q:         document.getElementById('filtro-busqueda'),
+    localidad: document.getElementById('filtro-localidad'),
+    colegio:   document.getElementById('filtro-ied'),
+    grado:     document.getElementById('filtro-grado'),
+    encuentro: document.getElementById('filtro-encuentro'),
+  }
+
+  const PALETA = [
+    { bg: 'var(--verde-bg)',     color: 'var(--verde-medio)' },
+    { bg: 'var(--dorado-bg)',    color: 'var(--dorado)'      },
+    { bg: 'var(--terracota-bg)', color: 'var(--terracota)'   },
+  ]
+
+  // Estado de los filtros
+  const estado = { q: '', localidad: '', colegio: '', grado: '', encuentro: '' }
+  let CURSOS = []  // un objeto por codigo_curso (con set de encuentros)
+
+  // --- Utilidades ---
+  const norm = (t) => (t ?? '').toString().toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+
+  // nomenclatura inconsistente (1003, 701, 8, "NOVENO"…) → grado "10°", "7°", "9°"
+  function grado(nivel) {
+    const t = (nivel ?? '').toString().trim()
+    const d = t.replace(/\D/g, '')
+    if (!d) {
+      const palabras = { sexto: 6, septimo: 7, octavo: 8, noveno: 9, decimo: 10, once: 11, undecimo: 11 }
+      const g = palabras[norm(t)]
+      return g ? `${g}°` : null
+    }
+    const c2 = parseInt(d.slice(0, 2), 10)
+    const c1 = parseInt(d.slice(0, 1), 10)
+    const g = c2 >= 6 && c2 <= 11 ? c2 : c1
+    return g >= 6 && g <= 11 ? `${g}°` : null
+  }
+
+  function pintar(html) {
+    container.innerHTML = `<div class="col-12 text-center py-5 text-muted">${html}</div>`
+  }
+
+  function cardHtml(c, i) {
+    const p = PALETA[i % PALETA.length]
+    const nivelCurso = [c.gradoLabel || c.nivel, c.curso].filter(Boolean).join(' · ')
+    const encs = [...c.encuentros].sort((a, b) => a - b)
+    return `
+      <div class="col-md-6 col-lg-4">
+        <a href="bitacora_detalle.html?curso=${encodeURIComponent(c.codigo_curso)}" class="text-decoration-none">
+          <div class="card card-ied">
+            <div style="background:${p.bg};height:180px;display:flex;align-items:center;justify-content:center;">
+              <i class="bi bi-people-fill" style="font-size:4rem;color:${p.color};opacity:.5;"></i>
+            </div>
+            <div class="card-body">
+              <div class="colegio-name">${esc(c.colegio)}</div>
+              <div class="meta">
+                <span><i class="bi bi-mortarboard"></i> ${esc(nivelCurso)}</span>
+                <span><i class="bi bi-geo-alt"></i> ${esc(c.localidad ?? '—')}</span>
+              </div>
+              <div class="meta mt-1" style="opacity:.85;">
+                <span><i class="bi bi-hash"></i> ${esc(c.codigo_curso)}</span>
+                <span title="Encuentros registrados"><i class="bi bi-journal-text"></i> ${encs.map((e) => 'E' + e).join(' ')}</span>
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>`
+  }
+
+  // ¿el curso cumple el estado de filtros? `excepto` ignora una dimensión
+  // (se usa para el filtrado en cascada de los dropdowns).
+  function cumple(c, excepto) {
+    if (excepto !== 'q' && estado.q) {
+      const q = norm(estado.q)
+      if (!norm(c.colegio).includes(q) && !norm(c.codigo_curso).includes(q)) return false
+    }
+    if (excepto !== 'localidad' && estado.localidad && c.localidad !== estado.localidad) return false
+    if (excepto !== 'colegio' && estado.colegio && c.colegio !== estado.colegio) return false
+    if (excepto !== 'grado' && estado.grado && c.gradoLabel !== estado.grado) return false
+    if (excepto !== 'encuentro' && estado.encuentro && !c.encuentros.has(Number(estado.encuentro))) return false
+    return true
+  }
+
+  // Opciones disponibles para una dimensión, dados los OTROS filtros activos
+  function opcionesDe(dim) {
+    const base = CURSOS.filter((c) => cumple(c, dim))
+    if (dim === 'encuentro') {
+      const s = new Set()
+      base.forEach((c) => c.encuentros.forEach((e) => s.add(e)))
+      return [...s].sort((a, b) => a - b).map((e) => ({ value: String(e), label: 'Encuentro ' + e }))
+    }
+    const key = dim === 'colegio' ? 'colegio' : dim === 'grado' ? 'gradoLabel' : 'localidad'
+    const vals = [...new Set(base.map((c) => c[key]).filter(Boolean))]
+    if (dim === 'grado') vals.sort((a, b) => parseInt(a) - parseInt(b))
+    else vals.sort((a, b) => a.localeCompare(b, 'es'))
+    return vals.map((v) => ({ value: v, label: v }))
+  }
+
+  function poblarSelect(dim) {
+    const sel = inputs[dim]
+    const placeholder = sel.querySelector('option')
+    const opciones = opcionesDe(dim)
+    // si el valor actual ya no es válido, lo limpiamos
+    if (estado[dim] && !opciones.some((o) => o.value === estado[dim])) estado[dim] = ''
+    sel.innerHTML = ''
+    sel.appendChild(placeholder)
+    opciones.forEach(({ value, label }) => {
+      const opt = document.createElement('option')
+      opt.value = value
+      opt.textContent = label
+      if (value === estado[dim]) opt.selected = true
+      sel.appendChild(opt)
+    })
+    sel.value = estado[dim]
+  }
+
+  const LABEL_DIM = { localidad: 'Localidad', colegio: 'IED', grado: 'Grado', encuentro: 'Encuentro' }
+
+  function pintarChips() {
+    const activos = []
+    if (estado.q) activos.push({ dim: 'q', txt: `“${estado.q}”` })
+    ;['localidad', 'colegio', 'grado', 'encuentro'].forEach((d) => {
+      if (estado[d]) {
+        const txt = d === 'encuentro' ? 'Encuentro ' + estado[d] : estado[d]
+        activos.push({ dim: d, txt })
+      }
+    })
+    chipsEl.innerHTML = activos
+      .map((a) => `<span class="filtro-chip">${esc(a.txt)}<button data-dim="${a.dim}" aria-label="Quitar filtro">&times;</button></span>`)
+      .join('')
+    chipsEl.querySelectorAll('button').forEach((b) =>
+      b.addEventListener('click', () => {
+        estado[b.dataset.dim] = ''
+        if (b.dataset.dim === 'q') inputs.q.value = ''
+        aplicar()
+      })
+    )
+  }
+
+  function aplicar() {
+    // Repoblar los dropdowns en cascada
+    ;['localidad', 'colegio', 'grado', 'encuentro'].forEach(poblarSelect)
+
+    const visibles = CURSOS.filter((c) => cumple(c, null))
+    const total = CURSOS.length
+
+    countEl.innerHTML = visibles.length === total
+      ? `<strong>${total}</strong> instituciones`
+      : `<strong>${visibles.length}</strong> de ${total} instituciones`
+
+    pintarChips()
+
+    if (visibles.length === 0) {
+      pintar('No se encontraron instituciones con los filtros seleccionados.')
+      return
+    }
+    container.innerHTML = visibles.map((c, i) => cardHtml(c, i)).join('')
+  }
+
+  async function init() {
+    const { data, error } = await getBitacorasUltimas()
+    if (error) {
+      console.error('[bitacoras]', error)
+      pintar('No se pudieron cargar las bitácoras. Revisa la conexión con la base de datos.')
+      return
+    }
+    const filas = data ?? []
+    if (filas.length === 0) {
+      pintar('Aún no hay bitácoras registradas. Aparecerán aquí en cuanto los tutores empiecen a enviarlas.')
+      return
+    }
+
+    // Agrupar una entrada por curso, acumulando el set de encuentros
+    const porCurso = new Map()
+    for (const r of filas) {
+      let c = porCurso.get(r.codigo_curso)
+      if (!c) {
+        c = {
+          codigo_curso: r.codigo_curso,
+          colegio: r.colegio,
+          localidad: r.localidad,
+          nivel: r.nivel,
+          curso: r.curso,
+          gradoLabel: grado(r.nivel),
+          encuentros: new Set(),
+        }
+        porCurso.set(r.codigo_curso, c)
+      }
+      if (r.encuentro_numero != null) c.encuentros.add(Number(r.encuentro_numero))
+    }
+    CURSOS = [...porCurso.values()].sort((a, b) => a.codigo_curso.localeCompare(b.codigo_curso, 'es'))
+
+    // Eventos
+    inputs.q.addEventListener('input', () => { estado.q = inputs.q.value.trim(); aplicar() })
+    ;['localidad', 'colegio', 'grado', 'encuentro'].forEach((dim) =>
+      inputs[dim].addEventListener('change', () => { estado[dim] = inputs[dim].value; aplicar() })
+    )
+    document.querySelectorAll('.btn-limpiar').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        Object.keys(estado).forEach((k) => (estado[k] = ''))
+        inputs.q.value = ''
+        aplicar()
+      })
+    )
+
+    aplicar()
+  }
+
+  init()
+</script>
+</body>
+</html>
