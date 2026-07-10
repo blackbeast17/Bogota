@@ -7,6 +7,50 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/css/styles.css" rel="stylesheet">
+
+  <!-- Reemplaza tu bloque <style> del mapa por este (v3) -->
+<style>
+  .mapa-col-title { font-family: var(--font-display); color: var(--terracota); font-weight: 700; margin-bottom: .5rem; }
+  .mapa-col-nota { font-size: .8rem; color: var(--gris-texto); margin-top: .6rem; }
+
+  /* Fondo de la tarjeta: transparente en reposo, con tonalidad al hover */
+  .mapa-preview-card { position: relative; cursor: pointer; border-radius: var(--radius, 12px);
+    background: transparent; padding: 1rem; overflow: hidden;
+    transition: background .2s ease, box-shadow .15s, transform .15s; }
+  .mapa-preview-card:hover { background: var(--gris-claro, #eaf0ea);
+    box-shadow: 0 10px 30px rgba(0,0,0,.10); transform: translateY(-2px); }
+
+  .mapa-preview { height: 620px; }
+  .mapa-preview svg { width: 100%; height: 100%; display: block; pointer-events: none; }  /* el clic abre el popup */
+  .mapa-preview path { stroke: #fff; stroke-width: .7; }
+  .mapa-preview-hint { position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,.9);
+    color: var(--verde-medio, #5c7a52); font-size: .78rem; padding: .25rem .6rem; border-radius: 20px; font-weight: 600; pointer-events: none; }
+
+  @media (max-width: 991px){ .mapa-preview { height: 400px; } }
+
+  /* ===== Popup del mapa ===== */
+  #modalMapa .mapa-wrap { position: relative; }
+  #modalMapa .mapa-modal-box { height: 60vh; min-height: 360px; }
+  #modalMapa .mapa-modal-box svg { width: 100%; height: 100%; display: block; }
+  #modalMapa .mapa-modal-box path { cursor: pointer; stroke: #fff; stroke-width: .8; transition: opacity .15s; }
+  #modalMapa .mapa-modal-box path:hover { opacity: .85; }
+  #modalMapa .mapa-modal-box path.sel { stroke: var(--terracota); stroke-width: 2.4; }
+  #modalMapa .mapa-modal-box path.sindata { cursor: default; }
+  #modalMapa .mapa-tip { position: absolute; pointer-events: none; background: #2b2b2b; color: #fff;
+    padding: .25rem .5rem; border-radius: 6px; font-size: .78rem; white-space: nowrap; opacity: 0; transition: opacity .1s; z-index: 5; }
+  #modalMapa .leyenda-mapa { font-size: .72rem; }
+  #modalMapa .leyenda-mapa .barra { height: 12px; border-radius: 3px; background: linear-gradient(90deg, #eaf0ea, #3d5c35); }
+  #modalMapa .sw-gris { display:inline-block; width:12px; height:12px; background:#e6e2d8; border-radius:3px; vertical-align:middle; }
+  #modalMapa .mapa-panel { border-left: 1px solid var(--gris-claro); }
+  @media (max-width: 991px){ #modalMapa .mapa-panel { border-left:none; border-top:1px solid var(--gris-claro);} #modalMapa .mapa-modal-box{height:44vh;} }
+  #modalMapa .stat-linea .num { font-family: var(--font-display); color: var(--terracota); font-size: 2rem; line-height: 1; }
+  #modalMapa .cat-row { display:grid; grid-template-columns:1fr auto; gap:.4rem; align-items:center; margin-bottom:.3rem; font-size:.82rem; }
+  #modalMapa .cat-bar { height:10px; border-radius:3px; }
+  #modalMapa .lista-col { list-style:none; padding:0; margin:.5rem 0 0; max-height:32vh; overflow:auto; }
+  #modalMapa .lista-col li { padding:.35rem .2rem; border-bottom:1px solid var(--gris-claro); }
+  #modalMapa .lista-col a { text-decoration:none; color:var(--terracota); font-weight:600; font-size:.85rem; }
+  #modalMapa .lista-col .meta { color:var(--gris-texto); font-size:.74rem; }
+</style>
 </head>
 <body>
 
@@ -25,12 +69,13 @@
           <li><a class="dropdown-item" href="datos.html">Datos descriptivos</a></li>
         </ul>
       </div>
+      <a href="creditos.html" class="nav-link">Creditos</a>
     </div>
   </nav>
 </div>
 
 <!-- ============ Banner ============ -->
-<section class="page-hero">
+<section class="page-hero page-hero-conoce">
   <div class="container">
     <div class="row">
       <div class="col-lg-7">
@@ -43,67 +88,78 @@ de la Ciencia</h1>
     </div>
   </div>
 </section>
-
-<!-- ============ MODELO PEDAGÓGICO ============ -->
+<!-- ============ INTRO + MAPA ============ -->
 <section class="section">
   <div class="container">
-  <h2 class="section-title">la ciencia también fluye fuera del agua</h2>
+    <h2 class="section-title">La ciencia también fluye fuera del agua</h2>
 
-  <div class="section-lead">
-    <p>
-      En el marco del convenio entre la <strong>Secretaría de Educación de Bogotá</strong> y la <strong>Universidad EAFIT</strong>,
-      se desarrolla la estrategia pedagógica <strong>Comunicación Pública de la Ciencia (CPC)</strong>,
-      la cual tiene como propósito fortalecer el uso comprensivo del conocimiento científico en niñas,
-      niños y adolescentes fuera del aula, mediante experiencias que articulan la ciencia con la vida
-      cotidiana, el territorio y las problemáticas ambientales de la ciudad.
-    </p>
+    <div class="row g-4">
+      <!-- Columna de texto -->
+      <div class="col-lg-7">
+        <div class="section-lead">
+          <p>
+            En el marco del convenio entre la <strong>Secretaría de Educación de Bogotá</strong> y la <strong>Universidad EAFIT</strong>,
+            se desarrolla la estrategia pedagógica <strong>Comunicación Pública de la Ciencia (CPC)</strong>,
+            la cual tiene como propósito fortalecer el uso comprensivo del conocimiento científico en niñas,
+            niños y adolescentes fuera del aula, mediante experiencias que articulan la ciencia con la vida
+            cotidiana, el territorio y las problemáticas ambientales de la ciudad.
+          </p>
 
-    <p>
-      Metodológicamente, <strong>la estrategia adopta un enfoque basado en la resolución de dilemas contextualizados</strong>.
-      Desde esta perspectiva, las y los estudiantes se enfrentan a situaciones complejas, abiertas y vinculadas
-      con ecosistemas y problemáticas socioambientales de Bogotá, que requieren interpretar información,
-      contrastar perspectivas, argumentar posiciones y tomar decisiones fundamentadas.
-    </p>
+          <p>
+            Metodológicamente, <strong>la estrategia adopta un enfoque basado en la resolución de dilemas contextualizados</strong>.
+            Desde esta perspectiva, las y los estudiantes se enfrentan a situaciones complejas, abiertas y vinculadas
+            con ecosistemas y problemáticas socioambientales de Bogotá, que requieren interpretar información,
+            contrastar perspectivas, argumentar posiciones y tomar decisiones fundamentadas.
+          </p>
 
-    <p>
-      Los dilemas abordados integran dimensiones científicas, sociales, éticas y culturales,
-      favoreciendo formas de pensamiento crítico y situado.
-    </p>
+          <p>
+            Los dilemas abordados integran dimensiones científicas, sociales, éticas y culturales,
+            favoreciendo formas de pensamiento crítico y situado.
+          </p>
 
-    <p>
-      En esta estrategia se implementan los aprendizajes priorizados en <strong>Ciencias Naturales y Educación Ambiental</strong>,
-      pero con <strong>enfoques educomunicativos</strong>  que promueven el análisis, diseño y circulación de contenidos en distintos
-      lenguajes y formatos.
-    </p>
+          <p>
+            En esta estrategia se implementan los aprendizajes priorizados en <strong>Ciencias Naturales y Educación Ambiental</strong>,
+            pero con <strong>enfoques educomunicativos</strong> que promueven el análisis, diseño y circulación de contenidos en distintos
+            lenguajes y formatos.
+          </p>
 
-     <p>
-      La estrategia de Comunicación Pública de la Ciencia (CPC) invita a las comunidades educativas a reconocer la ciencia como parte de su vida cotidiana y a descubrir su capacidad para participar activamente en ella. A través de las fases de Curiosidad, Ciencia Cotidiana y Creación, fortalece competencias relacionadas con el pensamiento crítico, la argumentación, la creatividad, el uso comprensivo del conocimiento científico y el agenciamiento individual y colectivo frente a los desafíos de sus contextos. Su propósito es ampliar las oportunidades de acercamiento a la ciencia, fortalecer el capital científico de las y los estudiantes y promover la construcción de narrativas que articulen conocimiento, experiencias, preguntas e intereses de las comunidades educativas y sus territorios.​
-    </p>
+          <p>
+            La estrategia de Comunicación Pública de la Ciencia (CPC) invita a las comunidades educativas a reconocer la ciencia como parte de su vida cotidiana y a descubrir su capacidad para participar activamente en ella. A través de las fases de Curiosidad, Ciencia Cotidiana y Creación, fortalece competencias relacionadas con el pensamiento crítico, la argumentación, la creatividad, el uso comprensivo del conocimiento científico y el agenciamiento individual y colectivo frente a los desafíos de sus contextos. Su propósito es ampliar las oportunidades de acercamiento a la ciencia, fortalecer el capital científico de las y los estudiantes y promover la construcción de narrativas que articulen conocimiento, experiencias, preguntas e intereses de las comunidades educativas y sus territorios.
+          </p>
 
-    <p>
-      En este marco, la producción de narrativas y productos educomunicativos se entiende como una manera de fortalecer la relación de las y los estudiantes con la ciencia, reconociéndola como parte de la vida cotidiana y como herramienta para comprender, interpretar y participar en discusiones públicas sobre asuntos ambientales, tecnológicos y sociales.​
-    </p>
-      <p>
-Los productos creados hacen parte de un <strong> universo transmedia </strong> construido colectivamente por las y los estudiantes. A través de contenidos en formatos sonoros, gráficos y audiovisuales, las narrativas se conectan entre sí mediante los ecosistemas, dilemas y problemáticas abordadas, permitiendo explorar múltiples perspectivas y formas de comunicar la ciencia desde el territorio.​    </p>
-    
-  </div>
-</div>
+          <p>
+            En este marco, la producción de narrativas y productos educomunicativos se entiende como una manera de fortalecer la relación de las y los estudiantes con la ciencia, reconociéndola como parte de la vida cotidiana y como herramienta para comprender, interpretar y participar en discusiones públicas sobre asuntos ambientales, tecnológicos y sociales.
+          </p>
 
-   
-<!-- ============ MODELO PEDAGOGICO ============ -->
-<section class="section section-alt">
-  <div class="container">
-    <h2 class="section-title">Modelo pedagógico</h2>
+          <p>
+            Los productos creados hacen parte de un <strong>universo transmedia</strong> construido colectivamente por las y los estudiantes. A través de contenidos en formatos sonoros, gráficos y audiovisuales, las narrativas se conectan entre sí mediante los ecosistemas, dilemas y problemáticas abordadas, permitiendo explorar múltiples perspectivas y formas de comunicar la ciencia desde el territorio.
+          </p>
+        </div>
+      </div>
 
-    <img src="./assets/img/modelo.png" alt="Modelo pedagógico de la estrategia" class="modelo-pedagogico-img">
-   
+      <!-- Columna del mapa (sticky) -->
+      <div class="col-lg-5">
+        <div class="mapa-col">
+          
+          <div class="mapa-preview-card" data-bs-toggle="modal" data-bs-target="#modalMapa"
+               role="button" tabindex="0" aria-label="Ampliar mapa de localidades">
+            <div id="mapa-preview" class="mapa-preview"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-   
-
+<!-- ============ MODELO PEDAGOGICO ============ -->
+<section class="section section-alt section-modelo">
+  <div class="container">
+    <h2 class="section-title">Modelo pedagógico</h2>
+    <img src="./assets/img/modelo.jpg" alt="Modelo pedagógico de la estrategia" class="modelo-pedagogico-img">
+  </div>
+</section>
 <!-- ============ FASES ============ -->
-<section class="section section-alt">
+<section class="section section-alt section-fases">
   <div class="container">
     <h2 class="section-title">Fases del proceso pedagógico</h2>
 
@@ -147,19 +203,19 @@ Los productos creados hacen parte de un <strong> universo transmedia </strong> c
 
     <div class="row g-4 justify-content-center">
       <div class="col-6 col-md-3 text-center">
-        <div class="stat-circle mx-auto">80</div>
+        <div class="stat-circle mx-auto" data-target="141">0</div>
         <p class="stat-label mx-auto">Instituciones Educativas Distritales</p>
       </div>
       <div class="col-6 col-md-3 text-center">
-        <div class="stat-circle mx-auto">158</div>
+        <div class="stat-circle mx-auto" data-target="158">0</div>
         <p class="stat-label mx-auto">Cursos de 7° a 11°</p>
       </div>
       <div class="col-6 col-md-3 text-center">
-        <div class="stat-circle mx-auto" style="font-size:1.2rem;">6.400+</div>
+<div class="stat-circle mx-auto" style="font-size:1.2rem;" data-target="6400" data-suffix="+" data-sep>0</div>
         <p class="stat-label mx-auto">Estudiantes participantes</p>
       </div>
       <div class="col-6 col-md-3 text-center">
-        <div class="stat-circle mx-auto">147</div>
+<div class="stat-circle mx-auto" data-target="147">0</div>
         <p class="stat-label mx-auto">Docentes participantes</p>
       </div>
     </div>
@@ -187,7 +243,207 @@ Los productos creados hacen parte de un <strong> universo transmedia </strong> c
   </div>
 </footer>
 
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/main.js"></script>
+
+
+<script>
+  (function () {
+    const nums = document.querySelectorAll('.stat-circle[data-target]');
+    if (!nums.length) return;
+
+    const anima = (el) => {
+      const fin = parseInt(el.dataset.target, 10) || 0;
+      const suf = el.dataset.suffix || '';
+      const sep = el.hasAttribute('data-sep');
+      const dur = 1400;                // duración en ms
+      const t0 = performance.now();
+
+      const fmt = (n) => (sep ? n.toLocaleString('es-CO') : String(n)) + suf;
+
+      const paso = (t) => {
+        const p = Math.min((t - t0) / dur, 1);
+        const eased = 1 - Math.pow(1 - p, 3);   // desacelera al final
+        el.textContent = fmt(Math.round(fin * eased));
+        if (p < 1) requestAnimationFrame(paso);
+        else el.textContent = fmt(fin);
+      };
+      requestAnimationFrame(paso);
+    };
+
+    const obs = new IntersectionObserver((entradas, o) => {
+      entradas.forEach((e) => {
+        if (e.isIntersecting) { anima(e.target); o.unobserve(e.target); }
+      });
+    }, { threshold: 0.5 });
+
+    nums.forEach((n) => obs.observe(n));
+  })();
+</script>
+
+
+
+<!-- Popup del mapa -->
+<div class="modal fade" id="modalMapa" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" style="font-family:var(--font-display);">Mapa de localidades</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-0">
+          <div class="col-lg-7">
+            <div class="mapa-wrap">
+              <div id="mapa-modal-box" class="mapa-modal-box"></div>
+              <div class="mapa-tip" id="mapa-modal-tip"></div>
+            </div>
+           
+          </div>
+          <div class="col-lg-5 mapa-panel p-3" id="mapa-modal-panel"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Reemplaza tu <script type="module"> del mapa por este v3 (el modal NO cambia) -->
+<script type="module">
+  import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm'
+  import { getDilemas } from './assets/js/db.js'
+
+  const GEOJSON_PATH = 'assets/data/localidades.geojson'
+  const PROP_CANDIDATAS = ['LocNombre','NOMBRE','Nombre','nombre','localidad','LOCALIDAD','NOMBRE_LOC','nombre_loc','loc_name']
+  const esc = (s) => (s ?? '').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+  const key = (s) => (s ?? '').toString().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9]/g,'')
+  const COLOR_CAT = (op) => { const t=(op||'').toLowerCase()
+    if (t.includes('agua')&&t.includes('contamin')) return '#90B49D'
+    if (t.includes('biodiversidad')) return '#9F574F'
+    if (t.includes('residuo')) return '#CCB364'
+    if (t.includes('escasez')) return '#CCA782'
+    if (t.includes('ruido')) return '#9066CC'
+    return '#54461E' }
+
+  // --- Esri JSON → GeoJSON ---
+  function areaAnillo(r){ let s=0; for(let i=0,n=r.length,j=n-1;i<n;j=i++){ s+=(r[j][0]*r[i][1])-(r[i][0]*r[j][1]) } return s/2 }
+  function puntoEnAnillo(p,r){ let d=false; for(let i=0,n=r.length,j=n-1;i<n;j=i++){ const xi=r[i][0],yi=r[i][1],xj=r[j][0],yj=r[j][1]; if(((yi>p[1])!==(yj>p[1]))&&(p[0]<(xj-xi)*(p[1]-yi)/(yj-yi)+xi)) d=!d } return d }
+  function ringsAGeoJSON(rings){ if(!rings||!rings.length) return {type:'Polygon',coordinates:[]}
+    const outer=[],holes=[]; for(const r of rings){ (areaAnillo(r)<0?outer:holes).push(r) }
+    if(!outer.length) return {type:'MultiPolygon',coordinates:rings.map((r)=>[r])}
+    const polys=outer.map((o)=>[o]); for(const h of holes){ let idx=0; for(let k=0;k<outer.length;k++){ if(puntoEnAnillo(h[0],outer[k])){ idx=k; break } } polys[idx].push(h) }
+    return outer.length===1?{type:'Polygon',coordinates:polys[0]}:{type:'MultiPolygon',coordinates:polys} }
+  function aFeatureCollection(json){ if(!json) return {type:'FeatureCollection',features:[]}
+    const f0=(json.features||[])[0]
+    if(json.type==='FeatureCollection'&&f0&&f0.geometry&&f0.geometry.coordinates) return json
+    if(json.geometryType||(f0&&f0.geometry&&f0.geometry.rings)) return {type:'FeatureCollection',features:(json.features||[]).map((ft)=>({type:'Feature',properties:ft.attributes||{},geometry:ringsAGeoJSON((ft.geometry||{}).rings)}))}
+    return json }
+
+  let GEO = null, PROP = null, STATS = {}, TOTAL = 0
+  const nombreDe = (f) => (f.properties?.[PROP] ?? '')
+  const statsDe = (f) => STATS[key(nombreDe(f))]
+
+  async function cargarStats(){
+    const { data, error } = await getDilemas()
+    if (error) { console.error('[mapa]', error); return }
+    for (const r of (data||[])) {
+      const k = key(r.localidad); if(!k) continue
+      const s = STATS[k] || (STATS[k] = { nombre:r.localidad, colegios:new Set(), dilemas:[], cat:{} })
+      s.colegios.add(r.colegio); s.dilemas.push(r); const c=r.categoria||'Otro'; s.cat[c]=(s.cat[c]||0)+1
+      TOTAL++
+    }
+  }
+
+  function resumenCiudad(panel){
+    const nLoc=Object.keys(STATS).length
+    const nCol=new Set(Object.values(STATS).flatMap((s)=>[...s.colegios])).size
+    panel.innerHTML = `
+      <h4 style="font-family:var(--font-display);color:var(--terracota);">Bogotá</h4>
+      <p class="text-muted small">Resumen general de la estrategia por territorio.</p>
+      <div class="row g-3 mb-3">
+        <div class="col-4"><div class="stat-linea"><span class="num">${TOTAL}</span></div><div class="text-muted small">Dilemas</div></div>
+        <div class="col-4"><div class="stat-linea"><span class="num">${nCol}</span></div><div class="text-muted small">Colegios</div></div>
+        <div class="col-4"><div class="stat-linea"><span class="num">${nLoc}</span></div><div class="text-muted small">Localidades</div></div>
+      </div>
+      <p class="text-muted small mb-0"><i class="bi bi-hand-index"></i> Haz clic en una localidad para ver su detalle.</p>`
+  }
+
+  function pintarLocalidad(panel, s){
+    if(!s) return
+    const cats=Object.entries(s.cat).sort((a,b)=>b[1]-a[1])
+    const maxCat=Math.max(...cats.map((c)=>c[1]),1)
+    const barras=cats.map(([c,n])=>`<div class="cat-row"><div><div class="cat-bar" style="width:${Math.round(n/maxCat*100)}%;background:${COLOR_CAT(c)};"></div></div><div>${esc(c.replace('Otro, ¿Cuál?','Otro'))} · <strong>${n}</strong></div></div>`).join('')
+    const lista=s.dilemas.slice().sort((a,b)=>(a.colegio||'').localeCompare(b.colegio||'','es'))
+      .map((d)=>`<li><a href="bitacora_detalle.html?curso=${encodeURIComponent(d.codigo_curso)}" target="_blank" rel="noopener">${esc(d.colegio)}</a><div class="meta">${esc([d.nivel,d.curso].filter(Boolean).join('-'))} · ${esc(d.codigo_curso)} · ${esc(d.categoria||'—')}</div></li>`).join('')
+    panel.innerHTML = `
+      <h4 style="font-family:var(--font-display);color:var(--terracota);text-transform:capitalize;">${esc((s.nombre||'').toLowerCase())}</h4>
+      <div class="row g-3 mb-3">
+        <div class="col-6"><div class="stat-linea"><span class="num">${s.dilemas.length}</span></div><div class="text-muted small">Dilemas</div></div>
+        <div class="col-6"><div class="stat-linea"><span class="num">${s.colegios.size}</span></div><div class="text-muted small">Colegios</div></div>
+      </div>
+      <p class="fw-bold mb-2" style="font-family:var(--font-display);color:var(--dorado);">Categorías de los dilemas</p>
+      ${barras || '<p class="text-muted small">Sin categorías.</p>'}
+      <p class="fw-bold mb-1 mt-3" style="font-family:var(--font-display);color:var(--dorado);">Colegios participantes</p>
+      <ul class="lista-col">${lista}</ul>`
+  }
+
+  function dibujar(cont, { modo, tip, panel } = {}){
+    if(!cont || !GEO) return
+    cont.innerHTML = ''
+    const feats = GEO.features || []
+
+    //const EXCLUIR = ['SUMAPAZ']  // agrega las que quieras: ['USAQUEN','SUMAPAZ',...]
+    //const feats = (GEO.features || []).filter((f) => !EXCLUIR.includes(key(nombreDe(f))))
+    const maxDil = Math.max(1, ...Object.values(STATS).map((s)=>s.dilemas.length))
+    const escala = d3.scaleSequential(d3.interpolateRgb('#eaf0ea','#3d5c35')).domain([0,maxDil])
+    const fill = (f)=>{ const s=statsDe(f); return s?escala(s.dilemas.length):'#e6e2d8' }
+    const W = cont.clientWidth || 1100, H = cont.clientHeight || 700
+    const proj = d3.geoIdentity().reflectY(true).fitSize([W,H], GEO)
+    const path = d3.geoPath(proj)
+    const svg = d3.select(cont).append('svg').attr('viewBox',`0 0 ${W} ${H}`).attr('preserveAspectRatio','xMidYMid meet')
+    const sel = svg.append('g').selectAll('path').data(feats).join('path').attr('d',path).classed('sindata',(f)=>!statsDe(f))
+
+    if(modo === 'interactivo'){
+      // Coropleta completa + hover + clic → panel
+      sel.attr('fill', fill)
+      let seleccionada=null
+      sel.on('mousemove',(event,f)=>{ const s=statsDe(f); if(!tip)return
+          tip.innerHTML=`<strong>${esc(nombreDe(f))}</strong>${s?` · ${s.dilemas.length} dilemas`:' · sin datos'}`
+          const r=cont.getBoundingClientRect(); tip.style.left=(event.clientX-r.left+12)+'px'; tip.style.top=(event.clientY-r.top+12)+'px'; tip.style.opacity=1 })
+        .on('mouseleave',()=>{ if(tip) tip.style.opacity=0 })
+        .on('click',function(event,f){ const s=statsDe(f); if(!s)return; if(seleccionada)seleccionada.classList.remove('sel'); this.classList.add('sel'); seleccionada=this; pintarLocalidad(panel,s) })
+    } else {
+      // PREVIEW: coropleta siempre visible (color por nº de dilemas). El clic burbujea a la tarjeta y abre el popup.
+      sel.attr('fill', fill)
+    }
+  }
+
+  async function init(){
+    await cargarStats()
+    try {
+      const resp = await fetch(GEOJSON_PATH); if(!resp.ok) throw new Error('HTTP '+resp.status)
+      GEO = aFeatureCollection(await resp.json())
+    } catch(e){ console.error('[mapa] No se pudo cargar el GeoJSON:', e)
+      const p=document.getElementById('mapa-preview'); if(p) p.innerHTML = '<p class="text-muted small text-center py-5">No se pudo cargar el mapa. Coloca <code>assets/data/localidades.geojson</code> y sirve por http.</p>'; return }
+
+    const feats = GEO.features || []
+    PROP = PROP_CANDIDATAS.find((p)=>feats[0]?.properties?.[p]!=null) || (feats[0] && Object.keys(feats[0].properties||{}).find((k)=>typeof feats[0].properties[k]==='string'))
+    console.log('[mapa] Propiedad de nombre:', PROP, '| ejemplo:', feats[0]?.properties?.[PROP])
+
+    dibujar(document.getElementById('mapa-preview'), { modo:'preview' })
+
+    const modal = document.getElementById('modalMapa')
+    const panel = document.getElementById('mapa-modal-panel')
+    const tip = document.getElementById('mapa-modal-tip')
+    let dibujado = false
+    if(panel) resumenCiudad(panel)
+    if(modal) modal.addEventListener('shown.bs.modal', ()=>{
+      if(dibujado) return
+      dibujar(document.getElementById('mapa-modal-box'), { modo:'interactivo', tip, panel })
+      dibujado = true
+    })
+  }
+  init()
+
+</script>
 </body>
 </html>

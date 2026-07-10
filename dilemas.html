@@ -32,15 +32,17 @@
           <li><a class="dropdown-item" href="datos.html">Datos descriptivos</a></li>
         </ul>
       </div>
+      <a href="creditos.html" class="nav-link">Creditos</a>
     </div>
   </nav>
 </div>
 
 <!-- ============ HERO ============ -->
-<section class="page-heroDilemas">
+<section class="page-heroDilemas page-hero-dilema">
   <div class="container">
+    
     <h1>Dilemas abordados</h1>
-
+    <div class="col-9">
     <p class="section-lead mb-0">
       En esta sección se presentan los dilemas construidos y seleccionados por las y los estudiantes durante el desarrollo de la estrategia.
       Cada dilema refleja tensiones relacionadas con los ecosistemas de Bogotá. Estos dilemas surgieron a partir de la exploración de los territorios,
@@ -51,6 +53,7 @@
       La sección permite conocer las categorías que más despertaron interés en los cursos y las maneras en que los y las estudiantes
       formularon preguntas sobre la relación entre las personas, la naturaleza y el territorio.
     </p>
+    </div>
   </div>
 </section>
 
@@ -88,202 +91,42 @@
       <!-- COLUMNA DERECHA: FILTROS + TARJETAS -->
       <main class="dilemas-maqueta-content">
 
-        <!-- FILTROS -->
-        <div class="filter-bar">
+        <!-- FILTROS (las opciones se llenan con datos reales desde db.js) -->
+        <div class="filter-bar mb-2">
           <span class="filter-label">Filtrar por</span>
+
+          <input type="search" class="form-control" id="filtro-busqueda"
+                 placeholder="Buscar dilema, colegio o código…" style="max-width:230px;">
 
           <select class="form-select" id="filtro-categoria" style="width:auto;">
             <option value="">Categoría</option>
-            <option value="humedal">Humedales</option>
-            <option value="paramo">Páramos</option>
-            <option value="rio">Ríos urbanos</option>
-            <option value="zona-verde">Zonas verdes</option>
-            <option value="biodiversidad">Biodiversidad</option>
-            <option value="residuos">Residuos sólidos</option>
           </select>
 
           <select class="form-select" id="filtro-localidad" style="width:auto;">
             <option value="">Localidad</option>
-            <option value="usme">Usme</option>
-            <option value="kennedy">Kennedy</option>
-            <option value="suba">Suba</option>
-            <option value="bosa">Bosa</option>
-            <option value="rafael-uribe">Rafael Uribe Uribe</option>
           </select>
 
           <select class="form-select" id="filtro-colegio" style="width:auto;">
             <option value="">Colegio</option>
-            <option value="juan-lozano">Juan Lozano</option>
-            <option value="rafael-uribe">Rafael Uribe</option>
-            <option value="rodrigo-lara">Rodrigo Lara</option>
-            <option value="liceo-femenino">Liceo Femenino</option>
           </select>
 
-          <select class="form-select" id="filtro-curso" style="width:auto;">
-            <option value="">Cursos</option>
-            <option value="7">Séptimo</option>
-            <option value="8">Octavo</option>
-            <option value="9">Noveno</option>
-            <option value="10">Décimo</option>
-            <option value="11">Undécimo</option>
+          <select class="form-select" id="filtro-grado" style="width:auto;">
+            <option value="">Grado</option>
           </select>
 
           <button class="btn-limpiar ms-auto">Limpiar filtros</button>
         </div>
 
-        <!-- CARDS -->
+        <!-- Contador + chips de filtros activos -->
+        <div class="resultado-count" id="resultado-count"></div>
+        <div id="filtro-chips" class="mb-3"></div>
+
+        <!-- CARDS (se llenan dinámicamente desde Supabase) -->
         <div class="row g-3" id="dilemas-container">
-
-          <!-- Card 1 -->
-          <div class="col-md-6 col-lg-4 dilema-item"
-               data-categoria="humedal"
-               data-localidad="usme"
-               data-colegio="juan-lozano"
-               data-curso="7">
-
-            <div class="card card-dilema h-100 d-flex flex-column">
-              <div class="card-header">Categoría: Humedales</div>
-
-              <div class="card-body flex-grow-1">
-                ¿Cómo podríamos promover la conservación y recuperación del Humedal del Techo en Bogotá, para que se restaure la calidad del agua y se mejore el equilibrio del ecosistema, al tiempo que reducimos la pérdida de biodiversidad, para que se protejan las especies de flora y fauna y se mantenga la riqueza natural del humedal?
-              </div>
-
-              <div class="card-footer">
-                <div class="colegio-name">Colegio Juan Lozano</div>
-
-                <div class="meta">
-                  <span><i class="bi bi-mortarboard"></i> 7°-1</span>
-                  <span><i class="bi bi-geo-alt"></i> Usme</span>
-                </div>
-              </div>
-            </div>
+          <div class="col-12 text-center py-5 text-muted" id="dilemas-loading">
+            <div class="spinner-border text-secondary" role="status" aria-hidden="true"></div>
+            <p class="mt-3 mb-0">Cargando dilemas…</p>
           </div>
-
-          <!-- Card 2 -->
-          <div class="col-md-6 col-lg-4 dilema-item"
-               data-categoria="paramo"
-               data-localidad="usme"
-               data-colegio="rafael-uribe"
-               data-curso="8">
-
-            <div class="card card-dilema h-100 d-flex flex-column">
-              <div class="card-header">Categoría: Páramos</div>
-
-              <div class="card-body flex-grow-1">
-                ¿Cómo podríamos proteger el Páramo de Sumapaz —el más extenso del mundo— frente a la expansión agrícola y el cambio climático, garantizando el suministro hídrico de Bogotá y preservando la biodiversidad única de este ecosistema?
-              </div>
-
-              <div class="card-footer">
-                <div class="colegio-name">Colegio Rafael Uribe</div>
-
-                <div class="meta">
-                  <span><i class="bi bi-mortarboard"></i> 8°-3</span>
-                  <span><i class="bi bi-geo-alt"></i> Usme</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 3 -->
-          <div class="col-md-6 col-lg-4 dilema-item"
-               data-categoria="rio"
-               data-localidad="usme"
-               data-colegio="rodrigo-lara"
-               data-curso="7">
-
-            <div class="card card-dilema h-100 d-flex flex-column">
-              <div class="card-header">Categoría: Ríos urbanos</div>
-
-              <div class="card-body flex-grow-1">
-                ¿Cómo podríamos recuperar el Río Tunjuelo para que los habitantes de Usme puedan acceder a espacios naturales limpios, reduciendo la contaminación industrial y doméstica que hoy impide que el río cumpla su función ecológica y cultural?
-              </div>
-
-              <div class="card-footer">
-                <div class="colegio-name">Colegio Rodrigo Lara</div>
-
-                <div class="meta">
-                  <span><i class="bi bi-mortarboard"></i> 7°-1</span>
-                  <span><i class="bi bi-geo-alt"></i> Usme</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 4 -->
-          <div class="col-md-6 col-lg-4 dilema-item"
-               data-categoria="zona-verde"
-               data-localidad="usme"
-               data-colegio="rodrigo-lara"
-               data-curso="7">
-
-            <div class="card card-dilema h-100 d-flex flex-column">
-              <div class="card-header">Categoría: Zonas verdes</div>
-
-              <div class="card-body flex-grow-1">
-                ¿Cómo podríamos evitar la urbanización de los cerros orientales de Bogotá para que las comunidades cercanas conserven sus zonas verdes, el hábitat de aves endémicas y la recarga hídrica de los acuíferos que abastecen a la ciudad?
-              </div>
-
-              <div class="card-footer">
-                <div class="colegio-name">Colegio Rodrigo Lara</div>
-
-                <div class="meta">
-                  <span><i class="bi bi-mortarboard"></i> 7°-2</span>
-                  <span><i class="bi bi-geo-alt"></i> Usme</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 5 -->
-          <div class="col-md-6 col-lg-4 dilema-item"
-               data-categoria="biodiversidad"
-               data-localidad="usme"
-               data-colegio="liceo-femenino"
-               data-curso="9">
-
-            <div class="card card-dilema h-100 d-flex flex-column">
-              <div class="card-header">Categoría: Biodiversidad</div>
-
-              <div class="card-body flex-grow-1">
-                ¿Cómo podríamos detener la pérdida de especies de anfibios en los humedales bogotanos, cuando la contaminación del agua y la fragmentación del hábitat amenazan su supervivencia, sabiendo que son indicadores clave de la salud de los ecosistemas?
-              </div>
-
-              <div class="card-footer">
-                <div class="colegio-name">Colegio Liceo Femenino</div>
-
-                <div class="meta">
-                  <span><i class="bi bi-mortarboard"></i> 9°-4</span>
-                  <span><i class="bi bi-geo-alt"></i> Usme</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 6 -->
-          <div class="col-md-6 col-lg-4 dilema-item"
-               data-categoria="residuos"
-               data-localidad="usme"
-               data-colegio="juan-lozano"
-               data-curso="10">
-
-            <div class="card card-dilema h-100 d-flex flex-column">
-              <div class="card-header">Categoría: Residuos sólidos</div>
-
-              <div class="card-body flex-grow-1">
-                ¿Cómo podríamos reducir la acumulación de residuos sólidos en los cuerpos de agua de Usme, cuando la falta de infraestructura y cultura ambiental resulta en la contaminación de quebradas y zonas verdes que son patrimonio del territorio?
-              </div>
-
-              <div class="card-footer">
-                <div class="colegio-name">Colegio Juan Lozano</div>
-
-                <div class="meta">
-                  <span><i class="bi bi-mortarboard"></i> 10°-1</span>
-                  <span><i class="bi bi-geo-alt"></i> Usme</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
         </div>
 
       </main>
@@ -315,18 +158,197 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/main.js"></script>
 
-<script>
-  initFilters({
-    containerSelector: '#dilemas-container',
-    itemSelector: '.dilema-item',
-    filters: [
-      { selectId: 'filtro-categoria', attribute: 'categoria' },
-      { selectId: 'filtro-localidad', attribute: 'localidad' },
-      { selectId: 'filtro-colegio', attribute: 'colegio' },
-      { selectId: 'filtro-curso', attribute: 'curso' }
-    ],
-    noResultsMsg: 'No se encontraron dilemas con los filtros seleccionados.'
-  });
+<!-- ============ CARGA DE DILEMAS DESDE SUPABASE ============ -->
+<script type="module">
+  import { getDilemas, esc } from './assets/js/db.js'
+
+  const container = document.getElementById('dilemas-container')
+  const countEl   = document.getElementById('resultado-count')
+  const chipsEl   = document.getElementById('filtro-chips')
+  const inputs = {
+    q:         document.getElementById('filtro-busqueda'),
+    categoria: document.getElementById('filtro-categoria'),
+    localidad: document.getElementById('filtro-localidad'),
+    colegio:   document.getElementById('filtro-colegio'),
+    grado:     document.getElementById('filtro-grado'),
+  }
+
+  // Estado de los filtros
+  const estado = { q: '', categoria: '', localidad: '', colegio: '', grado: '' }
+  let DILEMAS = []
+
+  // --- Utilidades ---
+  const norm = (t) => (t ?? '').toString().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+
+  // nomenclatura inconsistente (1003, 701, 8, "NOVENO"…) → grado "10°", "7°", "9°"
+  function grado(nivel) {
+    const t = (nivel ?? '').toString().trim()
+    const d = t.replace(/\D/g, '')
+    if (!d) {
+      const palabras = { sexto: 6, septimo: 7, octavo: 8, noveno: 9, decimo: 10, once: 11, undecimo: 11 }
+      const g = palabras[norm(t)]
+      return g ? `${g}°` : null
+    }
+    const c2 = parseInt(d.slice(0, 2), 10)
+    const c1 = parseInt(d.slice(0, 1), 10)
+    const g = c2 >= 6 && c2 <= 11 ? c2 : c1
+    return g >= 6 && g <= 11 ? `${g}°` : null
+  }
+
+  // Limpieza mínima del texto del dilema (dato real de tutores, viene con ruido).
+  // Solo colapsa "para que para que" repetidos y espacios sobrantes; no reescribe.
+  function limpiarDilema(texto) {
+    return (texto ?? '')
+      .toString()
+      .replace(/\s+/g, ' ')
+      .replace(/\bpara que\s+para que\b/gi, 'para que')
+      .trim()
+  }
+
+  function pintar(html) {
+    container.innerHTML = `<div class="col-12 text-center py-5 text-muted">${html}</div>`
+  }
+
+  function cardHtml(d) {
+    const nivelCurso = [d.gradoLabel || d.nivel, d.curso].filter(Boolean).join(' · ')
+    return `
+      <div class="col-md-6 col-lg-4 dilema-item">
+        <div class="card card-dilema h-100 d-flex flex-column">
+          <div class="card-header">Categoría: ${esc(d.categoria ?? '—')}</div>
+
+          <div class="card-body flex-grow-1">
+            ${esc(limpiarDilema(d.dilema))}
+          </div>
+
+          <div class="card-footer">
+            <div class="colegio-name">${esc(d.colegio)}</div>
+            <div class="meta">
+              <span><i class="bi bi-mortarboard"></i> ${esc(nivelCurso)}</span>
+              <span><i class="bi bi-geo-alt"></i> ${esc(d.localidad ?? '—')}</span>
+            </div>
+            <div class="meta mt-1" style="opacity:.85;">
+              <span><i class="bi bi-hash"></i> ${esc(d.codigo_curso)}</span>
+            </div>
+          </div>
+        </div>
+      </div>`
+  }
+
+  // ¿el dilema cumple el estado de filtros? `excepto` ignora una dimensión
+  // (se usa para el filtrado en cascada de los dropdowns).
+  function cumple(d, excepto) {
+    if (excepto !== 'q' && estado.q) {
+      const q = norm(estado.q)
+      if (!norm(d.dilema).includes(q) &&
+          !norm(d.colegio).includes(q) &&
+          !norm(d.codigo_curso).includes(q)) return false
+    }
+    if (excepto !== 'categoria' && estado.categoria && d.categoria !== estado.categoria) return false
+    if (excepto !== 'localidad' && estado.localidad && d.localidad !== estado.localidad) return false
+    if (excepto !== 'colegio'   && estado.colegio   && d.colegio   !== estado.colegio)   return false
+    if (excepto !== 'grado'     && estado.grado     && d.gradoLabel !== estado.grado)    return false
+    return true
+  }
+
+  // Opciones disponibles para una dimensión, dados los OTROS filtros activos.
+  function opcionesDe(dim) {
+    const base = DILEMAS.filter((d) => cumple(d, dim))
+    const key = dim === 'grado' ? 'gradoLabel' : dim
+    const vals = [...new Set(base.map((d) => d[key]).filter(Boolean))]
+    if (dim === 'grado') vals.sort((a, b) => parseInt(a) - parseInt(b))
+    else vals.sort((a, b) => a.localeCompare(b, 'es'))
+    return vals.map((v) => ({ value: v, label: v }))
+  }
+
+  function poblarSelect(dim) {
+    const sel = inputs[dim]
+    const placeholder = sel.querySelector('option')
+    const opciones = opcionesDe(dim)
+    if (estado[dim] && !opciones.some((o) => o.value === estado[dim])) estado[dim] = ''
+    sel.innerHTML = ''
+    sel.appendChild(placeholder)
+    opciones.forEach(({ value, label }) => {
+      const opt = document.createElement('option')
+      opt.value = value
+      opt.textContent = label
+      if (value === estado[dim]) opt.selected = true
+      sel.appendChild(opt)
+    })
+    sel.value = estado[dim]
+  }
+
+  function pintarChips() {
+    const activos = []
+    if (estado.q) activos.push({ dim: 'q', txt: `“${estado.q}”` })
+    ;['categoria', 'localidad', 'colegio', 'grado'].forEach((dm) => {
+      if (estado[dm]) activos.push({ dim: dm, txt: estado[dm] })
+    })
+    chipsEl.innerHTML = activos
+      .map((a) => `<span class="filtro-chip">${esc(a.txt)}<button data-dim="${a.dim}" aria-label="Quitar filtro">&times;</button></span>`)
+      .join('')
+    chipsEl.querySelectorAll('button').forEach((b) =>
+      b.addEventListener('click', () => {
+        estado[b.dataset.dim] = ''
+        if (b.dataset.dim === 'q') inputs.q.value = ''
+        aplicar()
+      })
+    )
+  }
+
+  function aplicar() {
+    // Repoblar los dropdowns en cascada
+    ;['categoria', 'localidad', 'colegio', 'grado'].forEach(poblarSelect)
+
+    const visibles = DILEMAS.filter((d) => cumple(d, null))
+    const total = DILEMAS.length
+
+    countEl.innerHTML = visibles.length === total
+      ? `<strong>${total}</strong> dilemas`
+      : `<strong>${visibles.length}</strong> de ${total} dilemas`
+
+    pintarChips()
+
+    if (visibles.length === 0) {
+      pintar('No se encontraron dilemas con los filtros seleccionados.')
+      return
+    }
+    container.innerHTML = visibles.map(cardHtml).join('')
+  }
+
+  async function init() {
+    const { data, error } = await getDilemas()
+    if (error) {
+      console.error('[dilemas]', error)
+      pintar('No se pudieron cargar los dilemas. Revisa la conexión con la base de datos.')
+      return
+    }
+    const filas = data ?? []
+    if (filas.length === 0) {
+      pintar('Aún no hay dilemas registrados. Aparecerán aquí en cuanto se carguen las bitácoras del Encuentro 2.')
+      return
+    }
+
+    // Enriquecer cada fila con la etiqueta de grado normalizada
+    DILEMAS = filas.map((d) => ({ ...d, gradoLabel: grado(d.nivel) }))
+
+    // Eventos
+    inputs.q.addEventListener('input', () => { estado.q = inputs.q.value.trim(); aplicar() })
+    ;['categoria', 'localidad', 'colegio', 'grado'].forEach((dim) =>
+      inputs[dim].addEventListener('change', () => { estado[dim] = inputs[dim].value; aplicar() })
+    )
+    document.querySelectorAll('.btn-limpiar').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        Object.keys(estado).forEach((k) => (estado[k] = ''))
+        inputs.q.value = ''
+        aplicar()
+      })
+    )
+
+    aplicar()
+  }
+
+  init()
 </script>
 
 </body>

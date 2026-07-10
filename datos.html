@@ -7,6 +7,47 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/css/styles.css" rel="stylesheet">
+  <style>
+    /* --- Tarjetas de datos: alineadas y del mismo tamaño --- */
+    #panel-fase2 .data-row,
+    #panel-fase3 .data-row { align-items: flex-start; min-height: 3.4rem; }
+    .data-title { line-height: 1.25; }
+
+    /* Flecha desplegable para el texto de opciones */
+    .arrow-icon { cursor: pointer; transition: transform .18s ease; user-select: none; }
+    .arrow-icon.abierto { transform: rotate(90deg); }
+    .data-options.collapse:not(.show) { display: none; }
+    .data-options { margin-top: .35rem; }
+
+    /* Lienzo de gráfica con altura fija → todas las tarjetas quedan iguales */
+    .viz-box { height: 300px; position: relative; padding: .5rem; }
+    .viz-box canvas { position: absolute; inset: .5rem; width: calc(100% - 1rem) !important; height: calc(100% - 1rem) !important; }
+    .viz-box.viz-nube { overflow: auto; }
+    .viz-box .nube-wrap { display: flex; flex-wrap: wrap; gap: .3rem .7rem; align-items: baseline; justify-content: center; height: 100%; align-content: center; }
+    .viz-box .nube-wrap span { cursor: pointer; transition: opacity .15s; }
+    .viz-box .nube-wrap span:hover { opacity: .6; }
+    .viz-clickable canvas { cursor: pointer; }
+
+    /* Modal de detalle: interactivo (izq) + explicación (der) */
+    #modalViz .viz-modal-box { height: 56vh; min-height: 340px; position: relative; padding: .5rem; }
+    #modalViz .viz-modal-box canvas { position: absolute; inset: .5rem; width: calc(100% - 1rem) !important; height: calc(100% - 1rem) !important; }
+    #modalViz .viz-modal-box.viz-nube { overflow: auto; }
+    #modalViz .viz-modal-box .nube-wrap { display: flex; flex-wrap: wrap; gap: .3rem .7rem; align-items: baseline; justify-content: center; height: 100%; align-content: center; }
+    #modalViz .viz-modal-box .nube-wrap span { cursor: pointer; transition: opacity .15s; }
+    #modalViz .viz-modal-box .nube-wrap span:hover { opacity: .6; }
+    #modalViz .viz-modal-panel { border-left: 1px solid var(--gris-claro); }
+    @media (max-width: 991px) {
+      #modalViz .viz-modal-panel { border-left: none; border-top: 1px solid var(--gris-claro); }
+      #modalViz .viz-modal-box { height: 42vh; }
+    }
+    #modalViz .metric-desc { color: var(--gris-texto); font-size: .9rem; line-height: 1.5; }
+    #modalViz .opcion-full { background: var(--gris-claro); border-left: 3px solid var(--verde-medio); padding: .6rem .8rem; border-radius: 6px; font-style: italic; }
+    #modalViz .big-num { font-family: var(--font-display); color: var(--terracota); font-size: 1.6rem; line-height: 1; }
+    #modalViz .lista-colegios { list-style: none; padding: 0; margin: .4rem 0 0; max-height: 30vh; overflow: auto; }
+    #modalViz .lista-colegios li { padding: .35rem .2rem; border-bottom: 1px solid var(--gris-claro); display: flex; justify-content: space-between; gap: .5rem; }
+    #modalViz .lista-colegios a { text-decoration: none; color: var(--terracota); font-weight: 600; }
+    #modalViz .lista-colegios .loc { color: var(--gris-texto); font-size: .8rem; white-space: nowrap; }
+  </style>
 </head>
 <body>
 
@@ -25,12 +66,13 @@
           <li><a class="dropdown-item active" href="datos.html">Datos descriptivos</a></li>
         </ul>
       </div>
+      <a href="creditos.html" class="nav-link">Creditos</a>
     </div>
   </nav>
 </div>
 
 <!-- ============ HERO ============ -->
-<section class="page-hero">
+<section class="page-hero page-hero-estrategia">
   <div class="container">
     <div class="row">
       <div class="col-lg-7">
@@ -167,7 +209,7 @@
                 <div class="data-options">Opciones: parques urbanos, cerros orientales, ríos, humedales, embalses, páramos, otros.</div>
               </div>
             </div>
-            <div class="viz-placeholder">
+            <div class="viz-placeholder" id="viz-ecosistemas">
               <div class="viz-icon"><i class="bi bi-tree-fill"></i></div>
               <strong>Ecosistemas reconocidos</strong>
             </div>
@@ -181,7 +223,7 @@
                 <div class="data-options">Opciones: Comprendieron claramente, Comprendieron parcialmente, No quedó claro.</div>
               </div>
             </div>
-            <div class="viz-placeholder">
+            <div class="viz-placeholder" id="viz-comprension">
               <div class="viz-icon"><i class="bi bi-pie-chart-fill"></i></div>
               <strong>Comprensión del dilema</strong>
             </div>
@@ -195,7 +237,7 @@
                 <div class="data-options">Opciones: Sí, hubo debate rico; hubo algo de debate; no, eligieron rápido.</div>
               </div>
             </div>
-            <div class="viz-placeholder">
+            <div class="viz-placeholder" id="viz-debate">
               <div class="viz-icon"><i class="bi bi-chat-left-text-fill"></i></div>
               <strong>Generación de debate</strong>
             </div>
@@ -209,7 +251,7 @@
                 <div class="data-options">Opciones: alto / medio / bajo.</div>
               </div>
             </div>
-            <div class="viz-placeholder">
+            <div class="viz-placeholder" id="viz-reconocimiento">
               <div class="viz-icon"><i class="bi bi-bar-chart-steps"></i></div>
               <strong>Reconocimiento de ecosistemas</strong>
             </div>
@@ -223,7 +265,7 @@
                 <div class="data-options">Opciones: contaminación del agua, escasez de agua, pérdida de biodiversidad, generación de residuos, ruido, otro.</div>
               </div>
             </div>
-            <div class="viz-placeholder">
+            <div class="viz-placeholder" id="viz-problematicas">
               <div class="viz-icon"><i class="bi bi-cloud-rain-fill"></i></div>
               <strong>Problemáticas mencionadas</strong>
             </div>
@@ -245,7 +287,7 @@
                 <div class="data-options">Respuesta abierta — agrupada por categorías.</div>
               </div>
             </div>
-            <div class="viz-placeholder">
+            <div class="viz-placeholder" id="viz-actores">
               <div class="viz-icon"><i class="bi bi-people-fill"></i></div>
               <strong>Actores representados</strong>
             </div>
@@ -259,7 +301,7 @@
                 <div class="data-options">Opciones: no lograron / diferenciaron sin diálogo / pusieron en diálogo en algunos momentos / articularon consistentemente.</div>
               </div>
             </div>
-            <div class="viz-placeholder">
+            <div class="viz-placeholder" id="viz-saberes">
               <div class="viz-icon"><i class="bi bi-diagram-2-fill"></i></div>
               <strong>Diálogo de saberes</strong>
             </div>
@@ -273,7 +315,7 @@
                 <div class="data-options">Opciones: sin cambios / algunos matizaron / varios cambiaron claramente.</div>
               </div>
             </div>
-            <div class="viz-placeholder">
+            <div class="viz-placeholder" id="viz-postura">
               <div class="viz-icon"><i class="bi bi-arrow-left-right"></i></div>
               <strong>Cambios de postura</strong>
             </div>
@@ -395,6 +437,26 @@
 </section>
 
 <!-- ============ FOOTER ============ -->
+<!-- ============ MODAL DE DETALLE (interactivo + explicación) ============ -->
+<div class="modal fade" id="modalViz" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viz-modal-titulo" style="font-family:var(--font-display);"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-0">
+          <div class="col-lg-7">
+            <div id="viz-modal-box" class="viz-modal-box"></div>
+          </div>
+          <div class="col-lg-5 viz-modal-panel p-3" id="viz-modal-panel"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <footer class="footer-bog26">
   <div class="container">
     <div class="row align-items-center">
@@ -426,7 +488,6 @@
     });
   });
 </script>
-
 <!-- ============ GRÁFICAS DESDE SUPABASE ============ -->
 <script type="module">
   import {
@@ -435,117 +496,310 @@
     getTematicasEmergentes,
     participacionLabel,
     formatoLabel,
+    getComprensionDilema,
+    getEcosistemas,
+    getDiferencioSaberes,
+    getCambiosPostura,
+    getActoresRaw,
+    getDebate,
+    getReconocimiento,
+    getProblematicas,
+    getE2Detalle,
+    getE3Detalle,
   } from './assets/js/db.js'
 
   const COLORES = ['#3d5c35', '#5c7a52', '#b8965a', '#c47c35', '#a8bc9e', '#d4b87a']
+  const esc = (s) => (s ?? '').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+  const norm = (t) => (t ?? '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+  const baseOpts = (extra={}) => Object.assign({ responsive:true, maintainAspectRatio:false }, extra)
 
-  // Convierte un placeholder en un lienzo listo para Chart.js.
-  // Devuelve el <canvas> o null si el nodo no existe.
-  function prepararLienzo(id) {
-    const box = document.getElementById(id)
-    if (!box) return null
-    box.style.display = 'block'
-    box.style.padding = '1rem'
-    box.style.minHeight = '260px'
-    box.innerHTML = '<canvas></canvas>'
-    return box.querySelector('canvas')
+  let DET_E2 = [], DET_E3 = []
+  const METR = {}                 // registro de métricas para el popup
+  let modalChart = null
+
+  // ---------- Cajas ----------
+  function box(id, { nube=false } = {}) {
+    const el = document.getElementById(id); if (!el) return null
+    el.classList.add('viz-box'); el.classList.remove('viz-placeholder')
+    el.classList.add('viz-clickable')
+    if (nube) el.classList.add('viz-nube')
+    return el
+  }
+  function vacio(id, texto) {
+    const el = document.getElementById(id)
+    el?.querySelector('strong')?.insertAdjacentHTML('afterend', `<small class="d-block mt-2 text-muted">${texto}</small>`)
   }
 
-  function vacio(id, texto) {
-    const box = document.getElementById(id)
-    if (box) {
-      box.querySelector('strong')?.insertAdjacentHTML(
-        'afterend',
-        `<small class="d-block mt-2 text-muted">${texto}</small>`
-      )
+  // ---------- Renderers reutilizables (sirven para tarjeta y popup) ----------
+  function renderBar(el, { labels, full, valores, colors, horizontal }, onPick) {
+    el.innerHTML = '<canvas></canvas>'
+    return new Chart(el.querySelector('canvas'), {
+      type: 'bar',
+      data: { labels, datasets: [{ data: valores, backgroundColor: colors }] },
+      options: baseOpts({
+        indexAxis: horizontal ? 'y' : 'x',
+        plugins: { legend: { display: false }, tooltip: { callbacks: { title: (it) => full[it[0].dataIndex] } } },
+        scales: { [horizontal ? 'x' : 'y']: { beginAtZero: true, ticks: { precision: 0 } } },
+        onClick: (e, els) => onPick && onPick(els.length ? full[els[0].index] : null),
+      }),
+    })
+  }
+  function renderDoughnut(el, { labels, full, valores, colors }, onPick) {
+    el.innerHTML = '<canvas></canvas>'
+    return new Chart(el.querySelector('canvas'), {
+      type: 'doughnut',
+      data: { labels, datasets: [{ data: valores, backgroundColor: colors }] },
+      options: baseOpts({
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } }, tooltip: { callbacks: { title: (it) => full[it[0].dataIndex] } } },
+        onClick: (e, els) => onPick && onPick(els.length ? full[els[0].index] : null),
+      }),
+    })
+  }
+  function renderNube(el, tokens, onPick) {
+    const max = tokens[0].n, min = tokens[tokens.length - 1].n
+    const size = (n) => (0.9 + 1.8 * ((n - min) / Math.max(1, max - min))).toFixed(2)
+    el.innerHTML = `<div class="nube-wrap">${tokens.map((t, i) =>
+      `<span data-word="${esc(norm(t.label))}" data-label="${esc(t.label)}" title="${t.n} menciones — clic para ver colegios" style="font-size:${size(t.n)}rem;color:${COLORES[i % COLORES.length]};font-weight:600;line-height:1.05;">${esc(t.label)}</span>`).join('')}</div>`
+    el.querySelectorAll('.nube-wrap span').forEach((sp) =>
+      sp.addEventListener('click', () => onPick && onPick(sp.dataset.word, sp.dataset.label)))
+  }
+
+  // ---------- Registro y popup ----------
+  function registrar(id, cfg) { METR[id] = cfg }        // {titulo, descripcion, total, render(el,onPick), filtro(op)->colegios, etiqueta?}
+
+  const aCol = (rows) => rows.map((r) => ({ codigo_curso: r.codigo_curso, colegio: r.colegio, localidad: r.localidad }))
+
+  function pintarPanel(id, op, label) {
+    const m = METR[id]
+    const panel = document.getElementById('viz-modal-panel')
+    let html = `<p class="metric-desc mb-3">${m.descripcion}</p>`
+    if (op == null) {
+      html += `<p class="text-muted small mb-0"><i class="bi bi-hand-index"></i> Haz clic en un elemento de la gráfica para ver qué colegios respondieron eso.</p>`
+    } else {
+      const colegios = m.filtro(op)
+      const pct = m.total ? Math.round((colegios.length / m.total) * 100) : null
+      const lista = colegios.slice().sort((a, b) => (a.colegio || '').localeCompare(b.colegio || '', 'es'))
+        .map((c) => `<li><a href="bitacora_detalle.html?curso=${encodeURIComponent(c.codigo_curso)}">${esc(c.colegio)} · ${esc(c.codigo_curso)}</a><span class="loc">${esc(c.localidad || '')}</span></li>`).join('')
+      html += `<div class="mb-2"><span class="badge" style="background:var(--verde-medio);">${esc(label || op)}</span></div>`
+      if (m.mostrarTexto !== false && (label == null)) html += `<p class="opcion-full mb-3">${esc(op)}</p>`
+      html += `<p class="mb-2"><span class="big-num">${colegios.length}</span> <span class="text-muted">curso(s)${pct != null ? ` · ${pct}% del total` : ''}</span></p>`
+      html += `<ul class="lista-colegios">${lista || '<li class="text-muted">Sin registros. ¿Corriste datos_detalle.sql?</li>'}</ul>`
+    }
+    panel.innerHTML = html
+  }
+
+  function abrirViz(id, pre = null, preLabel = null) {
+    const m = METR[id]; if (!m) return
+    document.getElementById('viz-modal-titulo').textContent = m.titulo
+    const el = document.getElementById('viz-modal-box')
+    el.className = 'viz-modal-box' + (m.nube ? ' viz-nube' : '')
+    if (modalChart) { modalChart.destroy(); modalChart = null }
+    const onPick = (op, label) => pintarPanel(id, op, label)
+    const c = m.render(el, onPick)
+    if (c && c.destroy) modalChart = c
+    pintarPanel(id, pre, preLabel)
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalViz')).show()
+  }
+
+  // ================= Métricas Fase 2 / 3 con popup =================
+  function mkOpciones({ id, titulo, descripcion, filas, mapa, colors, horizontal, det, col, total }) {
+    if (!filas || filas.length === 0) return vacio(id, 'Sin datos registrados aún.')
+    const full = filas.map((r) => r.opcion)
+    const corto = (t) => mapa ? (mapa.find((m) => (t || '').includes(m.has))?.label || t) : t
+    const spec = { labels: filas.map((r) => corto(r.opcion)), full, valores: filas.map((r) => Number(r.n || 0)), colors, horizontal }
+    registrar(id, {
+      titulo, descripcion, total: total ?? spec.valores.reduce((a, b) => a + b, 0),
+      render: (el, onPick) => renderBar(el, spec, onPick),
+      filtro: (op) => aCol(det().filter((r) => col(r) === op)),
+    })
+    renderBar(box(id), spec, (op) => abrirViz(id, op))
+  }
+
+  const ordenarPor = (filas, subs) => (filas || []).slice().sort((a, b) => {
+    const idx = (t) => { const i = subs.findIndex((s) => (t || '').includes(s)); return i < 0 ? 999 : i }
+    return idx(a.opcion) - idx(b.opcion)
+  })
+
+  async function cargarFase2y3() {
+    // --- Comprensión (dona) ---
+    {
+      const { data } = await getComprensionDilema()
+      const orden = ['Sí, claramente', 'Parcialmente', 'No quedó claro']
+      const filas = (data || []).slice().sort((a, b) => orden.indexOf(a.opcion) - orden.indexOf(b.opcion))
+      if (filas.length) {
+        const full = filas.map((r) => r.opcion)
+        const spec = { labels: full, full, valores: filas.map((r) => Number(r.n || 0)), colors: [COLORES[0], COLORES[2], COLORES[3]] }
+        registrar('viz-comprension', {
+          titulo: 'Comprensión del dilema múltiple',
+          descripcion: 'Qué proporción de cursos comprendió que un dilema admite varias respuestas válidas. Registrado por el tutor en el Encuentro 2.',
+          total: spec.valores.reduce((a, b) => a + b, 0),
+          render: (el, onPick) => renderDoughnut(el, spec, onPick),
+          filtro: (op) => aCol(DET_E2.filter((r) => r.comprension === op)),
+        })
+        renderDoughnut(box('viz-comprension'), spec, (op) => abrirViz('viz-comprension', op))
+      } else vacio('viz-comprension', 'Sin datos registrados aún.')
+    }
+
+    // --- Ecosistemas (barras + normalización) ---
+    {
+      const { data } = await getEcosistemas()
+      if (data && data.length) {
+        const PAT = { 'Humedales':'humedal','Ríos y quebradas':'rio|quebrada|fucha|tunjuelo|salitre|juan amarillo','Páramos':'paramo|sumapaz','Cerros':'cerro|monserrate|guadalupe','Embalses':'embalse|represa|neusa|regadera|chisaca|san rafael|tomine','Parques urbanos':'parque' }
+        const full = data.map((r) => r.ecosistema)
+        const spec = { labels: full, full, valores: data.map((r) => Number(r.menciones || 0)), colors: COLORES[4] }
+        registrar('viz-ecosistemas', {
+          titulo: 'Ecosistemas reconocidos',
+          descripcion: 'Ecosistemas urbanos cercanos que los estudiantes reconocieron, agrupados por tipo. Un curso puede mencionar varios (Encuentro 2).',
+          total: DET_E2.length,
+          render: (el, onPick) => renderBar(el, spec, onPick),
+          filtro: (eco) => { const re = new RegExp(PAT[eco] || '', 'i'); return aCol(DET_E2.filter((r) => (r.ecosistemas || []).some((e) => re.test(norm(e))))) },
+        })
+        renderBar(box('viz-ecosistemas'), spec, (op) => abrirViz('viz-ecosistemas', op))
+      } else vacio('viz-ecosistemas', 'Sin datos registrados aún.')
+    }
+
+    // --- Saberes / Postura / Debate (barras horizontales) ---
+    {
+      const { data } = await getDiferencioSaberes()
+      mkOpciones({ id:'viz-saberes', titulo:'Diálogo de saberes',
+        descripcion:'Cómo diferenciaron los cursos el saber popular del saber científico durante los debates (Encuentro 3).',
+        filas:data, colors:COLORES[1], horizontal:true, det:()=>DET_E3, col:(r)=>r.saberes,
+        mapa:[{has:'consistente',label:'Articularon (consistente)'},{has:'algunos momentos',label:'En diálogo (a veces)'},{has:'por separado',label:'Diferenciados (aparte)'},{has:'No lograron',label:'No diferenciaron'}] })
+    }
+    {
+      const { data } = await getCambiosPostura()
+      mkOpciones({ id:'viz-postura', titulo:'Cambios de postura',
+        descripcion:'Si hubo cambios de postura en los estudiantes a lo largo del debate (Encuentro 3).',
+        filas:data, colors:COLORES[3], horizontal:true, det:()=>DET_E3, col:(r)=>r.postura,
+        mapa:[{has:'cambiaron claramente',label:'Cambiaron postura'},{has:'matizaron',label:'Matizaron (sin cambiar)'},{has:'No se observaron',label:'Sin cambios'}] })
+    }
+    {
+      const { data } = await getDebate()
+      mkOpciones({ id:'viz-debate', titulo:'Generación de debate',
+        descripcion:'Cuánta discusión se generó al elegir el dilema en el Encuentro 2.',
+        filas:ordenarPor(data,['debate rico','algo de debate','eligieron rápido']), colors:COLORES[0], horizontal:true, det:()=>DET_E2, col:(r)=>r.debate,
+        mapa:[{has:'debate rico',label:'Debate rico'},{has:'algo de debate',label:'Algo de debate'},{has:'eligieron rápido',label:'Sin debate'}] })
+    }
+
+    // --- Reconocimiento (dona) ---
+    {
+      const { data } = await getReconocimiento()
+      const filas = ordenarPor(data, ['Alto', 'Medio', 'Bajo'])
+      if (filas.length) {
+        const LBL = [{has:'Alto',label:'Alto'},{has:'Medio',label:'Medio'},{has:'Bajo',label:'Bajo'}]
+        const full = filas.map((r) => r.opcion)
+        const spec = { labels: filas.map((r) => LBL.find((m)=>r.opcion.includes(m.has))?.label || r.opcion), full, valores: filas.map((r) => Number(r.n || 0)), colors: [COLORES[0], COLORES[2], COLORES[3]] }
+        registrar('viz-reconocimiento', {
+          titulo: 'Reconocimiento de ecosistemas',
+          descripcion: 'Nivel con que los estudiantes reconocieron características y funciones de los ecosistemas (Encuentro 2).',
+          total: spec.valores.reduce((a, b) => a + b, 0),
+          render: (el, onPick) => renderDoughnut(el, spec, onPick),
+          filtro: (op) => aCol(DET_E2.filter((r) => r.reconocimiento === op)),
+        })
+        renderDoughnut(box('viz-reconocimiento'), spec, (op) => abrirViz('viz-reconocimiento', op))
+      } else vacio('viz-reconocimiento', 'Sin datos registrados aún.')
+    }
+
+    // --- Problemáticas (barras horizontales, color por categoría) ---
+    {
+      const { data } = await getProblematicas()
+      if (data && data.length) {
+        const colorProb = (op) => { const t=(op||'').toLowerCase(); if(t.includes('agua')&&t.includes('contamin'))return'#90B49D'; if(t.includes('biodiversidad'))return'#9F574F'; if(t.includes('residuo'))return'#CCB364'; if(t.includes('escasez'))return'#CCA782'; if(t.includes('ruido'))return'#9066CC'; return'#54461E' }
+        const full = data.map((r) => r.opcion)
+        const spec = { labels: full.map((o) => o.replace('Otro, ¿Cuál?', 'Otro')), full, valores: data.map((r) => Number(r.n || 0)), colors: data.map((r) => colorProb(r.opcion)), horizontal: true }
+        registrar('viz-problematicas', {
+          titulo: 'Problemáticas mencionadas',
+          descripcion: 'Problemáticas ambientales que cada curso asoció a su dilema. Una por curso (Encuentro 2).',
+          total: DET_E2.length,
+          render: (el, onPick) => renderBar(el, spec, onPick),
+          filtro: (op) => aCol(DET_E2.filter((r) => (r.problematicas || []).includes(op))),
+        })
+        renderBar(box('viz-problematicas'), spec, (op) => abrirViz('viz-problematicas', op))
+      } else vacio('viz-problematicas', 'Sin datos registrados aún.')
+    }
+
+    // --- Actores (nube) ---
+    {
+      const { data } = await getActoresRaw()
+      if (data && data.length) {
+        const STOP = new Set(['de','la','el','los','las','y','o','del','en','a','un','una','con','the','otros','otras','etc','perfil'])
+        const cuenta = new Map()
+        for (const row of data) for (let p of (row.actores || '').split(/[\n,;/]|(?:\sy\s)/g)) {
+          p = p.replace(/^\s*\d+[.)\-]\s*/, '').replace(/[()"'.:]/g, '').trim()
+          if (!p || p.split(/\s+/).length > 4) continue
+          const nn = norm(p).trim(); if (nn.length < 3 || STOP.has(nn)) continue
+          const cur = cuenta.get(nn) || { label: p, n: 0 }; cur.n += 1; cuenta.set(nn, cur)
+        }
+        const tokens = [...cuenta.values()].sort((a, b) => b.n - a.n).slice(0, 40)
+        if (tokens.length) {
+          registrar('viz-actores', {
+            titulo: 'Actores definidos por el grupo', nube: true, mostrarTexto: false, total: DET_E3.length,
+            descripcion: 'Actores que los cursos identificaron como involucrados en su dilema (Encuentro 3). El tamaño refleja cuántas veces se mencionó.',
+            render: (el, onPick) => renderNube(el, tokens, onPick),
+            filtro: (word) => aCol(DET_E3.filter((r) => norm(r.actores).includes(word))),
+          })
+          const b = box('viz-actores', { nube: true })
+          renderNube(b, tokens, (word, label) => abrirViz('viz-actores', word, label))
+        } else vacio('viz-actores', 'Sin datos suficientes.')
+      } else vacio('viz-actores', 'Sin datos registrados aún.')
     }
   }
 
-  // --- 1. Distribución de niveles de participación ---
+  // ================= Gráficas simples (sin popup) =================
   async function graficaParticipacion() {
     const { data, error } = await getDistribucionParticipacion()
     if (error) return console.error('[participacion]', error)
     if (!data || data.length === 0) return vacio('viz-participacion', 'Sin datos registrados aún.')
-
-    // Sumamos cantidades por nivel a través de todos los encuentros
-    const acc = {}
-    for (const r of data) {
-      const k = r.nivel_participacion
-      acc[k] = (acc[k] ?? 0) + Number(r.cantidad || 0)
-    }
-    const labels = Object.keys(acc).map(participacionLabel)
-    const valores = Object.values(acc)
-
-    const canvas = prepararLienzo('viz-participacion')
-    if (!canvas) return
-    new Chart(canvas, {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [{ label: 'Bitácoras', data: valores, backgroundColor: COLORES[1] }],
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
-      },
+    const acc = {}; for (const r of data) { const k = r.nivel_participacion; acc[k] = (acc[k] ?? 0) + Number(r.cantidad || 0) }
+    const el = box('viz-participacion'); el.classList.remove('viz-clickable')
+    new Chart((el.innerHTML = '<canvas></canvas>', el.querySelector('canvas')), {
+      type: 'bar', data: { labels: Object.keys(acc).map(participacionLabel), datasets: [{ label: 'Bitácoras', data: Object.values(acc), backgroundColor: COLORES[1] }] },
+      options: baseOpts({ plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }),
     })
   }
-
-  // --- 2. Formatos más populares ---
   async function graficaFormatos() {
     const { data, error } = await getFormatosPopulares()
     if (error) return console.error('[formatos]', error)
     if (!data || data.length === 0) return vacio('viz-formatos', 'Sin datos registrados aún.')
-
-    const labels = data.map((r) => formatoLabel(r.formato))
-    const valores = data.map((r) => Number(r.total_grupos || 0))
-
-    const canvas = prepararLienzo('viz-formatos')
-    if (!canvas) return
-    new Chart(canvas, {
-      type: 'doughnut',
-      data: {
-        labels,
-        datasets: [{ data: valores, backgroundColor: COLORES }],
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } },
-      },
+    const el = box('viz-formatos'); el.classList.remove('viz-clickable')
+    new Chart((el.innerHTML = '<canvas></canvas>', el.querySelector('canvas')), {
+      type: 'doughnut', data: { labels: data.map((r) => formatoLabel(r.formato)), datasets: [{ data: data.map((r) => Number(r.total_grupos || 0)), backgroundColor: COLORES }] },
+      options: baseOpts({ plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }),
     })
   }
-
-  // --- 3. Temáticas emergentes (top 8) ---
   async function graficaTematicas() {
     const { data, error } = await getTematicasEmergentes()
     if (error) return console.error('[tematicas]', error)
     if (!data || data.length === 0) return vacio('viz-tematicas', 'Sin datos registrados aún.')
-
     const top = data.slice(0, 8)
-    const labels = top.map((r) => r.tematica_normalizada)
-    const valores = top.map((r) => Number(r.veces_mencionada || 0))
-
-    const canvas = prepararLienzo('viz-tematicas')
-    if (!canvas) return
-    new Chart(canvas, {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [{ label: 'Menciones', data: valores, backgroundColor: COLORES[2] }],
-      },
-      options: {
-        indexAxis: 'y',
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: { x: { beginAtZero: true, ticks: { precision: 0 } } },
-      },
+    const el = box('viz-tematicas'); el.classList.remove('viz-clickable')
+    new Chart((el.innerHTML = '<canvas></canvas>', el.querySelector('canvas')), {
+      type: 'bar', data: { labels: top.map((r) => r.tematica_normalizada), datasets: [{ label: 'Menciones', data: top.map((r) => Number(r.veces_mencionada || 0)), backgroundColor: COLORES[2] }] },
+      options: baseOpts({ indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }),
     })
   }
 
-  graficaParticipacion()
-  graficaFormatos()
-  graficaTematicas()
+  // ================= Texto verde desplegable =================
+  function activarDesplegables() {
+    document.querySelectorAll('#panel-fase2 .data-row, #panel-fase3 .data-row').forEach((row, i) => {
+      const opts = row.querySelector('.data-options'); const arrow = row.querySelector('.arrow-icon')
+      if (!opts || !arrow) return
+      opts.id = opts.id || `opts-${i}`; opts.classList.add('collapse')
+      const col = new bootstrap.Collapse(opts, { toggle: false }); let abierto = false
+      arrow.setAttribute('role', 'button'); arrow.setAttribute('title', 'Ver/ocultar opciones')
+      arrow.addEventListener('click', () => { abierto = !abierto; col[abierto ? 'show' : 'hide'](); arrow.classList.toggle('abierto', abierto) })
+    })
+  }
+
+  async function init() {
+    activarDesplegables()
+    const [e2, e3] = await Promise.all([getE2Detalle(), getE3Detalle()])
+    if (!e2.error) DET_E2 = e2.data || []
+    if (!e3.error) DET_E3 = e3.data || []
+    graficaParticipacion(); graficaFormatos(); graficaTematicas()
+    cargarFase2y3()
+  }
+  init()
 </script>
 </body>
 </html>

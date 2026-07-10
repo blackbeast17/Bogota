@@ -170,7 +170,7 @@ a:hover { color: var(--verde-oscuro); }
 }
 
 .section-lead {
-  font-size: 0.8rem;
+  font-size: 1rem;
   color: var(--gris-texto);
  
   max-width: 900px;
@@ -753,4 +753,134 @@ a:hover { color: var(--verde-oscuro); }
     flex: 0 0 100%;
     max-width: 100%;
   }
+}
+
+.page-hero-conoce {
+  background: url('../img/Banner-Estrategia.jpg') center / cover no-repeat;
+  border-bottom: none;
+  padding: 5rem 0;              /* un poco más de aire para que se vean las ilustraciones */
+}
+
+.page-hero-dilema {
+  background: url('../img/Banner-Dilemas.jpg') center / cover no-repeat;
+  border-bottom: none;
+  padding: 5rem 0;              /* un poco más de aire para que se vean las ilustraciones */
+}
+
+
+.page-hero-bitacora {
+  background: url('../img/Banner-Conoce-el-proceso-vivido.jpg') center / cover no-repeat;
+  border-bottom: none;
+  padding: 5rem 0;              /* un poco más de aire para que se vean las ilustraciones */
+}
+
+.page-hero-estrategia{
+  background: url('../img/Banner-Estrategia.jpg') center / cover no-repeat;
+  border-bottom: none;
+  padding: 5rem 0;              /* un poco más de aire para que se vean las ilustraciones */
+}
+
+
+
+:root {
+  /* Fondos pastel derivados de tu paleta (nada de blanco puro) */
+  --crema:       #f6f2e9;   /* base cálida de la página        */
+  --superficie:  #fcfaf3;   /* tarjetas, navbar, inputs        */
+  --sage-suave:  #eaf0ea;   /* secciones alternas y paneles    */
+ 
+  /* Intensidad de las ilustraciones de ambiente (súbela/bájala a gusto) */
+  --deco-op:     0.07;
+}
+ 
+/* Reapuntamos el gris claro a un sage suave: arrastra en cascada a
+   .section-alt, .filter-bar, .viz-placeholder y el thumb del breadcrumb. */
+:root { --gris-claro: var(--sage-suave); }
+ 
+/* ---- Fondos base ---- */
+body { background: var(--crema); }
+ 
+/* Tarjetas y navbar: off-white cálido en vez de blanco puro */
+.navbar-bog26,
+.card,
+.card-ied,
+.card-dilema,
+.card-producto {
+  background-color: var(--superficie);
+  --bs-card-bg: var(--superficie);
+}
+ 
+/* Pies de tarjeta e inputs que estaban en white explícito */
+.card-dilema .card-footer,
+.card-producto .card-footer,
+.filter-bar .form-select,
+.filter-bar .form-control {
+  background-color: var(--superficie);
+}
+ 
+/* ---- Decoración de ambiente ----
+   Dos ilustraciones tuyas, fijas en las esquinas, muy tenues y sin capturar
+   clics. Aparecen una vez por página, así que no saturan. Se ocultan en móvil. */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  z-index: 1;                 /* detrás del navbar (que va en 1000) */
+  pointer-events: none;       /* no estorban al hacer clic          */
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: var(--deco-op);
+}
+ 
+/* Frailejón, abajo a la izquierda */
+body::before {
+  left: 0; bottom: 0;
+  width: 150px; height: 290px;
+  background-image: url('../img/frailejon.png');
+  background-position: left bottom;
+}
+ 
+/* Pájaro, arriba a la derecha */
+body::after {
+  right: 12px; top: 88px;
+  width: 130px; height: 130px;
+  background-image: url('../img/pajaro.png');
+  background-position: right top;
+}
+ 
+@media (max-width: 992px) {
+  body::before,
+  body::after { display: none; }   /* en móvil, fuera para no estorbar */
+}
+
+/* Imagen del modelo pedagógico: bordes redondeados + sombra ligera */
+.modelo-pedagogico-img {
+  border-radius: var(--radius-lg);
+  box-shadow: 0 6px 22px rgba(0,0,0,0.10);
+}
+
+/* Acercar la imagen del modelo a la sección de Fases */
+.section-modelo { padding-bottom: 2rem; }
+.section-fases  { padding-top: 2rem; }
+
+/* Footer siempre pegado al fondo, sin hueco debajo */
+/* Footer pegado al contenido, sin hueco grande */
+section.section:last-of-type { padding-bottom: 2.5rem; }
+.footer-bog26 { margin-top: 0; }
+
+
+
+/* ---- Navbar: distribuir los links en todo el ancho ---- */
+.navbar-bog26 .d-flex.flex-wrap {
+  justify-content: space-between;
+}
+
+.navbar-bog26 .nav-link,
+.navbar-bog26 .dropdown {
+  flex: 1 1 0;
+  text-align: center;
+}
+
+.navbar-bog26 .dropdown .nav-link {
+  flex: none; /* el <a> interno no necesita crecer, ya lo hace el .dropdown */
+  width: 100%;
 }

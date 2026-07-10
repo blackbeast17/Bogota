@@ -10,9 +10,9 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 
 // --- Configuración del proyecto Supabase (proyecto Vidal) ---
-const SUPABASE_URL = 'https://bjmphcemjhvvmxloynbw.supabase.co'
+const SUPABASE_URL = 'https://efdssqphticqwkfhlfun.supabase.co'
 const SUPABASE_ANON_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqbXBoY2Vtamh2dm14bG95bmJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNzU3MTQsImV4cCI6MjA5NDk1MTcxNH0.FHDPw3fPURp1RJ524lhBAqI1jKhv8l0p01X1qfpNEQg'
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVmZHNzcXBodGljcXdrZmhsZnVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NDA0OTIsImV4cCI6MjA5OTIxNjQ5Mn0.hAduLICmqi8gt2lWD3ZNobkF4zG51QNXX1L4Ks6BpEg'
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
@@ -56,6 +56,16 @@ export async function getBitacorasDeCurso(codigoCurso) {
 export async function getBitacoraPorId(id) {
   return supabase.from('bitacoras_resumen').select('*').eq('id', id).single()
 }
+
+
+// Dilemas finales por curso (Encuentro 2) para dilemas.html.
+export async function getDilemas() {
+  return supabase
+    .from('dilemas_publicos')
+    .select('*')
+    .order('colegio', { ascending: true })
+}
+
 
 // --- Vistas analíticas (datos.html) ---
 
@@ -144,4 +154,36 @@ export function esc(s) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
+}
+// --- Datos E2/E3 para datos.html (vistas nuevas) ---
+export async function getComprensionDilema() {
+  return supabase.from('datos_comprension_dilema').select('*')
+}
+export async function getEcosistemas() {
+  return supabase.from('datos_ecosistemas').select('*').order('orden', { ascending: true })
+}
+export async function getDiferencioSaberes() {
+  return supabase.from('datos_diferencio_saberes').select('*')
+}
+export async function getCambiosPostura() {
+  return supabase.from('datos_cambios_postura').select('*')
+}
+export async function getActoresRaw() {
+  return supabase.from('datos_actores_raw').select('*')
+}
+
+export async function getDebate() {
+  return supabase.from('datos_debate').select('*')
+}
+export async function getReconocimiento() {
+  return supabase.from('datos_reconocimiento').select('*')
+}
+export async function getProblematicas() {
+  return supabase.from('datos_problematicas').select('*')
+}
+export async function getE2Detalle() {
+  return supabase.from('datos_e2_detalle').select('*')
+}
+export async function getE3Detalle() {
+  return supabase.from('datos_e3_detalle').select('*')
 }
