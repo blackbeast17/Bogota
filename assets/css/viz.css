@@ -1,0 +1,255 @@
+/* ============================================================
+   viz.css — estilos de las visualizaciones de datos.html
+   (antes vivían dentro del <style> del HTML)
+   ============================================================ */
+
+    /* --- Tarjetas de datos: alineadas y del mismo tamaño --- */
+    #panel-fase2 .data-row,
+    #panel-fase3 .data-row { align-items: flex-start; min-height: 3.4rem; }
+    .data-title { line-height: 1.25; }
+
+    /* Flecha desplegable para el texto de opciones */
+    .arrow-icon { cursor: pointer; transition: transform .18s ease; user-select: none; }
+    .arrow-icon.abierto { transform: rotate(90deg); }
+    .data-options.collapse:not(.show) { display: none; }
+    .data-options { margin-top: .35rem; }
+
+    /* Lienzo de gráfica con altura fija → todas las tarjetas quedan iguales */
+    .viz-box { height: 300px; position: relative; padding: .5rem; }
+    .viz-box canvas { position: absolute; inset: .5rem; width: calc(100% - 1rem) !important; height: calc(100% - 1rem) !important; }
+    .viz-box.viz-nube { overflow: auto; }
+    .viz-box .nube-wrap, #modalViz .viz-modal-box .nube-wrap {
+      display: flex; flex-wrap: wrap; gap: .05rem .5rem; align-items: center; justify-content: center;
+      height: 100%; align-content: center; padding: .4rem; }
+    .nube-wrap span { cursor: pointer; font-family: var(--font-display); font-weight: 800;
+      letter-spacing: -.015em; line-height: 1; transition: transform .15s, opacity .15s; }
+    .nube-wrap span:hover { transform: scale(1.09); }
+    .nube-wrap .nube-top { font-weight: 900; letter-spacing: -.03em; }
+    .nube-wrap.atenuada span { opacity: .3; }
+    .nube-wrap.atenuada span:hover { opacity: 1; }
+    .viz-clickable canvas { cursor: pointer; }
+
+    /* Modal de detalle: interactivo (izq) + explicación (der) */
+    #modalViz .viz-modal-box { height: 56vh; min-height: 340px; position: relative; padding: .5rem; }
+    #modalViz .viz-modal-box canvas { position: absolute; inset: .5rem; width: calc(100% - 1rem) !important; height: calc(100% - 1rem) !important; }
+    #modalViz .viz-modal-box.viz-nube { overflow: auto; }
+
+    #modalViz .viz-modal-panel { border-left: 1px solid var(--gris-claro); }
+    @media (max-width: 991px) {
+      #modalViz .viz-modal-panel { border-left: none; border-top: 1px solid var(--gris-claro); }
+      #modalViz .viz-modal-box { height: 42vh; }
+    }
+    #modalViz .metric-desc { color: var(--gris-texto); font-size: .9rem; line-height: 1.5; }
+    #modalViz .opcion-full { background: var(--gris-claro); border-left: 3px solid var(--verde-medio); padding: .6rem .8rem; border-radius: 6px; font-style: italic; }
+    #modalViz .big-num { font-family: var(--font-display); color: var(--terracota); font-size: 1.6rem; line-height: 1; }
+    #modalViz .lista-colegios { list-style: none; padding: 0; margin: .4rem 0 0; max-height: 30vh; overflow: auto; }
+    #modalViz .lista-colegios li { padding: .35rem .2rem; border-bottom: 1px solid var(--gris-claro); display: flex; justify-content: space-between; gap: .5rem; }
+    #modalViz .lista-colegios a { text-decoration: none; color: var(--terracota); font-weight: 600; }
+    #modalViz .lista-colegios .loc { color: var(--gris-texto); font-size: .8rem; white-space: nowrap; }
+
+    /* ===== Radial de debate (sectores) ===== */
+    .viz-box.radial-box { height: 300px; min-height: 300px; }
+    .radial-box { padding: .5rem; position: relative;
+      background: var(--gris-claro); border: none; border-radius: var(--radius); display: block; }
+    .radial-box svg { width: 100%; height: 100%; display: block; }
+    .radial-box .rad-sector { cursor: pointer; transition: opacity .2s; }
+    .radial-box .rad-sector path { transition: d .55s cubic-bezier(.34,1.3,.64,1); }
+    .radial-box.atenuado .rad-sector { opacity: .3; }
+    .radial-box.atenuado .rad-sector.activo { opacity: 1; }
+    .radial-box .rad-num { font-size: 13px; font-weight: 800; fill: #fff; pointer-events: none;
+      transition: opacity .2s; }
+    .radial-box .rad-lbl { font-size: 8.5px; font-weight: 700; fill: var(--gris-texto); pointer-events: none; }
+
+    /* ===== Blobs de participación (SVG + ruido) ===== */
+    #viz-participacion.blobs-box { height: 300px; min-height: 300px; padding: .5rem; position: relative;
+      background: var(--gris-claro); border: none; border-radius: var(--radius); display: block; }
+    #viz-participacion.blobs-box svg { width: 100%; height: 100%; display: block; overflow: visible; }
+    #viz-participacion .blob-path { cursor: pointer; transition: opacity .2s; }
+    #viz-participacion.atenuado .blob-path { opacity: .3; }
+    #viz-participacion.atenuado .blob-path.activo { opacity: 1; }
+    .blob-tip { position: absolute; pointer-events: none; z-index: 6; opacity: 0; transition: opacity .12s;
+      background: #2f2b25; color: #fff; border-radius: 8px; padding: .45rem .65rem; white-space: nowrap;
+      box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+    .blob-tip .t { display: block; font-weight: 700; font-size: .78rem; }
+    .blob-tip .v { display: block; font-size: .72rem; opacity: .85; margin-top: .1rem; }
+    .blob-leyenda { display: flex; flex-wrap: wrap; justify-content: center; gap: .25rem 1rem; margin-top: .6rem; }
+    .blob-leg { display: flex; align-items: center; gap: .35rem; font-size: .76rem; color: var(--gris-texto); }
+    .blob-leg .sw { width: .8rem; height: .8rem; border-radius: 50%; flex: 0 0 auto; }
+
+    /* ===== Ecosistemas: barras con siluetas ===== */
+    .eco-box svg { width: 100%; height: 100%; display: block; }
+    .eco-box .eco-g { cursor: pointer; transition: opacity .18s, transform .18s; transform-box: fill-box; transform-origin: 50% 100%; }
+    .eco-box .eco-g:hover { transform: translateY(-3px); }
+    .eco-box.atenuado .eco-g { opacity: .32; }
+    .eco-box.atenuado .eco-g.activo { opacity: 1; }
+    .eco-box .eco-lbl { font-size: 8px; fill: var(--gris-texto); font-weight: 600; }
+    .eco-box .eco-num { font-size: 11px; font-weight: 800; }
+    #viz-ecosistemas.eco-box { height: 300px; min-height: 300px; padding: .5rem; position: relative;
+      background: var(--gris-claro); border: none; border-radius: var(--radius); display: block; }
+    #viz-ecosistemas.eco-box svg { width: 100%; height: 100%; display: block; }
+    #viz-ecosistemas .eco-g { cursor: pointer; transition: opacity .18s, transform .18s; transform-box: fill-box; transform-origin: 50% 100%; }
+    #viz-ecosistemas .eco-g:hover { transform: translateY(-3px); }
+    #viz-ecosistemas.atenuado .eco-g { opacity: .32; }
+    #viz-ecosistemas.atenuado .eco-g.activo { opacity: 1; }
+    #viz-ecosistemas .eco-lbl { font-size: 8px; fill: var(--gris-texto); font-weight: 600; }
+    #viz-ecosistemas .eco-num { font-size: 11px; font-weight: 800; }
+
+    /* --- 3 idles: cada parte se anima por separado --- */
+
+    /* idle A: saluda (un brazo sube y baja) */
+    @keyframes picto-saludo {
+      0%, 62%, 100% { transform: rotate(0deg); }
+      70%           { transform: rotate(-58deg); }
+      78%           { transform: rotate(-42deg); }
+      86%           { transform: rotate(-58deg); }
+      94%           { transform: rotate(-6deg); }
+    }
+    /* idle B: peso de un pie al otro (cuerpo se inclina un pelin) */
+    @keyframes picto-peso {
+      0%, 100% { transform: translateX(0) rotate(0deg); }
+      25%      { transform: translateX(-.4px) rotate(-2.2deg); }
+      75%      { transform: translateX(.4px)  rotate(2.2deg); }
+    }
+    /* idle C: respira (cuerpo sube/baja, cabeza acompaña) */
+    @keyframes picto-resp {
+      0%, 100% { transform: scaleY(1) translateY(0); }
+      50%      { transform: scaleY(1.06) translateY(-.5px); }
+    }
+    @keyframes picto-cabeceo {
+      0%, 100% { transform: rotate(0deg) translateY(0); }
+      50%      { transform: rotate(3deg) translateY(-.35px); }
+    }
+    /* brazos en reposo: leve vaivén (para los idles B y C) */
+    @keyframes picto-brazo-idle {
+      0%, 100% { transform: rotate(0deg); }
+      50%      { transform: rotate(5deg); }
+    }
+
+    /* Cada grupo tiene su origen de rotación: el brazo gira desde el hombro */
+    .picto-figs .fig, .picto-figs .brazo-i, .picto-figs .brazo-d,
+    .picto-figs .cabeza, .picto-figs .cuerpo { transform-box: fill-box; }
+    .picto-figs .brazo-i { transform-origin: 100% 8%; }   /* hombro izq */
+    .picto-figs .brazo-d { transform-origin: 0% 8%; }     /* hombro der */
+    .picto-figs .cabeza  { transform-origin: 50% 100%; }  /* cuello */
+    .picto-figs .cuerpo  { transform-origin: 50% 100%; }  /* cadera */
+    .picto-figs .fig     { transform-origin: 50% 100%; }  /* pies */
+
+    /* --- Asignación de idle por clase (la rota el JS) --- */
+    .fig-a .brazo-d { animation: picto-saludo var(--dur) ease-in-out var(--delay) infinite; }
+    .fig-a .brazo-i { animation: picto-brazo-idle calc(var(--dur) * 1.3) ease-in-out var(--delay) infinite; }
+
+    .fig-b          { animation: picto-peso var(--dur) ease-in-out var(--delay) infinite; }
+    .fig-b .brazo-i,
+    .fig-b .brazo-d { animation: picto-brazo-idle calc(var(--dur) * .9) ease-in-out var(--delay) infinite; }
+
+    .fig-c .cuerpo  { animation: picto-resp var(--dur) ease-in-out var(--delay) infinite; }
+    .fig-c .cabeza  { animation: picto-cabeceo calc(var(--dur) * 1.1) ease-in-out var(--delay) infinite; }
+    .fig-c .brazo-i,
+    .fig-c .brazo-d { animation: picto-brazo-idle calc(var(--dur) * 1.2) ease-in-out var(--delay) infinite; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .picto-figs * { animation: none !important; }
+    }
+
+    /* ===== Pictograma (comprensión del dilema) ===== */
+    .picto-wrap { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: .4rem .2rem; }
+    .picto-fila { display: flex; align-items: center; gap: .5rem; margin-bottom: .35rem; cursor: pointer;
+      border-radius: 8px; padding: .25rem .35rem; transition: background .15s; }
+    .picto-fila:hover { background: rgba(0,0,0,.04); }
+    .picto-fila.apagada { opacity: .35; }
+    .picto-info { flex: 0 0 auto; min-width: 92px; text-align: right; line-height: 1.1; }
+    .picto-info .np { display: block; font-family: var(--font-display); font-size: 1.05rem; font-weight: 800; }
+    .picto-info .lbl { display: block; font-size: .58rem; color: var(--gris-texto); text-transform: uppercase; letter-spacing: .03em; }
+    .picto-figs { display: flex; flex-wrap: wrap; gap: 2px; align-content: center; flex: 1 1 auto; }
+    .picto-figs svg { display: block; overflow: visible; }
+    .picto-figs .fig { transform-box: fill-box; transform-origin: 50% 100%; }
+  
+/* ===== Marcador de DATOS QUEMADOS ===== */
+.ast { color: #d6453c; font-weight: 900; margin-left: .18rem; cursor: help; }
+.aviso-quemado { background: #fdf1ef; border-left: 3px solid #d6453c; padding: .5rem .7rem;
+  border-radius: 6px; font-size: .78rem; color: #8a4038; }
+
+/* ===== Tooltip compartido (blobs, siluetas, flujo, hojas) ===== */
+.viz-tip { position: absolute; pointer-events: none; z-index: 6; opacity: 0; transition: opacity .12s;
+  background: #2f2b25; color: #fff; border-radius: 8px; padding: .45rem .65rem; white-space: nowrap;
+  box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+.viz-tip .t { display: block; font-weight: 700; font-size: .78rem; }
+.viz-tip .v { display: block; font-size: .72rem; opacity: .85; margin-top: .1rem; }
+
+/* ===== Flujo de cintas (participación docente) ===== */
+.flujo-box { position: relative; padding: .5rem; background: var(--gris-claro);
+  border: none; border-radius: var(--radius); display: block; }
+.viz-box.flujo-box { height: 300px; min-height: 300px; }
+.flujo-box svg { width: 100%; height: 100%; display: block; }
+.flujo-cinta { cursor: pointer; transition: opacity .2s; }
+.flujo-box.atenuado .flujo-cinta { opacity: .28; }
+.flujo-box.atenuado .flujo-cinta.activo { opacity: 1; }
+.flujo-eje { font-size: 10px; font-weight: 700; fill: var(--gris-texto); }
+
+/* ===== Hojas (aprendizajes destacados) ===== */
+.hojas-box { position: relative; padding: .5rem; background: var(--gris-claro);
+  border: none; border-radius: var(--radius); display: block; }
+.viz-box.hojas-box { height: 300px; min-height: 300px; }
+.hojas-box svg { width: 100%; height: 100%; display: block; }
+.hoja-g { cursor: pointer; transition: opacity .18s, transform .25s; transform-box: fill-box; transform-origin: 50% 50%; }
+.hoja-g:hover { transform: scale(1.04); }
+.hojas-box.atenuado .hoja-g { opacity: .32; }
+.hojas-box.atenuado .hoja-g.activo { opacity: 1; }
+.hoja-num { font-size: 20px; font-weight: 800; fill: #fff; pointer-events: none; }
+.hoja-lbl { font-size: 10px; font-weight: 700; fill: var(--gris-texto); pointer-events: none; }
+.hoja-sub { font-size: 8.5px; fill: var(--gris-texto); opacity: .75; pointer-events: none; }
+
+/* Las siluetas y blobs también usan el tooltip compartido */
+.eco-box, .blobs-box, .radial-box { position: relative; }
+
+/* ===== Pétalos (formatos desarrollados) ===== */
+.petalo-box { position: relative; padding: .5rem; background: var(--gris-claro);
+  border: none; border-radius: var(--radius); display: block; }
+.viz-box.petalo-box { height: 300px; min-height: 300px; }
+.petalo-box svg { width: 100%; height: 100%; display: block; }
+.petalo-g { cursor: pointer; transition: opacity .2s, transform .2s; transform-box: fill-box; }
+.petalo-g:hover { transform: scale(1.04); }
+.petalo-box.atenuado .petalo-g { opacity: .3; }
+.petalo-box.atenuado .petalo-g.activo { opacity: 1; }
+.petalo-centro { fill: #fff; stroke: var(--gris-medio); stroke-width: 2; }
+
+/* ===== Órbitas (públicos objetivos) ===== */
+.orbita-box { position: relative; padding: .5rem; background: var(--gris-claro);
+  border: none; border-radius: var(--radius); display: block; }
+.viz-box.orbita-box { height: 300px; min-height: 300px; }
+.orbita-box svg { width: 100%; height: 100%; display: block; }
+.orbita-anillo { fill: none; stroke: var(--gris-medio); stroke-width: 1; stroke-dasharray: 2 5; opacity: .55; }
+.orbita-sol { fill: var(--terracota); }
+.orbita-sol-txt { font-size: 9px; font-weight: 700; fill: #fff; pointer-events: none; }
+.orbita-punto { cursor: pointer; transition: opacity .2s, r .2s; }
+.orbita-box.atenuado .orbita-punto { opacity: .3; }
+.orbita-box.atenuado .orbita-punto.activo { opacity: 1; }
+.orbita-g:hover .orbita-punto { filter: brightness(1.12); }
+
+/* ===== Lluvia de hojas (aprendizajes destacados) ===== */
+.lluvia-box { padding: .3rem; }
+.viz-box.lluvia-box { height: 300px; min-height: 300px; }
+.lluvia-wrap { display: flex; height: 100%; gap: .5rem; }
+.lluvia-mitad { flex: 1 1 0; display: flex; flex-direction: column; align-items: center;
+  cursor: pointer; border-radius: 10px; transition: background .15s; padding: .3rem 0; }
+.lluvia-mitad:hover { background: rgba(0,0,0,.03); }
+.lluvia-cielo { position: relative; overflow: hidden; width: 100%; flex: 1 1 auto; min-height: 0; }
+.hoja-cae { position: absolute; top: -12%; width: var(--tam); height: var(--tam);
+  border-radius: 0 100% 0 100%; opacity: .88;
+  animation: hoja-caer var(--dur) linear var(--delay) infinite;
+  transform: rotate(var(--rot0)); }
+@keyframes hoja-caer {
+  0%   { transform: translateY(0) translateX(0) rotate(var(--rot0)); opacity: .92; }
+  100% { transform: translateY(720%) translateX(16px) rotate(calc(var(--rot0) + 220deg)); opacity: .1; }
+}
+.lluvia-blob { flex: 0 0 auto; width: 74px; height: 74px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; margin: .3rem 0;
+  box-shadow: 0 4px 14px rgba(0,0,0,.14); animation: lluvia-late 3.6s ease-in-out infinite; }
+@keyframes lluvia-late { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.lluvia-pct { color: #fff; font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; }
+.lluvia-lbl { text-align: center; font-size: .72rem; color: var(--gris-texto); line-height: 1.3; flex: 0 0 auto; }
+.lluvia-n { font-size: .66rem; opacity: .75; }
+@media (prefers-reduced-motion: reduce) { .hoja-cae, .lluvia-blob { animation: none !important; } }
+
+/* Contenedores nuevos también participan del tooltip/atenuado compartido */
+.petalo-box, .orbita-box { position: relative; }

@@ -3,22 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visualización de dilemas — BOG26</title>
+  <title>Créditos — BOG26</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/css/styles.css" rel="stylesheet">
   <style>
-    .viz-card { cursor: pointer; transition: box-shadow .15s, transform .15s; }
-    .viz-card:hover { box-shadow: 0 8px 26px rgba(0,0,0,.12); transform: translateY(-2px); }
-    .viz-card svg { pointer-events: none; }
-    .viz-ampliar { font-size: .78rem; color: var(--verde-medio); }
-    .viz-modal-canvas { min-height: 64vh; }
-    .viz-modal-canvas svg { width: 100%; }
-    .detalle-panel { border-left: 1px solid var(--gris-medio); min-height: 64vh; }
-    @media (max-width: 991px){ .detalle-panel { border-left:none; border-top:1px solid var(--gris-medio); min-height:auto; } }
-    .detalle-vacio { color: var(--gris-texto); font-size: .9rem; }
-    .leyenda { font-size: .72rem; }
-    .leyenda .dot { display:inline-block; width:.7rem; height:.7rem; border-radius:50%; margin-right:.25rem; vertical-align:middle; }
+    .credito-caja { background: #ffffff; border: 1px solid var(--gris-claro); border-radius: var(--radius);
+      padding: 1.5rem 1.6rem; height: 100%; }
+    .credito-intro { color: var(--gris-texto); font-size: .92rem; line-height: 1.55; }
+    .credito-intro a { color: var(--verde-medio); font-weight: 600; text-decoration: none; }
+    .credito-intro a:hover { text-decoration: underline; }
+    .credito-rol { margin-bottom: 1.3rem; }
+    .credito-rol:last-child { margin-bottom: 0; }
+    .credito-rol-titulo { font-family: var(--font-display); font-size: .82rem; font-weight: 700;
+      padding: .4rem .7rem; border-radius: 6px; margin-bottom: .55rem; display: inline-block; }
+    .caja-autoria .credito-rol-titulo { background: var(--dorado-bg); color: var(--dorado-claro); border-left: 3px solid var(--dorado); }
+    .caja-gestion .credito-rol-titulo { background: var(--terracota-bg); color: var(--terracota); border-left: 3px solid var(--terracota); }
+    .credito-persona { display: flex; align-items: center; gap: .4rem; font-size: .87rem; line-height: 1.7;
+      color: #4a4436; }
+    .credito-persona .inst { color: var(--gris-texto); font-size: .82rem; }
+    .orcid-icon { flex: 0 0 auto; width: 14px; height: 14px; }
+    .credito-parrafo { font-size: .87rem; color: #4a4436; line-height: 1.6; }
+    .credito-derechos { background: #dff3e1; border-radius: var(--radius); padding: 1rem 1.4rem;
+      font-size: .85rem; color: var(--gris-texto); text-align: center; }
+    body{background-color: #dff3e1;}
   </style>
 </head>
 <body>
@@ -38,65 +46,138 @@
           <li><a class="dropdown-item" href="datos.html">Datos descriptivos</a></li>
         </ul>
       </div>
-            <a href="creditos.html" class="nav-link">creditos</a>
-
+      <a href="creditos.html" class="nav-link active">Créditos</a>
     </div>
   </nav>
 </div>
 
 
 
-<!-- ============ TARJETA (vista previa) ============ -->
+<!-- ============ CRÉDITOS ============ -->
 <section class="section" style="padding-top:1rem;">
   <div class="container">
-    <div class="row">
-      <div class="col-lg-8 mx-auto">
-        <div class="card card-ied viz-card" data-bs-toggle="modal" data-bs-target="#modalTree">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-start mb-2">
-              <div class="colegio-name mb-0">Dilemas individuales</div>
-              <span class="viz-ampliar"><i class="bi bi-arrows-fullscreen"></i> Ampliar</span>
-            </div>
-            <div id="prev-individuales"></div>
+    <div class="row g-4">
+
+      <!-- ---- COLUMNA IZQUIERDA: autoría por rol (CRediT) ---- -->
+      <div class="col-lg-6">
+        <div class="credito-caja caja-autoria">
+          <h5 style="font-family:var(--font-display);color:var(--verde-oscuro);">Comunicación Pública de la Ciencia</h5>
+          <p class="credito-intro mb-3">
+            Secretaría de Educación del Distrito – Bogotá, D.C.<br>
+            <a href="https://www.educacionbogota.edu.co" target="_blank">www.educacionbogota.edu.co</a><br>
+            Universidad EAFIT<br>
+            <a href="https://www.eafit.edu.co" target="_blank">www.eafit.edu.co</a>
+          </p>
+          <p class="credito-intro mb-4">
+            Se reconocen los aportes individuales de los profesionales participantes, de acuerdo con la Taxonomía
+            de Roles CRediT (Contributor Roles Taxonomy,
+            <a href="https://credit.niso.org" target="_blank">https://credit.niso.org</a>), de la siguiente manera:
+          </p>
+
+          <div class="credito-rol">
+            <span class="credito-rol-titulo">Conceptualización</span>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Lizett Vaneza Yepez Aguirre <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Cristina Romero Ríos <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Mauricio Vásquez Arias <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Lina Katherine Mora <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Jesús David Amaya Hincapié <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Natalia Suárez Jaramillo <span class="inst">(SED)</span></div>
+          </div>
+
+          <div class="credito-rol">
+            <span class="credito-rol-titulo">Diseño metodológico</span>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Lizett Vaneza Yepez Aguirre <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Cristina Romero Ríos <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Mauricio Vásquez Arias <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Lina Katherine Mora <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Jesús David Amaya Hincapié <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> José Octavio Vidal Salcedo <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Natalia Suárez Jaramillo <span class="inst">(SED)</span></div>
+          </div>
+
+          <div class="credito-rol">
+            <span class="credito-rol-titulo">Escritura</span>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Lizett Vaneza Yepez Aguirre <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Lina Katherine Mora <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Maribel Velasco Piamba <span class="inst">(Universidad EAFIT)</span></div>
+          </div>
+
+          <div class="credito-rol">
+            <span class="credito-rol-titulo">Revisión y edición</span>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Cristina Romero Ríos <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Mauricio Vásquez Arias <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Jesús David Amaya Hincapié <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Natalia Suárez Jaramillo <span class="inst">(SED)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Claudia Patricia Vega Suaza <span class="inst">(SED)</span></div>
           </div>
         </div>
       </div>
+
+      <!-- ---- COLUMNA DERECHA: software, visualización, coordinación ---- -->
+      <div class="col-lg-6">
+        <div class="credito-caja caja-gestion">
+
+          <div class="credito-rol">
+            <span class="credito-rol-titulo">Software</span>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> José Octavio Vidal Salcedo <span class="inst">(Universidad EAFIT)</span></div>
+          </div>
+
+          <div class="credito-rol">
+            <span class="credito-rol-titulo">Visualización</span>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Claudia Patricia Giraldo Ramírez <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> José Octavio Vidal Salcedo <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Lina Katherine Mora <span class="inst">(Universidad EAFIT)</span></div>
+          </div>
+
+          <div class="credito-rol">
+            <span class="credito-rol-titulo">Coordinación técnica del convenio</span>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Natalia Suárez Jaramillo <span class="inst">(SED)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Maribel Velasco Piamba <span class="inst">(Universidad EAFIT)</span></div>
+          </div>
+
+          <div class="credito-rol">
+            <span class="credito-rol-titulo">Dirección general del convenio</span>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Mauricio Vásquez Arias <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Mabel Ayure Urrego <span class="inst">(SED)</span></div>
+          </div>
+
+          <div class="credito-rol">
+            <span class="credito-rol-titulo">Financiación del proyecto</span>
+            <p class="credito-parrafo mb-0">
+              Convenio CO1.PCCNTR.9161370 de 2026, suscrito entre la Secretaría de Educación del Distrito y la
+              Universidad EAFIT para la implementación de la estrategia de Comunicación Pública de la Ciencia 2026.
+            </p>
+          </div>
+
+          <div class="credito-rol">
+            <span class="credito-rol-titulo">Nota sobre el uso y adaptación del material</span>
+            <p class="credito-parrafo mb-0">
+              Esta guía tiene un carácter orientador. Hace parte de una serie de materiales que incluye recursos
+              complementarios en formatos editables (como anexos en Word en guías posteriores), los cuales permiten
+              su adaptación por parte de docentes.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ---- DERECHOS ---- -->
+      <div class="col-12">
+        <div class="credito-derechos">
+          © 2026 Universidad EAFIT y Secretaría de Educación de Bogotá. Todos los derechos reservados.
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
-
-<!-- ============ MODAL ============ -->
-<div class="modal fade" id="modalTree" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header d-block">
-        <div class="d-flex justify-content-between align-items-center">
-          <h5 class="modal-title mb-0" style="font-family:var(--font-display);">Dilemas individuales</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-        <div class="leyenda mt-2" id="leyenda"></div>
-      </div>
-      <div class="modal-body">
-        <div class="row g-0">
-          <div class="col-lg-8">
-            <p class="text-muted small px-2 mb-1">Rueda para zoom, arrastra para mover. Clic en un colegio (punta) para ver su dilema.</p>
-            <div id="big-individuales" class="viz-modal-canvas"></div>
-          </div>
-          <div class="col-lg-4 detalle-panel p-3" id="detalle">
-            <p class="detalle-vacio mb-0">Haz clic en la punta de un colegio para ver su dilema aqui.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- ============ FOOTER ============ -->
 <footer class="footer-bog26">
   <div class="container">
     <div class="row align-items-center">
       <div class="col-md-6 mb-2 mb-md-0">
-        Convenio CO1.PCCNTR.9161370 de 2026 &mdash; Universidad EAFIT &amp; Secretaria de Educacion del Distrito, Bogota.
+        Convenio CO1.PCCNTR.9161370 de 2026 — Universidad EAFIT &amp; Secretaría de Educación del Distrito, Bogotá.
       </div>
       <div class="col-md-6 text-md-end">
         <a href="https://www.eafit.edu.co" target="_blank">www.eafit.edu.co</a>
@@ -108,158 +189,6 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- ============ VISUALIZACION ============ -->
-<script type="module">
-  import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm'
-  import { getDilemas } from './assets/js/db.js'
-
-  // ---- Niveles de clasificacion (ramas). El primero define el color. ----
-  // Deja 'categoria' de primero. Puedes reordenar o agregar: 'localidad','colegio','grado'.
-  const NIVELES = ['categoria', 'localidad']
-
-  const COLOR_CAT = {
-    'Contaminación en el agua': '#90B49D',
-    'Pérdida de biodiversidad': '#9F574F',
-    'Generación de residuos':   '#CCB364',
-    'Escasez de agua':          '#CCA782',
-    'Ruido':                    '#9066CC',
-    'Otro':                     '#54461E',
-  }
-  const colorCat = (c) => COLOR_CAT[c] ?? '#54461E'
-  const catAncestor = (d) => { let n = d; while (n.depth > 1) n = n.parent; return n.data?.name }
-  const truncar = (t, n) => { t = (t ?? '').toString(); return (n > 0 && t.length > n) ? t.slice(0, n - 1) + '…' : t }
-  const escapeHtml = (s) => (s ?? '').toString()
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-
-  function anidar(rows, niveles) {
-    const root = { name: 'Dilemas', children: [] }
-    for (const r of rows) {
-      let node = root
-      for (const key of niveles) {
-        const kv = (r[key] ?? '—').toString()
-        let child = node.children.find((c) => c.name === kv)
-        if (!child) { child = { name: kv, children: [] }; node.children.push(child) }
-        node = child
-      }
-      node.children.push({ name: r.colegio, value: 1, data: r }) // hoja = dilema, etiqueta = nombre colegio
-    }
-    return root
-  }
-
-  function pintarDetalle(panelEl, r) {
-    const col = colorCat(r.categoria)
-    panelEl.innerHTML = `
-      <span class="badge mb-2" style="background:${col};">${escapeHtml(r.categoria ?? '—')}</span>
-      <h6 style="font-family:var(--font-display);color:var(--terracota);" class="mb-1">${escapeHtml(r.colegio)}</h6>
-      <div class="text-muted small mb-3">
-        <i class="bi bi-geo-alt"></i> ${escapeHtml(r.localidad ?? '—')}
-        &nbsp;·&nbsp; <i class="bi bi-mortarboard"></i> ${escapeHtml([r.nivel, r.curso].filter(Boolean).join('-'))}
-        &nbsp;·&nbsp; <i class="bi bi-hash"></i> ${escapeHtml(r.codigo_curso)}
-      </div>
-      <p style="line-height:1.55;">${escapeHtml(r.dilema)}</p>
-      <a class="btn btn-sm" style="background:var(--verde-medio);color:#fff;"
-         href="bitacora_detalle.html?curso=${encodeURIComponent(r.codigo_curso)}">
-        <i class="bi bi-journal-text"></i> Ver bitacora completa
-      </a>`
-  }
-
-  function renderTree(el, dilemas, { size, onLeaf } = {}) {
-    el.innerHTML = ''
-    const interactivo = !!onLeaf
-    size = size || Math.max(260, Math.min(el.clientWidth || 300, 460))
-    const radius = size / 2 - 16
-
-    const root = d3.hierarchy(anidar(dilemas, NIVELES))
-    d3.tree().size([2 * Math.PI, radius]).separation((a, b) => (a.parent === b.parent ? 1 : 2) / a.depth)(root)
-
-    const svg = d3.select(el).append('svg')
-      .attr('viewBox', `-${size / 2} -${size / 2} ${size} ${size}`)
-      .attr('width', '100%').attr('height', size)
-      .style('display', 'block').style('cursor', interactivo ? 'grab' : 'default')
-      .style('font', '7px Archivo, sans-serif')
-
-    const g = svg.append('g')
-
-    // Enlaces
-    g.append('g').attr('fill', 'none').attr('stroke-opacity', 0.55).attr('stroke-width', 0.7)
-      .selectAll('path').data(root.links()).join('path')
-        .attr('stroke', (d) => colorCat(catAncestor(d.target)))
-        .attr('d', d3.linkRadial().angle((d) => d.x).radius((d) => d.y))
-
-    // Etiquetas de nodos intermedios (categoria, localidad, ...)
-    g.append('g').selectAll('g').data(root.descendants().filter((d) => d.depth > 0 && d.children)).join('g')
-      .attr('transform', (d) => `rotate(${(d.x * 180) / Math.PI - 90}) translate(${d.y},0)`)
-      .call((s) => {
-        s.append('text').attr('dy', '0.31em').style('font-size', '6.5px').attr('font-weight', '600')
-          .attr('x', (d) => (d.x < Math.PI ? 5 : -5))
-          .attr('text-anchor', (d) => (d.x < Math.PI ? 'start' : 'end'))
-          .attr('transform', (d) => (d.x >= Math.PI ? 'rotate(180)' : null))
-          .attr('fill', (d) => colorCat(catAncestor(d)))
-          .text((d) => truncar(d.data.name, 22))
-      })
-
-    // Hojas = colegios (dilemas)
-    const leaf = g.append('g').selectAll('g').data(root.leaves()).join('g')
-      .attr('transform', (d) => `rotate(${(d.x * 180) / Math.PI - 90}) translate(${d.y},0)`)
-      .style('cursor', interactivo ? 'pointer' : 'default')
-      .on('click', (event, d) => { if (onLeaf) onLeaf(d.data.data) })
-
-    leaf.append('title').text((d) => `${d.data.data?.colegio || ''} — ${d.data.data?.dilema || ''}`)
-    leaf.append('circle').attr('r', 2.2).attr('fill', (d) => colorCat(catAncestor(d)))
-      .on('mouseover', function () { if (interactivo) d3.select(this).attr('r', 3.6).attr('stroke', '#54461E').attr('stroke-width', 1) })
-      .on('mouseout', function () { if (interactivo) d3.select(this).attr('r', 2.2).attr('stroke', 'none') })
-    leaf.append('text').attr('dy', '0.31em')
-      .attr('x', (d) => (d.x < Math.PI ? 5 : -5))
-      .attr('text-anchor', (d) => (d.x < Math.PI ? 'start' : 'end'))
-      .attr('transform', (d) => (d.x >= Math.PI ? 'rotate(180)' : null))
-      .attr('fill', '#4a4436').text((d) => truncar(d.data.name, 26))
-
-    // Ajuste para que todo quepa
-    const bb = g.node().getBBox()
-    const k = Math.min(interactivo ? 8 : 6, (0.94 * size) / Math.max(bb.width, bb.height, 1))
-
-    if (interactivo) {
-      const zoom = d3.zoom().scaleExtent([k * 0.5, 14]).on('zoom', (event) => g.attr('transform', event.transform))
-      svg.call(zoom).call(zoom.transform, d3.zoomIdentity.scale(k))
-    } else {
-      g.attr('transform', `scale(${k})`)
-    }
-  }
-
-  function pintarLeyenda(el, dilemas) {
-    const cats = [...new Set(dilemas.map((d) => d.categoria).filter(Boolean))]
-    el.innerHTML = cats.map((c) =>
-      `<span class="me-3"><span class="dot" style="background:${colorCat(c)}"></span>${escapeHtml(c)}</span>`
-    ).join('')
-  }
-
-  async function init() {
-    const { data, error } = await getDilemas()
-    const filas = data ?? []
-    const prev = document.getElementById('prev-individuales')
-
-    if (error || filas.length === 0) {
-      prev.innerHTML = '<p class="text-muted small mb-0 py-4 text-center">No hay dilemas para graficar todavia.</p>'
-      return
-    }
-
-    renderTree(prev, filas) // vista previa (sin panel)
-
-    const detalle = document.getElementById('detalle')
-    pintarLeyenda(document.getElementById('leyenda'), filas)
-
-    let listo = false
-    document.getElementById('modalTree').addEventListener('shown.bs.modal', () => {
-      if (listo) return
-      const el = document.getElementById('big-individuales')
-      const size = Math.min(el.clientWidth || 720, 740)
-      renderTree(el, filas, { size, onLeaf: (r) => pintarDetalle(detalle, r) })
-      listo = true
-    })
-  }
-
-  init()
-</script>
+<script src="assets/js/main.js"></script>
 </body>
 </html>

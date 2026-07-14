@@ -8,6 +8,21 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/css/styles.css" rel="stylesheet">
+  <style>
+    /* --- Visualizacion del arbol de dilemas (sidebar) --- */
+    .viz-card { cursor: pointer; transition: box-shadow .15s, transform .15s; position: relative;
+      background: var(--gris-claro); border: 1px dashed var(--gris-medio); border-radius: var(--radius, 12px); padding: .5rem; }
+    .viz-card:hover { box-shadow: 0 8px 26px rgba(0,0,0,.10); transform: translateY(-2px); }
+    .viz-card svg { pointer-events: none; }          /* el clic abre el modal */
+    .viz-ampliar { position: absolute; top: .5rem; right: .6rem; font-size: .7rem; color: var(--verde-medio); font-weight: 600; }
+    .viz-modal-canvas { min-height: 64vh; }
+    .viz-modal-canvas svg { width: 100%; }
+    .detalle-panel { border-left: 1px solid var(--gris-medio); min-height: 64vh; }
+    @media (max-width: 991px){ .detalle-panel { border-left:none; border-top:1px solid var(--gris-medio); min-height:auto; } }
+    .detalle-vacio { color: var(--gris-texto); font-size: .9rem; }
+    .leyenda { font-size: .72rem; }
+    .leyenda .dot { display:inline-block; width:.7rem; height:.7rem; border-radius:50%; margin-right:.25rem; vertical-align:middle; }
+  </style>
 </head>
 
 <body>
@@ -66,24 +81,19 @@
       <!-- COLUMNA IZQUIERDA: VISUALIZADORES -->
       <aside class="dilemas-maqueta-sidebar">
 
-        <div class="dilemas-viz-bloque">
-          <h2 class="section-title">
-            Agrupación de los dilemas por categorías
-          </h2>
-
-          <div class="viz-placeholder dilemas-viz-placeholder">
-            Aquí irá una visualización acorde con la naturaleza de los datos
-          </div>
-        </div>
+        
 
         <div class="dilemas-viz-bloque">
           <h2 class="section-title">
             Visualización de los dilemas individuales
           </h2>
-
-          <div class="viz-placeholder dilemas-viz-placeholder">
-            Aquí irá una visualización acorde con la naturaleza de los datos
+            
+          <div class="viz-card" data-bs-toggle="modal" data-bs-target="#modalTree"
+               role="button" tabindex="0" aria-label="Ampliar visualización de dilemas">
+            <span class="viz-ampliar"><i class="bi bi-arrows-fullscreen"></i></span>
+            <div id="prev-individuales"></div>
           </div>
+          <div class="leyenda mt-2" id="leyenda"></div>
         </div>
 
       </aside>
@@ -135,6 +145,32 @@
 
   </div>
 </section>
+
+<!-- ============ MODAL: ARBOL DE DILEMAS ============ -->
+<div class="modal fade" id="modalTree" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-block">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="modal-title mb-0" style="font-family:var(--font-display);">Dilemas individuales</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="leyenda mt-2" id="leyenda"></div>
+      </div>
+      <div class="modal-body">
+        <div class="row g-0">
+          <div class="col-lg-8">
+            <p class="text-muted small px-2 mb-1">Rueda para zoom, arrastra para mover. </p>
+            <div id="big-individuales" class="viz-modal-canvas"></div>
+          </div>
+          <div class="col-lg-4 detalle-panel p-3" id="detalle">
+            <p class="detalle-vacio mb-0">Haz clic en la punta de un colegio para ver su dilema aquí.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ============ FOOTER ============ -->
 <footer class="footer-bog26">
@@ -349,6 +385,194 @@
   }
 
   init()
+</script>
+
+<!-- ============ VISUALIZACION: ARBOL RADIAL DE DILEMAS ============ -->
+<script type="module">
+  import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm'
+  import { getDilemas } from './assets/js/db.js'
+
+  // Niveles de agrupacion (ramas). 'categoria' debe ir primero (define los colores).
+  const NIVELES = ['categoria', 'localidad']
+
+  const COLOR_CAT = {
+    'Contaminación en el agua': '#90B49D',
+    'Pérdida de biodiversidad': '#9F574F',
+    'Generación de residuos':   '#CCB364',
+    'Escasez de agua':          '#CCA782',
+    'Ruido':                    '#9066CC',
+    'Otro':                     '#54461E',
+  }
+  const colorCat = (c) => COLOR_CAT[c] ?? '#54461E'
+  const catAncestor = (d) => { let n = d; while (n.depth > 1) n = n.parent; return n.data?.name }
+  const truncar = (t, n) => { t = (t ?? '').toString(); return (n > 0 && t.length > n) ? t.slice(0, n - 1) + '…' : t }
+  const escapeHtml = (s) => (s ?? '').toString()
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+
+  function anidar(rows, niveles) {
+    const root = { name: 'Dilemas', children: [] }
+    for (const r of rows) {
+      let node = root
+      for (const k of niveles) {
+        const kv = (r[k] ?? '—').toString()
+        let child = node.children.find((c) => c.name === kv)
+        if (!child) { child = { name: kv, children: [] }; node.children.push(child) }
+        node = child
+      }
+      node.children.push({ name: r.colegio, value: 1, data: r })
+    }
+    return root
+  }
+
+  function pintarDetalle(panelEl, r) {
+    const col = colorCat(r.categoria)
+    panelEl.innerHTML = `
+      <span class="badge mb-2" style="background:${col};">${escapeHtml(r.categoria ?? '—')}</span>
+      <h6 style="font-family:var(--font-display);color:var(--terracota);" class="mb-1">${escapeHtml(r.colegio)}</h6>
+      <div class="text-muted small mb-3">
+        <i class="bi bi-geo-alt"></i> ${escapeHtml(r.localidad ?? '—')}
+        &nbsp;·&nbsp; <i class="bi bi-mortarboard"></i> ${escapeHtml([r.nivel, r.curso].filter(Boolean).join('-'))}
+        &nbsp;·&nbsp; <i class="bi bi-hash"></i> ${escapeHtml(r.codigo_curso)}
+      </div>
+      <p style="line-height:1.55;">${escapeHtml(r.dilema)}</p>
+      <a class="btn btn-sm" style="background:var(--verde-medio);color:#fff;"
+         href="bitacora_detalle.html?curso=${encodeURIComponent(r.codigo_curso)}">
+        <i class="bi bi-journal-text"></i> Ver bitácora completa
+      </a>`
+  }
+
+  function renderTree(el, dilemas, { size, onLeaf } = {}) {
+    el.innerHTML = ''
+    const interactivo = !!onLeaf
+    size = size || Math.max(240, Math.min(el.clientWidth || 280, 460))
+    const radius = size / 2 - 14
+
+    const root = d3.hierarchy(anidar(dilemas, NIVELES))
+    d3.tree().size([2 * Math.PI, radius]).separation((a, b) => (a.parent === b.parent ? 1 : 2) / a.depth)(root)
+
+    const svg = d3.select(el).append('svg')
+      .attr('viewBox', `-${size / 2} -${size / 2} ${size} ${size}`)
+      .attr('width', '100%').attr('height', size)
+      .style('display', 'block').style('cursor', interactivo ? 'grab' : 'pointer')
+      .style('font', '7px Archivo, sans-serif')
+
+    const g = svg.append('g')
+
+    g.append('g').attr('fill', 'none').attr('stroke-opacity', 0.55).attr('stroke-width', 0.7)
+      .selectAll('path').data(root.links()).join('path')
+        .attr('stroke', (d) => colorCat(catAncestor(d.target)))
+        .attr('d', d3.linkRadial().angle((d) => d.x).radius((d) => d.y))
+
+    // Etiquetas intermedias (categoria / localidad) — solo en el modal, para no saturar la preview
+    if (interactivo) {
+      g.append('g').selectAll('g').data(root.descendants().filter((d) => d.depth > 0 && d.children)).join('g')
+        .attr('transform', (d) => `rotate(${(d.x * 180) / Math.PI - 90}) translate(${d.y},0)`)
+        .call((sN) => {
+          sN.append('text').attr('dy', '0.31em').style('font-size', '6.5px').attr('font-weight', '600')
+            .attr('x', (d) => (d.x < Math.PI ? 5 : -5))
+            .attr('text-anchor', (d) => (d.x < Math.PI ? 'start' : 'end'))
+            .attr('transform', (d) => (d.x >= Math.PI ? 'rotate(180)' : null))
+            .attr('fill', (d) => colorCat(catAncestor(d)))
+            .text((d) => truncar(d.data.name, 22))
+        })
+    }
+
+    const leaf = g.append('g').selectAll('g').data(root.leaves()).join('g')
+      .attr('transform', (d) => `rotate(${(d.x * 180) / Math.PI - 90}) translate(${d.y},0)`)
+      .style('cursor', interactivo ? 'pointer' : 'default')
+      .on('click', (event, d) => { if (onLeaf) onLeaf(d.data.data) })
+
+    leaf.append('title').text((d) => `${d.data.data?.colegio || ''} — ${d.data.data?.dilema || ''}`)
+
+    // --- Puntas con animacion de "respiracion" (loop) ---
+    const R_BASE = 2.2, R_MAX = 3.6      // radio en reposo / en el pico del latido
+    const puntos = leaf.append('circle')
+      .attr('r', R_BASE)
+      .attr('fill', (d) => colorCat(catAncestor(d)))
+      .property('__hover', false)
+      // desfase por punta: cada una respira en su momento (mas organico)
+      .property('__fase', () => Math.random() * Math.PI * 2)
+      .each(function () { this.__fase = Math.random() * Math.PI * 2 })
+      .on('mouseover', function () {
+        this.__hover = true
+        if (interactivo) d3.select(this).attr('r', R_MAX + 1).attr('stroke', '#54461E').attr('stroke-width', 1)
+      })
+      .on('mouseout', function () {
+        this.__hover = false
+        if (interactivo) d3.select(this).attr('stroke', 'none')
+      })
+
+    // Loop de respiracion (~3.2s por ciclo). Se detiene si el nodo sale del DOM.
+    const PERIODO = 3200
+    const amp = (R_MAX - R_BASE) / 2
+    const medio = R_BASE + amp
+    const t0 = performance.now()
+    let raf = null
+    const respirar = (t) => {
+      if (!el.isConnected) { cancelAnimationFrame(raf); return }   // limpieza si se re-renderiza
+      const dt = (t - t0) / PERIODO * Math.PI * 2
+      puntos.each(function () {
+        if (this.__hover) return                                    // el hover manda
+        const r = medio + amp * Math.sin(dt + (this.__fase || 0))
+        this.setAttribute('r', r.toFixed(2))
+      })
+      raf = requestAnimationFrame(respirar)
+    }
+    raf = requestAnimationFrame(respirar)
+
+    // Nombres de colegio: solo en el modal (en la preview se verian ilegibles)
+    if (interactivo) {
+      leaf.append('text').attr('dy', '0.31em')
+        .attr('x', (d) => (d.x < Math.PI ? 5 : -5))
+        .attr('text-anchor', (d) => (d.x < Math.PI ? 'start' : 'end'))
+        .attr('transform', (d) => (d.x >= Math.PI ? 'rotate(180)' : null))
+        .attr('fill', '#4a4436').text((d) => truncar(d.data.name, 26))
+    }
+
+    const bb = g.node().getBBox()
+    const k = Math.min(interactivo ? 8 : 6, (0.94 * size) / Math.max(bb.width, bb.height, 1))
+
+    if (interactivo) {
+      const zoom = d3.zoom().scaleExtent([k * 0.5, 14]).on('zoom', (event) => g.attr('transform', event.transform))
+      svg.call(zoom).call(zoom.transform, d3.zoomIdentity.scale(k))
+    } else {
+      g.attr('transform', `scale(${k})`)
+    }
+  }
+
+  function pintarLeyenda(el, dilemas) {
+    const cats = [...new Set(dilemas.map((d) => d.categoria).filter(Boolean))]
+    el.innerHTML = cats.map((c) =>
+      `<span class="me-3"><span class="dot" style="background:${colorCat(c)}"></span>${escapeHtml(c)}</span>`
+    ).join('')
+  }
+
+  async function initViz() {
+    const { data, error } = await getDilemas()
+    const filas = data ?? []
+    const prev = document.getElementById('prev-individuales')
+    if (!prev) return
+
+    if (error || filas.length === 0) {
+      prev.innerHTML = '<p class="text-muted small mb-0 py-4 text-center">No hay dilemas para graficar todavía.</p>'
+      return
+    }
+
+    renderTree(prev, filas)   // preview (sin etiquetas, sin panel)
+    pintarLeyenda(document.getElementById('leyenda'), filas)
+
+    const detalle = document.getElementById('detalle')
+    let listo = false
+    document.getElementById('modalTree').addEventListener('shown.bs.modal', () => {
+      if (listo) return
+      const el = document.getElementById('big-individuales')
+      const size = Math.min(el.clientWidth || 720, 740)
+      renderTree(el, filas, { size, onLeaf: (r) => pintarDetalle(detalle, r) })
+      listo = true
+    })
+  }
+
+  initViz()
 </script>
 
 </body>
