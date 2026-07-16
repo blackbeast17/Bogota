@@ -22,10 +22,14 @@
     .credito-persona { display: flex; align-items: center; gap: .4rem; font-size: .87rem; line-height: 1.7;
       color: #4a4436; }
     .credito-persona .inst { color: var(--gris-texto); font-size: .82rem; }
-    .orcid-icon { flex: 0 0 auto; width: 14px; height: 14px; }
+    .orcid-icon { flex: 0 0 auto; width: 17px; height: 17px; }
+    .orcid-link { display: inline-flex; line-height: 0; }
+    .orcid-link:hover .orcid-icon circle { fill: #8fb52e; }
     .credito-parrafo { font-size: .87rem; color: #4a4436; line-height: 1.6; }
-    .credito-derechos { background: #dff3e1; border-radius: var(--radius); padding: 1rem 1.4rem;
-      font-size: .85rem; color: var(--gris-texto); text-align: center; }
+    .credito-licencia { display: flex; align-items: flex-start; gap: 1.1rem; background: #fff; border-radius: var(--radius); padding: 1.1rem 1.3rem; }
+    .credito-licencia .cc-badge { flex: 0 0 auto; width: 132px; height: auto; }
+    .credito-licencia p.fw-bold { color: var(--negro); font-size: .88rem; }
+    @media (max-width: 575px) { .credito-licencia { flex-direction: column; align-items: flex-start; } }
     body{background-color: #dff3e1;}
   </style>
 </head>
@@ -56,6 +60,11 @@
 <!-- ============ CRÉDITOS ============ -->
 <section class="section" style="padding-top:1rem;">
   <div class="container">
+    <p class="credito-intro mb-4">
+      Este producto fue desarrollado en el marco del convenio especial de cooperación en ciencia y tecnología
+      CO1.PCCNTR.9161370 de 2026 firmado entre la Universidad EAFIT y la Secretaría de Educación del Distrito,
+      para la implementación de la Estrategia de Comunicación Pública de la Ciencia 2026.
+    </p>
     <div class="row g-4">
 
       <!-- ---- COLUMNA IZQUIERDA: autoría por rol (CRediT) ---- -->
@@ -76,39 +85,39 @@
 
           <div class="credito-rol">
             <span class="credito-rol-titulo">Conceptualización</span>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Lizett Vaneza Yepez Aguirre <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Cristina Romero Ríos <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Mauricio Vásquez Arias <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Lina Katherine Mora <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Jesús David Amaya Hincapié <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Natalia Suárez Jaramillo <span class="inst">(SED)</span></div>
+            <div class="credito-persona">Lizett Vaneza Yepez Aguirre <a href="https://orcid.org/0009-0009-7768-634X" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Lizett Vaneza Yepez Aguirre"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Cristina Romero Ríos <a href="https://orcid.org/0009-0002-2948-315X" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Cristina Romero Ríos"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Mauricio Vásquez Arias <a href="https://orcid.org/0000-0003-0147-8914" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Mauricio Vásquez Arias"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Lina Katherine Mora <a href="https://orcid.org/0009-0008-3506-2128" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Lina Katherine Mora"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Jesús David Amaya Hincapié <a href="https://orcid.org/0009-0006-1721-8323" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Jesús David Amaya Hincapié"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Natalia Suárez Jaramillo <a href="https://orcid.org/0009-0007-8038-1008" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Natalia Suárez Jaramillo"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(SED)</span></div>
           </div>
 
           <div class="credito-rol">
             <span class="credito-rol-titulo">Diseño metodológico</span>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Lizett Vaneza Yepez Aguirre <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Cristina Romero Ríos <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Mauricio Vásquez Arias <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Lina Katherine Mora <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Jesús David Amaya Hincapié <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> José Octavio Vidal Salcedo <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Natalia Suárez Jaramillo <span class="inst">(SED)</span></div>
+            <div class="credito-persona">Lizett Vaneza Yepez Aguirre <a href="https://orcid.org/0009-0009-7768-634X" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Lizett Vaneza Yepez Aguirre"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Cristina Romero Ríos <a href="https://orcid.org/0009-0002-2948-315X" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Cristina Romero Ríos"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Mauricio Vásquez Arias <a href="https://orcid.org/0000-0003-0147-8914" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Mauricio Vásquez Arias"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Lina Katherine Mora <a href="https://orcid.org/0009-0008-3506-2128" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Lina Katherine Mora"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Jesús David Amaya Hincapié <a href="https://orcid.org/0009-0006-1721-8323" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Jesús David Amaya Hincapié"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">José Octavio Vidal Salcedo  <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Natalia Suárez Jaramillo <a href="https://orcid.org/0009-0007-8038-1008" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Natalia Suárez Jaramillo"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(SED)</span></div>
           </div>
 
           <div class="credito-rol">
             <span class="credito-rol-titulo">Escritura</span>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Lizett Vaneza Yepez Aguirre <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Lina Katherine Mora <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Maribel Velasco Piamba <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Lizett Vaneza Yepez Aguirre <a href="https://orcid.org/0009-0009-7768-634X" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Lizett Vaneza Yepez Aguirre"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Lina Katherine Mora <a href="https://orcid.org/0009-0008-3506-2128" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Lina Katherine Mora"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Maribel Velasco Piamba <a href="https://orcid.org/0009-0008-7118-4130" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Maribel Velasco Piamba"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
           </div>
 
           <div class="credito-rol">
             <span class="credito-rol-titulo">Revisión y edición</span>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Cristina Romero Ríos <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Mauricio Vásquez Arias <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Jesús David Amaya Hincapié <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Natalia Suárez Jaramillo <span class="inst">(SED)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Claudia Patricia Vega Suaza <span class="inst">(SED)</span></div>
+            <div class="credito-persona">Cristina Romero Ríos <a href="https://orcid.org/0009-0002-2948-315X" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Cristina Romero Ríos"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Mauricio Vásquez Arias <a href="https://orcid.org/0000-0003-0147-8914" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Mauricio Vásquez Arias"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Jesús David Amaya Hincapié <a href="https://orcid.org/0009-0006-1721-8323" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Jesús David Amaya Hincapié"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Natalia Suárez Jaramillo <a href="https://orcid.org/0009-0007-8038-1008" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Natalia Suárez Jaramillo"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(SED)</span></div>
+            <div class="credito-persona">Claudia Patricia Vega Suaza <a href="https://orcid.org/0009-0001-3727-0982" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Claudia Patricia Vega Suaza"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(SED)</span></div>
           </div>
         </div>
       </div>
@@ -119,26 +128,26 @@
 
           <div class="credito-rol">
             <span class="credito-rol-titulo">Software</span>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> José Octavio Vidal Salcedo <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">José Octavio Vidal Salcedo  <span class="inst">(Universidad EAFIT)</span></div>
           </div>
 
           <div class="credito-rol">
             <span class="credito-rol-titulo">Visualización</span>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Claudia Patricia Giraldo Ramírez <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> José Octavio Vidal Salcedo <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Lina Katherine Mora <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Claudia Patricia Giraldo Ramírez <a href="https://orcid.org/0009-0006-5511-0647" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Claudia Patricia Giraldo Ramírez"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">José Octavio Vidal Salcedo  <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Lina Katherine Mora <a href="https://orcid.org/0009-0008-3506-2128" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Lina Katherine Mora"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
           </div>
 
           <div class="credito-rol">
             <span class="credito-rol-titulo">Coordinación técnica del convenio</span>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Natalia Suárez Jaramillo <span class="inst">(SED)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Maribel Velasco Piamba <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Natalia Suárez Jaramillo <a href="https://orcid.org/0009-0007-8038-1008" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Natalia Suárez Jaramillo"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(SED)</span></div>
+            <div class="credito-persona">Maribel Velasco Piamba <a href="https://orcid.org/0009-0008-7118-4130" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Maribel Velasco Piamba"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
           </div>
 
           <div class="credito-rol">
             <span class="credito-rol-titulo">Dirección general del convenio</span>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Mauricio Vásquez Arias <span class="inst">(Universidad EAFIT)</span></div>
-            <div class="credito-persona"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg> Mabel Ayure Urrego <span class="inst">(SED)</span></div>
+            <div class="credito-persona">Mauricio Vásquez Arias <a href="https://orcid.org/0000-0003-0147-8914" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Mauricio Vásquez Arias"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(Universidad EAFIT)</span></div>
+            <div class="credito-persona">Mabel Ayure Urrego <a href="https://orcid.org/0000-0002-0883-5120" target="_blank" rel="noopener" class="orcid-link" title="Ver perfil ORCID de Mabel Ayure Urrego"><svg class="orcid-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#A6CE39"/><text x="8" y="11" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Arial" fill="#fff">iD</text></svg></a> <span class="inst">(SED)</span></div>
           </div>
 
           <div class="credito-rol">
@@ -148,18 +157,27 @@
               Universidad EAFIT para la implementación de la estrategia de Comunicación Pública de la Ciencia 2026.
             </p>
           </div>
-
+        <div class="credito-licencia">
+          <img src="assets/img/Creative commons.png" alt="Licencia Creative Commons Atribución-NoComercial-SinDerivadas 4.0 Internacional" class="cc-badge">
+          
+        </div>
+        <div>
+            <p class="fw-bold mb-1">
+              Esta obra está bajo una licencia Creative Commons Atribución-NoComercial-SinDerivadas 4.0
+              Internacional (CC BY-NC-ND 4.0).
+            </p>
+            <p class="mb-0 credito-parrafo">
+              Esta licencia permite compartir este material en cualquier medio o formato, siempre que otorgue
+              el crédito correspondiente, no lo utilice con fines comerciales y no distribuya versiones
+              modificadas.
+            </p>
+          </div>
           
 
         </div>
       </div>
 
-      <!-- ---- DERECHOS ---- -->
-      <div class="col-12">
-        <div class="credito-derechos">
-          © 2026 Universidad EAFIT y Secretaría de Educación de Bogotá. Todos los derechos reservados.
-        </div>
-      </div>
+      
 
     </div>
   </div>

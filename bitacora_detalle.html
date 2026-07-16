@@ -238,7 +238,26 @@
   function fase3Html(data, tieneE6) {
     const filaFormatos = filaConCampo(data, 'formatos')
     const tabla = filaFormatos ? formatosHtml(filaFormatos.respuestas) : ''
-    const vid = tieneE6 ? VIDEO_DEMO_ID : null
+
+    // Sin Encuentro 6 todavía no hay nada que mostrar: ni cajas vacías ni un
+    // texto que prometa "los encuentras a continuación" sin nada debajo.
+    const seccionProductos = tieneE6 ? `
+      <p class="section-lead">
+        <strong>En las siguientes dos sesiones, continuamos con la producción y posproducción de nuestros
+        productos:</strong> finalmente, de todas las creaciones que conseguimos en los diferentes grupos,
+        seleccionamos los dos productos educomunicativos que mejor representan nuestro proceso, los cuales
+        encuentras a continuación.
+      </p>
+      <div class="row g-3 mt-2">
+        ${productoPlaceholderHtml(VIDEO_DEMO_ID)}
+        ${productoPlaceholderHtml(VIDEO_DEMO_ID)}
+      </div>` : `
+      <p class="section-lead">
+        <strong>En las siguientes dos sesiones, continuamos con la producción y posproducción de nuestros
+        productos:</strong> de todas las creaciones que conseguimos en los diferentes grupos, seleccionaremos
+        los dos productos educomunicativos que mejor representen nuestro proceso. Muy pronto estarán
+        disponibles aquí.
+      </p>`
 
     return `
       <div class="fase-badge fase3-badge mb-3 mt-5">
@@ -256,34 +275,21 @@
         materiales para lograr mensajes más claros, creativos y comprensibles, que reflejaran nuestra
         apropiación de los aprendizajes priorizados en Ciencias Naturales.
       </p>
-      <p class="section-lead">
-        <strong>En las siguientes dos sesiones, continuamos con la producción y posproducción de nuestros
-        productos:</strong> finalmente, de todas las creaciones que conseguimos en los diferentes grupos,
-        seleccionamos los dos productos educomunicativos que mejor representan nuestro proceso, los cuales
-        encuentras a continuación.
-      </p>
       ${tabla}
-      <div class="row g-3 mt-2">
-        ${productoPlaceholderHtml(vid)}
-        ${productoPlaceholderHtml(vid)}
-      </div>`
+      ${seccionProductos}`
   }
 
-  // Tarjeta de producto: si el curso ya tiene Encuentro 6, mostramos el video de
-  // referencia; si no, el placeholder gris. El público/intención comunicativa
-  // aún no están definidos con el equipo pedagógico (quedaron marcados así en
-  // la revisión con Lina) — por eso van con asterisco, no con datos inventados.
+  // Tarjeta de producto: solo se llama cuando SÍ hay Encuentro 6, así que
+  // siempre trae video real — ya no existe la variante de placeholder gris.
+  // El público/intención comunicativa aún no están definidos con el equipo
+  // pedagógico (quedaron marcados así en la revisión con Lina) — por eso van
+  // con asterisco, no con datos inventados.
   function productoPlaceholderHtml(videoId) {
-    const viz = videoId
-      ? `<div class="producto-viz-video">
+    const viz = `<div class="producto-viz-video">
            <iframe src="https://www.youtube.com/embed/${esc(videoId)}"
                    title="Producto educomunicativo" frameborder="0"
                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-         </div>`
-      : `<div class="producto-viz-mini">
-           <i class="bi bi-play-circle"></i>
-           <span>Aquí irá la visualización del producto</span>
          </div>`
     return `
       <div class="col-md-6">
@@ -321,7 +327,11 @@
     document.getElementById('breadcrumb-curso').textContent =
       `${primera.colegio} — ${primera.codigo_curso}`
 
-    const tieneE6 = data.some((r) => Number(r.encuentro_numero) === 6)
+    // Ojo: bitacoras_resumen puede traer una fila por cada encuentro aunque el
+    // tutor todavía no la haya diligenciado — por eso no basta con que la fila
+    // exista, exigimos que además traiga contenido real en `respuestas`.
+    const filaE6 = data.find((r) => Number(r.encuentro_numero) === 6)
+    const tieneE6 = !!filaE6 && filaE6.respuestas && Object.keys(filaE6.respuestas).length > 0
 
     cont.innerHTML =
       heroHtml(primera) +
