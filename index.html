@@ -39,7 +39,7 @@
   #modalMapa .mapa-tip { position: absolute; pointer-events: none; background: #2b2b2b; color: #fff;
     padding: .25rem .5rem; border-radius: 6px; font-size: .78rem; white-space: nowrap; opacity: 0; transition: opacity .1s; z-index: 5; }
   #modalMapa .leyenda-mapa { font-size: .72rem; }
-  #modalMapa .leyenda-mapa .barra { height: 12px; border-radius: 3px; background: linear-gradient(90deg, #eaf0ea, #3d5c35); }
+  #modalMapa .leyenda-mapa .barra { height: 12px; border-radius: 3px; background: linear-gradient(90deg, #eaf0ea, #d4b87a, #c47c35); }
   #modalMapa .sw-gris { display:inline-block; width:12px; height:12px; background:#e6e2d8; border-radius:3px; vertical-align:middle; }
   #modalMapa .mapa-panel { border-left: 1px solid var(--gris-claro); }
   @media (max-width: 991px){ #modalMapa .mapa-panel { border-left:none; border-top:1px solid var(--gris-claro);} #modalMapa .mapa-modal-box{height:44vh;} }
@@ -203,7 +203,7 @@ de la Ciencia</h1>
 
     <div class="row g-4 justify-content-center">
       <div class="col-6 col-md-3 text-center">
-        <div class="stat-circle mx-auto" data-target="141">0</div>
+        <div class="stat-circle mx-auto" data-target="80">0</div>
         <p class="stat-label mx-auto">Instituciones Educativas Distritales</p>
       </div>
       <div class="col-6 col-md-3 text-center">
@@ -211,11 +211,11 @@ de la Ciencia</h1>
         <p class="stat-label mx-auto">Cursos de 7° a 11°</p>
       </div>
       <div class="col-6 col-md-3 text-center">
-<div class="stat-circle mx-auto" style="font-size:1.2rem;" data-target="6400" data-suffix="+" data-sep>0</div>
+<div class="stat-circle mx-auto" style="font-size:1.2rem;" data-target="5170"  data-sep>0</div>
         <p class="stat-label mx-auto">Estudiantes participantes</p>
       </div>
       <div class="col-6 col-md-3 text-center">
-<div class="stat-circle mx-auto" data-target="147">0</div>
+<div class="stat-circle mx-auto" data-target="167">0</div>
         <p class="stat-label mx-auto">Docentes participantes</p>
       </div>
     </div>
@@ -391,7 +391,8 @@ de la Ciencia</h1>
     //const EXCLUIR = ['SUMAPAZ']  // agrega las que quieras: ['USAQUEN','SUMAPAZ',...]
     //const feats = (GEO.features || []).filter((f) => !EXCLUIR.includes(key(nombreDe(f))))
     const maxDil = Math.max(1, ...Object.values(STATS).map((s)=>s.dilemas.length))
-    const escala = d3.scaleSequential(d3.interpolateRgb('#eaf0ea','#3d5c35')).domain([0,maxDil])
+    const escala = d3.scaleLinear().domain([0, maxDil*0.5, maxDil])
+      .range(['#eaf0ea', '#d4b87a', '#c47c35']).interpolate(d3.interpolateRgb)
     const fill = (f)=>{ const s=statsDe(f); return s?escala(s.dilemas.length):'#e6e2d8' }
     const W = cont.clientWidth || 1100, H = cont.clientHeight || 700
     const proj = d3.geoIdentity().reflectY(true).fitSize([W,H], GEO)
