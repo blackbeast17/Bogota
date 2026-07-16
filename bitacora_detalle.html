@@ -111,7 +111,6 @@
   import {
     getBitacorasDeCurso,
     formatoLabel,
-    participacionLabel,
     esc,
   } from './assets/js/db.js'
 
@@ -167,54 +166,132 @@
       </div>`
   }
 
-  function tematicasHtml(resp) {
-    const t = (resp?.tematicas ?? []).filter(Boolean)
-    if (t.length === 0) return ''
-    return `
-      <p class="fw-bold mb-1" style="color:var(--dorado);font-family:var(--font-display);">Temáticas trabajadas</p>
-      <div class="actores-box"><ol class="mb-0 ps-3">${t.map((x) => `<li>${esc(x)}</li>`).join('')}</ol></div>`
+  // ---------- Utilidad: busca la primera fila que trae un campo con dato ----------
+  // Las respuestas viven repartidas en distintos encuentros (dilema_final en E2,
+  // actores en E3, formatos más adelante); en vez de asumir un número de
+  // encuentro fijo, buscamos la fila que de verdad trae el campo con contenido.
+  function filaConCampo(data, campo) {
+    return data.find((r) => {
+      const v = r.respuestas?.[campo]
+      if (v == null) return false
+      if (typeof v === 'string') return v.trim() !== ''
+      if (Array.isArray(v)) return v.length > 0
+      if (typeof v === 'object') return Object.keys(v).length > 0
+      return true
+    })
   }
 
-  function evolucionHtml(resp) {
-    const e = resp?.evolucion_participacion
-    if (!e || (!e.inicio && !e.final)) return ''
+  // ---------- Fase 1. Activación de la curiosidad ----------
+  // Narrativa fija (misma para todas las instituciones): describe la metodología,
+  // no depende de datos particulares del curso.
+  function fase1Html() {
     return `
-      <p class="fw-bold mb-1" style="color:var(--dorado);font-family:var(--font-display);">Evolución de la participación</p>
-      <div class="row g-3 mb-3">
-        <div class="col-md-6"><div class="dilema-box mb-0"><strong>Al inicio:</strong> ${esc(e.inicio || '—')}</div></div>
-        <div class="col-md-6"><div class="dilema-box mb-0"><strong>Al final:</strong> ${esc(e.final || '—')}</div></div>
+      <div class="fase-badge fase1-badge mb-3">
+        <span class="dot"></span> Fase 1. Activación de la curiosidad
+      </div>
+      <p class="section-lead">
+        Durante esta fase, observamos, debatimos y compartimos ideas sobre fenómenos cotidianos que quizás
+        nunca habíamos mirado con tanta atención. Entendimos que la ciencia no solo ocurre en los laboratorios,
+        sino también en el salón, en el barrio y en las preguntas que hacemos todos los días.
+        Esta fase constó de un encuentro con un experimento demostrativo para activar la curiosidad.
+      </p>`
+  }
+
+  // ---------- Fase 2. Comprensión ----------
+  // El dilema viene del Encuentro 2; los actores del juego de roles, del Encuentro 3
+  // (así los agrupa el propio "Datos descriptivos" del sitio bajo Fase 2).
+  function fase2Html(data) {
+    const dilema = filaConCampo(data, 'dilema_final')?.respuestas?.dilema_final
+    const actores = filaConCampo(data, 'actores')?.respuestas?.actores
+
+    return `
+      <div class="fase-badge fase2-badge mb-3 mt-5">
+        <span class="dot"></span> Fase 2. Comprensión
+      </div>
+      <p class="section-lead">
+        En esta fase nos convertimos en navegantes de dilemas. En un primer taller, exploramos sobre páramos,
+        humedales, ríos, zonas verdes urbanas y otros ecosistemas de Bogotá para entender que una misma
+        situación puede tener muchas perspectivas. Luego, en el segundo taller de esta fase, seleccionamos
+        un ecosistema y construimos un dilema alrededor de este.
+      </p>
+      ${dilema ? `
+        <p class="fw-bold mb-1" style="color:var(--dorado);font-family:var(--font-display);">Nuestro dilema</p>
+        <div class="dilema-box">${esc(dilema)}</div>` : ''}
+      <p class="section-lead mt-3">
+        Después de elegir nuestro dilema, tuvimos dos talleres complementarios entre sí en los que
+        participamos de un juego de roles para debatir diferentes puntos de vista. Investigamos, argumentamos
+        y creamos títeres para representar posturas distintas y así comprender que los problemas
+        socioambientales tienen múltiples voces e intereses. Experimentamos, además, cómo la Comunicación
+        Pública de la Ciencia es una herramienta poderosa para contar perspectivas desde un enfoque riguroso
+        pero también divertido.
+      </p>
+      ${actores ? `
+        <p class="fw-bold mb-1" style="color:var(--dorado);font-family:var(--font-display);">Actores que interpretamos</p>
+        <div class="actores-box">${esc(actores)}</div>` : ''}`
+  }
+
+  // Video temporal para cursos con Encuentro 6 registrado: mientras no exista un
+  // enlace real por producto, mostramos este de referencia en las dos tarjetas.
+  const VIDEO_DEMO_ID = 'Epcpsv9OgAI'
+
+  // ---------- Fase 3. Empoderamiento/acción ----------
+  function fase3Html(data, tieneE6) {
+    const filaFormatos = filaConCampo(data, 'formatos')
+    const tabla = filaFormatos ? formatosHtml(filaFormatos.respuestas) : ''
+    const vid = tieneE6 ? VIDEO_DEMO_ID : null
+
+    return `
+      <div class="fase-badge fase3-badge mb-3 mt-5">
+        <span class="dot"></span> Fase 3. Empoderamiento/acción
+      </div>
+      <p class="section-lead">
+        En esta fase transformamos nuestras reflexiones y aprendizajes en productos educomunicativos para dar
+        a conocer lo que descubrimos sobre los ecosistemas y dilemas socioambientales del territorio. En las
+        primeras dos sesiones, exploramos diferentes formas de comunicar: sonoras, gráficas y audiovisuales.
+      </p>
+      <p class="section-lead">
+        Luego nos organizamos en grupos y cada equipo eligió el formato con el que quería trabajar. Ahí
+        arrancamos con la <strong>preproducción</strong> de nuestras creaciones: definimos qué queríamos
+        comunicar, organizamos roles dentro de los equipos, construimos guiones y ajustamos nuestros
+        materiales para lograr mensajes más claros, creativos y comprensibles, que reflejaran nuestra
+        apropiación de los aprendizajes priorizados en Ciencias Naturales.
+      </p>
+      <p class="section-lead">
+        <strong>En las siguientes dos sesiones, continuamos con la producción y posproducción de nuestros
+        productos:</strong> finalmente, de todas las creaciones que conseguimos en los diferentes grupos,
+        seleccionamos los dos productos educomunicativos que mejor representan nuestro proceso, los cuales
+        encuentras a continuación.
+      </p>
+      ${tabla}
+      <div class="row g-3 mt-2">
+        ${productoPlaceholderHtml(vid)}
+        ${productoPlaceholderHtml(vid)}
       </div>`
   }
 
-  function generalHtml(meta, r) {
-    const p = meta?.p6_nivel_participacion
-    const fecha = r.fecha_encuentro ? `<span><i class="bi bi-calendar3 me-1"></i>${esc(r.fecha_encuentro)}</span>` : ''
-    const part = p ? `<span><i class="bi bi-bar-chart-fill me-1"></i>Participación: <strong>${esc(participacionLabel(p))}</strong></span>` : ''
-    if (!fecha && !part) return ''
-    return `<div class="ied-meta mb-3" style="gap:1.5rem;">${fecha}${part}</div>`
-  }
-
-  // Tarjeta por encuentro registrado
-  function encuentroHtml(r) {
-    const resp = r.respuestas ?? {}
-    const meta = r.meta_general ?? {}
-    const cuerpo = [
-      generalHtml(meta, r),
-      tematicasHtml(resp),
-      formatosHtml(resp),
-      evolucionHtml(resp),
-      r.comentarios
-        ? `<p class="fw-bold mb-1" style="color:var(--dorado);font-family:var(--font-display);">Comentarios del tutor</p><p>${esc(r.comentarios)}</p>`
-        : '',
-    ].join('')
-
+  // Tarjeta de producto: si el curso ya tiene Encuentro 6, mostramos el video de
+  // referencia; si no, el placeholder gris. El público/intención comunicativa
+  // aún no están definidos con el equipo pedagógico (quedaron marcados así en
+  // la revisión con Lina) — por eso van con asterisco, no con datos inventados.
+  function productoPlaceholderHtml(videoId) {
+    const viz = videoId
+      ? `<div class="producto-viz-video">
+           <iframe src="https://www.youtube.com/embed/${esc(videoId)}"
+                   title="Producto educomunicativo" frameborder="0"
+                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                   referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+         </div>`
+      : `<div class="producto-viz-mini">
+           <i class="bi bi-play-circle"></i>
+           <span>Aquí irá la visualización del producto</span>
+         </div>`
     return `
-      <div class="mb-4">
-        <div class="fase-badge fase3-badge">
-          <span class="dot"></span>
-          Encuentro ${esc(r.encuentro_numero)} · ${esc(r.encuentro_nombre)}
+      <div class="col-md-6">
+        ${viz}
+        <div class="producto-meta-box">
+          <div><strong>Público objetivo:</strong> por definir <span class="ast" title="Dato pendiente de definir con el equipo pedagógico">*</span></div>
+          <div><strong>Intención comunicativa:</strong> por definir <span class="ast" title="Dato pendiente de definir con el equipo pedagógico">*</span></div>
         </div>
-        ${cuerpo || '<p class="text-muted">Esta bitácora no tiene detalles adicionales registrados.</p>'}
       </div>`
   }
 
@@ -244,10 +321,14 @@
     document.getElementById('breadcrumb-curso').textContent =
       `${primera.colegio} — ${primera.codigo_curso}`
 
+    const tieneE6 = data.some((r) => Number(r.encuentro_numero) === 6)
+
     cont.innerHTML =
       heroHtml(primera) +
       `<p class="section-lead mb-4">Proceso registrado por el equipo tutor a lo largo de los encuentros de la estrategia.</p>` +
-      data.map(encuentroHtml).join('')
+      fase1Html() +
+      fase2Html(data) +
+      fase3Html(data, tieneE6)
   }
 
   init()

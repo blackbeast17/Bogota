@@ -610,7 +610,7 @@ a:hover { color: var(--verde-oscuro); }
 }
 
 .tabla-formatos th {
-  background: var(--verde-medio);
+  background: var(--dorado);
   color: white;
   font-family: var(--font-display);
   font-weight: 600;
@@ -623,6 +623,40 @@ a:hover { color: var(--verde-oscuro); }
   font-size: 0.9rem;
   border-bottom: 1px solid var(--gris-claro);
 }
+
+/* ---- Dato pendiente de definir (asterisco rojo) ---- */
+.ast { color: #d6453c; font-weight: 900; margin-left: .15rem; cursor: help; }
+
+/* ---- Producto destacado (Fase 3): visualización + ficha ---- */
+.producto-viz-mini {
+  background: var(--gris-claro);
+  border-radius: var(--radius) var(--radius) 0 0;
+  aspect-ratio: 16/10;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: .5rem; color: var(--gris-texto); text-align: center; padding: 1rem;
+}
+.producto-viz-mini i { font-size: 2.2rem; opacity: .5; }
+.producto-viz-mini span { font-size: .82rem; }
+
+/* Producto CON video (temporal, mientras se define el enlace real por producto) */
+.producto-viz-video {
+  position: relative;
+  aspect-ratio: 16/9;
+  border-radius: var(--radius) var(--radius) 0 0;
+  overflow: hidden;
+  background: #000;
+}
+.producto-viz-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+.producto-meta-box {
+  background: var(--terracota-bg);
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: .75rem 1rem;
+  font-size: .82rem;
+  color: var(--negro);
+}
+.producto-meta-box div + div { margin-top: .3rem; }
+.producto-meta-box strong { color: var(--terracota); }
 
 /* ---- Breadcrumb mini ---- */
 .mini-breadcrumb {
