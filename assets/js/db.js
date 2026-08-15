@@ -58,7 +58,7 @@ export async function getBitacoraPorId(id) {
 }
 
 
-// Dilemas finales por curso (Encuentro 2) para dilemas.html.
+// Dilemas definitivos por curso (Encuentro 6) para dilemas.html.
 export async function getDilemas() {
   return supabase
     .from('dilemas_publicos')
@@ -67,7 +67,56 @@ export async function getDilemas() {
 }
 
 
+// --- Productos educomunicativos (productos.html, bitacora_detalle.html) ---
+
+// Todos los productos con su curso, colegio, ecosistema y dilema.
+export async function getProductos() {
+  return supabase
+    .from('productos_publicos')
+    .select('*')
+    .order('colegio', { ascending: true })
+    .order('orden', { ascending: true })
+}
+
+// Los productos de un solo curso, p. ej. "IED7A".
+export async function getProductosDeCurso(codigoCurso) {
+  return supabase
+    .from('productos_publicos')
+    .select('*')
+    .eq('codigo_curso', codigoCurso)
+    .order('orden', { ascending: true })
+}
+
+
 // --- Vistas analíticas (datos.html) ---
+
+// Participación docente por encuentro y fase (flujo).
+export async function getDocentesFase() {
+  return supabase
+    .from('datos_docentes_fase')
+    .select('*')
+    .order('encuentro', { ascending: true })
+}
+
+// Formas de comunicar de los productos publicados.
+export async function getFormasComunicar() {
+  return supabase.from('datos_formas_comunicar').select('*').order('n', { ascending: false })
+}
+
+// Verbos de la intención comunicativa (nube).
+export async function getIntencionVerbos() {
+  return supabase.from('datos_intencion_verbos').select('*').order('n', { ascending: false })
+}
+
+// Públicos objetivos de los productos.
+export async function getPublicosObjetivo() {
+  return supabase.from('datos_publicos_objetivo').select('*').order('n', { ascending: false })
+}
+
+// Formatos realmente producidos (Encuentro 6), no los proyectados en el E4.
+export async function getFormatosFinales() {
+  return supabase.from('formatos_finales').select('*').order('total_productos', { ascending: false })
+}
 
 // Distribución de niveles de participación por encuentro.
 export async function getDistribucionParticipacion() {

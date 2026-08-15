@@ -11,59 +11,55 @@
 
   <style>
     /* ── Layout página ───────────────────────────────── */
-    .productos-maqueta {
-      padding: 3rem 0;
-      background: var(--blanco);
-    }
+    .productos-maqueta { padding: 2.5rem 0 3rem; background: var(--blanco); }
 
-    .productos-maqueta-grid {
-      display: grid;
-      grid-template-columns: 38% 62%;
-      gap: 3rem;
-      align-items: start;
-    }
+    /* Encabezado: título + intro en dos columnas de texto, ancho completo */
+    .productos-intro { margin-bottom: 1.5rem; }
+    .productos-intro h1 { font-size: 1.9rem; margin-bottom: .6rem; }
+    .productos-intro .intro-cols { column-count: 2; column-gap: 2.5rem; }
+    .productos-intro p { line-height: 1.35; margin-bottom: .8rem; color: var(--gris-texto);
+      break-inside: avoid; }
+    @media (max-width: 767px) { .productos-intro .intro-cols { column-count: 1; } }
 
-    /* ── Columna izquierda ───────────────────────────── */
-    .productos-intro h1 {
-      font-size: 1.7rem;
-      margin-bottom: 0.5rem;
-    }
+    /* ── Diagrama de arcos (banda superior) ──────────── */
+    .productos-viz-banda { margin: 0 0 2rem; }
+    .viz-productos-box { background: var(--gris-claro); border-radius: var(--radius-lg);
+      padding: .5rem .75rem 0; position: relative; }
+    .viz-productos-box svg { width: 100%; height: auto; display: block; outline: none; }
+    .viz-productos-box svg:focus-visible { outline: 2px solid var(--verde-medio); outline-offset: 3px; }
 
-    .productos-intro p {
-      max-width: 100%;
-      line-height: 1.25;
-      margin-bottom: 1rem;
-      color: var(--gris-texto);
-    }
+    .vp-arco { transition: opacity .12s ease; }
+    .vp-arcos.vp-atenuado .vp-arco { opacity: .04 !important; }
+    .vp-arcos.vp-atenuado .vp-punto,
+    .vp-arcos.vp-atenuado .vp-barra { opacity: .25; }
+    .vp-arco.vp-hl { opacity: .95 !important; stroke-width: 1.6; }
+    .vp-punto.vp-hl, .vp-barra.vp-hl { opacity: 1 !important; }
+    .vp-punto.vp-hl { r: 4.5; stroke: #fff; stroke-width: 1.2; }
+    .vp-off { opacity: .05 !important; }
+    .vp-banda { font-size: 8px; fill: var(--gris-texto); font-family: var(--font-body, sans-serif);
+      text-transform: capitalize; }
+    .vp-sep { stroke: #d8d0be; stroke-width: .5; }
 
-    .productos-viz-placeholder {
-      margin-top: 1.5rem;
-      min-height: 170px;
-    }
+    .vp-tip { position: absolute; top: .4rem; transform: translateX(-50%);
+      background: var(--verde-oscuro); color: #fff; border-radius: 8px; padding: .35rem .6rem;
+      font-size: .72rem; line-height: 1.25; pointer-events: none; opacity: 0;
+      transition: opacity .12s ease; max-width: 260px; text-align: center; z-index: 5; }
+    .vp-tip.visible { opacity: 1; }
+    .vp-tip strong { display: block; font-family: var(--font-display); }
+    .vp-tip span { opacity: .85; font-size: .68rem; }
 
-    /* ── Visualización: individual <-> red ───────────── */
-    .viz-productos-box { background: var(--gris-claro); border-radius: var(--radius); padding: .75rem; position: relative; }
-    .viz-productos-box svg { width: 100%; height: auto; display: block; cursor: grab; touch-action: none; }
-    .viz-productos-box svg:active { cursor: grabbing; }
-    .viz-productos-box .vp-node { cursor: pointer; }
-    .viz-productos-box .vp-node circle { stroke: #fff; stroke-width: 1.5; }
-    .viz-productos-box .vp-node:hover circle { r: 8; }
-    .vp-mini-card { width: 100%; height: 100%; border-radius: 8px; overflow: hidden; position: relative;
-      background: var(--gris-medio); box-shadow: 0 2px 10px rgba(0,0,0,.25); display: flex; align-items: center; justify-content: center; }
-    .vp-mini-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .vp-mini-audio { font-size: 1.4rem; color: #fff; }
-    .vp-mini-play { position: absolute; inset: 0; margin: auto; width: 26px; height: 26px; border-radius: 50%;
-      background: rgba(255,255,255,.92); border: none; color: var(--verde-oscuro); font-size: .7rem;
-      display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
-    .vp-mini-titulo { position: absolute; left: 0; right: 0; bottom: 0; padding: 2px 4px; font-size: 6.5px;
-      color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.65)); line-height: 1.15; }
-    .viz-productos-leyenda { display: flex; flex-wrap: wrap; gap: .4rem 1rem; margin-top: .6rem; font-size: .72rem; color: var(--gris-texto); }
-    .viz-productos-leyenda .dot { display: inline-block; width: .6rem; height: .6rem; border-radius: 50%; margin-right: .3rem; vertical-align: middle; }
-    .viz-productos-controles { display: flex; align-items: center; gap: .6rem; margin-top: .7rem; }
-    .viz-productos-controles button { font-size: .72rem; padding: .3rem .7rem; border-radius: 6px; border: 1px solid var(--gris-medio); background: #fff; cursor: pointer; color: var(--verde-oscuro); font-weight: 600; }
+    .viz-productos-leyenda { display: flex; flex-wrap: wrap; align-items: center;
+      gap: .4rem 1.2rem; margin-top: .5rem; font-size: .72rem; color: var(--gris-texto); }
+    .viz-productos-leyenda .dot { display: inline-block; width: .6rem; height: .6rem;
+      border-radius: 50%; margin-right: .3rem; vertical-align: middle; }
+    .viz-productos-leyenda .vp-nota { margin-left: auto; font-style: italic; opacity: .8; }
+    .viz-productos-controles { display: flex; align-items: center; gap: .8rem; margin-top: .6rem; }
+    .viz-productos-controles button { font-size: .74rem; padding: .3rem .8rem; border-radius: 50px;
+      border: 1px solid var(--gris-medio); background: #fff; cursor: pointer;
+      color: var(--verde-oscuro); font-weight: 600; }
     .viz-productos-controles button:hover { background: var(--gris-claro); }
-    .viz-productos-controles input[type=range] { flex: 1; }
-    .viz-productos-modo { font-size: .72rem; font-weight: 700; color: var(--verde-oscuro); min-width: 74px; text-align: right; }
+    .viz-productos-modo { font-size: .74rem; font-weight: 700; color: var(--verde-oscuro); }
+
     .vp-highlight { animation: vp-pulse 1.4s ease; }
     @keyframes vp-pulse {
       0%   { box-shadow: 0 0 0 0 rgba(61,92,53,.5); }
@@ -72,13 +68,7 @@
     }
 
     /* ── Columna derecha ─────────────────────────────── */
-    .productos-derecha {
-      min-width: 0;
-    }
-
-    .productos-filtros {
-      margin-bottom: 1.25rem;
-    }
+    .productos-filtros { margin-bottom: 1.25rem; }
 
     .productos-filtros .filter-bar {
       margin-bottom: 0;
@@ -130,12 +120,20 @@
       font-family: var(--font-display);
     }
 
-    /* ── Responsive ──────────────────────────────────── */
-    @media (max-width: 992px) {
-      .productos-maqueta-grid {
-        grid-template-columns: 1fr;
-      }
-    }
+
+    /* ── Estados añadidos al conectar con la base ────── */
+    .productos-contador { font-size: .8rem; color: var(--gris-texto); margin-bottom: .5rem; }
+    .productos-estado { padding: 3rem 0; text-align: center; color: var(--gris-texto); }
+    .card-producto .card-header { font-size: .82rem; line-height: 1.2; }
+    .card-producto .card-footer .meta { font-size: .7rem; }
+    .badge-tipo { background: var(--gris-claro); color: var(--negro); font-size: .7rem; }
+    .badge-eco  { background: var(--verde-bg); color: var(--verde-oscuro); font-size: .7rem; }
+    #modalProducto .player-wrap img { border-radius: var(--radius); }
+    #modalProducto .player-wrap.juego { height: min(78vh, 760px); background:#000; }
+    #modalProducto .player-wrap.juego iframe { height: calc(100% - 34px); }
+    #modalProducto .player-fallback { height:34px; display:flex; align-items:center; justify-content:center;
+      font-size:.78rem; background:var(--gris-claro); color:var(--gris-texto); }
+    #modalProducto .player-fallback a { color:var(--verde-medio); margin-left:.3rem; }
   </style>
 </head>
 
@@ -164,236 +162,81 @@
 <!-- ============ PRODUCTOS EDUCOMUNICATIVOS ============ -->
 <section class="productos-maqueta">
   <div class="container">
-    <div class="productos-maqueta-grid">
 
-      <!-- ── COLUMNA IZQUIERDA ── -->
-      <aside class="productos-intro">
-        <h1>Voces de los ecosistemas de Bogotá</h1>
-
-        <p class="section-lead mb-2">
+    <!-- ── ENCABEZADO ── -->
+    <header class="productos-intro">
+      <h1>Voces de los ecosistemas de Bogotá</h1>
+      <div class="intro-cols">
+        <p class="section-lead">
           Los productos educomunicativos hacen parte de un
           <strong>universo transmedia</strong> construido colectivamente por las y los estudiantes.
         </p>
-
         <p>
           Cada curso se dividió en grupos. Cada equipo eligió un formato distinto —sonoro, gráfico
           o audiovisual— y desarrollaron productos que se conectan entre sí a partir de los dilemas
           socioambientales relacionados con los ecosistemas trabajados durante la estrategia.
-          Aquí se presenta una selección de 4 productos de cada Institución Educativa.
         </p>
-
         <p>
-          Esta sección permite explorar las creaciones desde diferentes categorías: formas de
-          comunicar, formato y ecosistema abordado. Cada pieza puede entenderse de manera individual,
-          pero también como parte de una red de historias, preguntas, perspectivas y formas de
-          comunicar la ciencia desde múltiples lenguajes.
+          El diagrama reúne todas las piezas sobre un mismo eje. Cada punto es un producto y cada
+          arco una relación: piezas del mismo curso, del mismo colegio, del mismo formato o del
+          mismo ecosistema. Pasa el cursor por el eje para seguir una pieza y haz clic para ir a ella.
         </p>
+      </div>
+    </header>
 
-        <div class="productos-viz-placeholder">
-          <div id="viz-productos-red" class="viz-productos-box"></div>
-          <div class="viz-productos-leyenda" id="viz-productos-leyenda"></div>
-          <div class="viz-productos-controles">
-            <button type="button" id="vp-play">Ver como red (equirectangular)</button>
-            <span class="viz-productos-modo" id="vp-modo">Individual (ortográfica)</span>
-          </div>
-        </div>
-      </aside>
+    <!-- ── DIAGRAMA DE ARCOS ── -->
+    <div class="productos-viz-banda">
+      <div id="viz-productos-red" class="viz-productos-box"></div>
+      <div class="viz-productos-leyenda" id="viz-productos-leyenda"></div>
+      <div class="viz-productos-controles">
+        <button type="button" id="vp-play">Reagrupar por ecosistema</button>
+        <span class="viz-productos-modo" id="vp-modo">Agrupados por localidad</span>
+      </div>
+    </div>
 
-      <!-- ── COLUMNA DERECHA ── -->
-      <main class="productos-derecha">
+    <!-- ── FILTROS Y GRILLA ── -->
+    <main class="productos-derecha">
 
-        <!-- FILTROS -->
+        <!-- FILTROS (las opciones se arman con lo que traiga la base) -->
         <div class="productos-filtros">
           <div class="filter-bar">
             <span class="filter-label">Filtrar por</span>
 
             <select class="form-select" id="filtro-forma" style="width:auto;">
               <option value="">Formas de comunicar</option>
-              <option value="audiovisual">Audiovisual</option>
-              <option value="sonoro">Sonoro</option>
-              <option value="grafico">Gráfico</option>
             </select>
 
             <select class="form-select" id="filtro-formato" style="width:auto;">
               <option value="">Formatos</option>
-              <option value="entrevista">Entrevista audiovisual</option>
-              <option value="performance">Performance</option>
-              <option value="radionovela">Radionovela</option>
-              <option value="cancion">Canción</option>
-              <option value="historieta">Historieta</option>
-              <option value="linea-tiempo">Línea de tiempo</option>
             </select>
 
             <select class="form-select" id="filtro-ecosistema" style="width:auto;">
               <option value="">Ecosistemas</option>
-              <option value="humedal">Humedal</option>
-              <option value="paramo">Páramo</option>
-              <option value="rio">Río</option>
-              <option value="cerros">Cerros orientales</option>
-              <option value="parque">Parque urbano</option>
             </select>
 
             <select class="form-select" id="filtro-localidad" style="width:auto;">
               <option value="">Localidad</option>
-              <option value="usme">Usme</option>
-              <option value="kennedy">Kennedy</option>
-              <option value="suba">Suba</option>
             </select>
 
             <select class="form-select" id="filtro-colegio" style="width:auto;">
               <option value="">Colegio</option>
-              <option value="juan-lozano">Juan Lozano</option>
-              <option value="rafael-uribe">Rafael Uribe</option>
-              <option value="rodrigo-lara">Rodrigo Lara</option>
-              <option value="liceo-femenino">Liceo Femenino</option>
             </select>
 
             <button class="btn-limpiar ms-auto">Limpiar filtros</button>
           </div>
         </div>
 
+        <p class="productos-contador" id="productos-contador"></p>
+
         <!-- CARDS GRID -->
         <div class="row g-3" id="productos-container" style="--bs-gutter-x:1rem;">
-
-          <!-- El agua tiene voz -->
-          <div class="col-6 col-xl-4 producto-item"
-               data-forma="audiovisual" data-formato="entrevista" data-grado="7"
-               data-ecosistema="humedal" data-localidad="usme" data-colegio="juan-lozano">
-            <div class="card card-producto h-100 d-flex flex-column"
-                 data-id="p1" data-kind="youtube" data-vid="k6vQ5rQFMh8" data-titulo="El agua tiene voz">
-              <div class="card-header">El agua tiene voz</div>
-
-              <div class="media-area" data-slot="media">
-                <img class="media-poster" src="https://i.ytimg.com/vi/k6vQ5rQFMh8/hqdefault.jpg" alt="">
-                <div class="play-btn" data-action="play"><i class="bi bi-play-fill"></i></div>
-                <span class="badge position-absolute top-0 end-0 m-2" style="background:var(--verde-oscuro);">Audiovisual</span>
-              </div>
-
-              <div class="p-2 flex-grow-1">
-                <small class="d-block" style="color:var(--gris-texto);">
-                  <span class="badge me-1" style="background:var(--gris-claro);color:var(--negro);font-size:.7rem;">Entrevista</span>
-                  <span class="badge" style="background:var(--verde-bg);color:var(--verde-oscuro);font-size:.7rem;">Humedal</span>
-                </small>
-                <button class="btn-grande d-none" data-action="grande">
-                  <i class="bi bi-arrows-fullscreen"></i> Ver en grande
-                </button>
-              </div>
-
-              <div class="card-footer">
-                <div class="colegio-name">Colegio Juan Lozano</div>
-                <div class="meta">
-                  <span><i class="bi bi-mortarboard"></i> 7°-1</span>
-                  <span><i class="bi bi-geo-alt"></i> Usme</span>
-                </div>
-              </div>
-            </div>
+          <div class="productos-estado col-12" id="productos-loading">
+            <div class="spinner-border text-secondary" role="status" aria-hidden="true"></div>
+            <p class="mt-3 mb-0">Cargando productos…</p>
           </div>
+        </div>
 
-          <!-- El último páramo -->
-          <div class="col-6 col-xl-4 producto-item"
-               data-forma="audiovisual" data-formato="entrevista" data-grado="8"
-               data-ecosistema="paramo" data-localidad="usme" data-colegio="rafael-uribe">
-            <div class="card card-producto h-100 d-flex flex-column"
-                 data-id="p2" data-kind="youtube" data-vid="5GxfsiVnvu0" data-titulo="El último páramo">
-              <div class="card-header">El último páramo</div>
-
-              <div class="media-area" data-slot="media">
-                <img class="media-poster" src="https://i.ytimg.com/vi/5GxfsiVnvu0/hqdefault.jpg" alt="">
-                <div class="play-btn" data-action="play"><i class="bi bi-play-fill"></i></div>
-                <span class="badge position-absolute top-0 end-0 m-2" style="background:var(--verde-oscuro);">Audiovisual</span>
-              </div>
-
-              <div class="p-2 flex-grow-1">
-                <small class="d-block" style="color:var(--gris-texto);">
-                  <span class="badge me-1" style="background:var(--gris-claro);color:var(--negro);font-size:.7rem;">Entrevista</span>
-                  <span class="badge" style="background:var(--verde-bg);color:var(--verde-oscuro);font-size:.7rem;">Páramo</span>
-                </small>
-                <button class="btn-grande d-none" data-action="grande">
-                  <i class="bi bi-arrows-fullscreen"></i> Ver en grande
-                </button>
-              </div>
-
-              <div class="card-footer">
-                <div class="colegio-name">Colegio Rafael Uribe</div>
-                <div class="meta">
-                  <span><i class="bi bi-mortarboard"></i> 8°-3</span>
-                  <span><i class="bi bi-geo-alt"></i> Usme</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-           <!-- El último páramo -->
-          <div class="col-6 col-xl-4 producto-item"
-               data-forma="audiovisual" data-formato="entrevista" data-grado="8"
-               data-ecosistema="paramo" data-localidad="usme" data-colegio="rafael-uribe">
-            <div class="card card-producto h-100 d-flex flex-column"
-                 data-id="p2" data-kind="youtube" data-vid="Epcpsv9OgAI" data-titulo="El último páramo">
-              <div class="card-header">El espejo sumergido</div>
-
-              <div class="media-area" data-slot="media">
-                <img class="media-poster" src="https://i.ytimg.com/vi/Epcpsv9OgAI/hqdefault.jpg" alt="">
-                <div class="play-btn" data-action="play"><i class="bi bi-play-fill"></i></div>
-                <span class="badge position-absolute top-0 end-0 m-2" style="background:var(--verde-oscuro);">Audiovisual</span>
-              </div>
-
-              <div class="p-2 flex-grow-1">
-                <small class="d-block" style="color:var(--gris-texto);">
-                  <span class="badge me-1" style="background:var(--gris-claro);color:var(--negro);font-size:.7rem;">Entrevista</span>
-                  <span class="badge" style="background:var(--verde-bg);color:var(--verde-oscuro);font-size:.7rem;">Páramo</span>
-                </small>
-                <button class="btn-grande d-none" data-action="grande">
-                  <i class="bi bi-arrows-fullscreen"></i> Ver en grande
-                </button>
-              </div>
-
-              <div class="card-footer">
-                <div class="colegio-name">Colegio Rafael Uribe</div>
-                <div class="meta">
-                  <span><i class="bi bi-mortarboard"></i> 8°-3</span>
-                  <span><i class="bi bi-geo-alt"></i> Usme</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- El Río que Habla -->
-          <div class="col-6 col-xl-4 producto-item"
-               data-forma="sonoro" data-formato="radionovela" data-grado="7"
-               data-ecosistema="rio" data-localidad="usme" data-colegio="rodrigo-lara">
-            <div class="card card-producto h-100 d-flex flex-column"
-                 data-id="p3" data-kind="spotify" data-vid="59UurEPK1yATvycAaPdJhb" data-titulo="El Río que Habla">
-              <div class="card-header">El Río que Habla</div>
-
-              <div class="media-area" data-slot="media">
-                <div class="media-poster media-poster-audio"><i class="bi bi-mic-fill"></i></div>
-                <div class="play-btn" data-action="play"><i class="bi bi-volume-up-fill"></i></div>
-                <span class="badge position-absolute top-0 end-0 m-2" style="background:var(--dorado);">Sonoro</span>
-              </div>
-
-              <div class="p-2 flex-grow-1">
-                <small class="d-block" style="color:var(--gris-texto);">
-                  <span class="badge me-1" style="background:var(--gris-claro);color:var(--negro);font-size:.7rem;">Radionovela</span>
-                  <span class="badge" style="background:var(--verde-bg);color:var(--verde-oscuro);font-size:.7rem;">Río</span>
-                </small>
-                <button class="btn-grande d-none" data-action="grande">
-                  <i class="bi bi-arrows-fullscreen"></i> Ver en grande
-                </button>
-              </div>
-
-              <div class="card-footer">
-                <div class="colegio-name">Colegio Rodrigo Lara</div>
-                <div class="meta">
-                  <span><i class="bi bi-mortarboard"></i> 7°-1</span>
-                  <span><i class="bi bi-geo-alt"></i> Usme</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div><!-- /row -->
-      </main>
-    </div>
+    </main>
   </div>
 </section>
 
@@ -413,218 +256,157 @@
   </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="assets/js/main.js"></script>
-<script>
-  initFilters({
-    containerSelector: '#productos-container',
-    itemSelector: '.producto-item',
-    filters: [
-      { selectId: 'filtro-forma',      attribute: 'forma'      },
-      { selectId: 'filtro-formato',    attribute: 'formato'    },
-      { selectId: 'filtro-ecosistema', attribute: 'ecosistema' },
-      { selectId: 'filtro-localidad',  attribute: 'localidad'  },
-      { selectId: 'filtro-colegio',    attribute: 'colegio'    }
-    ],
-    noResultsMsg: 'No se encontraron productos con los filtros seleccionados.'
-  });
-</script>
-<script src="assets/js/viz/productos.js"></script>
 <!-- ============ POPUP DE REPRODUCCIÓN ============ -->
 <div class="modal fade" id="modalProducto" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="mp-titulo" style="font-family:var(--font-display);"></h5>
+        <h5 class="modal-title" data-slot="titulo" style="font-family:var(--font-display);"></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body">
-        <div id="mp-player" class="player-wrap video"></div>
+        <div data-slot="player" class="player-wrap video"></div>
       </div>
     </div>
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/main.js"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
-<script>
-(function () {
-  // ---------------------------------------------------------------
-  // Reproductores: YouTube (API JS, permite saber/fijar el segundo)
-  // y Spotify (iframe API). Reglas:
-  //  - solo UNO suena a la vez
-  //  - "Ver en grande" continua por el mismo punto
-  //  - cerrar el popup pausa
-  // ---------------------------------------------------------------
-  const modalEl = document.getElementById('modalProducto')
-  const modal   = new bootstrap.Modal(modalEl)
-  const mpTitulo = document.getElementById('mp-titulo')
-  const mpPlayer = document.getElementById('mp-player')
+<script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
+<script src="assets/js/viz/productos.js"></script>
 
-  let ytReady = false
-  const cola = []                    // acciones que esperan a la API de YouTube
-  window.onYouTubeIframeAPIReady = () => { ytReady = true; cola.forEach((f) => f()); cola.length = 0 }
-  const cuandoYT = (f) => (ytReady ? f() : cola.push(f))
+<!-- ============ CARGA DE PRODUCTOS DESDE SUPABASE ============ -->
+<script type="module">
+  import { getProductos, slug, esc } from './assets/js/db.js'
+  import { mediaAreaHtml, cardAttrs, montarMedia } from './assets/js/media.js'
 
-  const players = {}                 // id -> { kind, yt, spotify, card }
-  let activo = null                  // id del que esta sonando inline
-  let enModal = null                 // { id, kind, player }
+  const cont = document.getElementById('productos-container')
+  const contador = document.getElementById('productos-contador')
 
-  // Pausa cualquier reproductor inline distinto de `salvo`
-  function pausarOtros(salvo) {
-    Object.entries(players).forEach(([id, p]) => {
-      if (id === salvo) return
-      try {
-        if (p.kind === 'youtube' && p.yt?.pauseVideo) p.yt.pauseVideo()
-        if (p.kind === 'spotify' && p.spotify?.pause) p.spotify.pause()
-      } catch (e) { /* el player aun no esta listo */ }
-    })
+  // Rellena un <select> con los valores que de verdad existen en los datos.
+  function llenarFiltro(id, valores) {
+    const sel = document.getElementById(id)
+    const primera = sel.querySelector('option')
+    sel.innerHTML = ''
+    sel.appendChild(primera)
+    ;[...new Set(valores.filter(Boolean))].sort((a, b) => a.localeCompare(b, 'es'))
+      .forEach((v) => {
+        const o = document.createElement('option')
+        o.value = slug(v)
+        o.textContent = v
+        sel.appendChild(o)
+      })
   }
 
-  // ---------- Spotify iframe API ----------
-  let spotifyAPI = null
-  const spotifyCola = []
-  window.onSpotifyIframeApiReady = (API) => { spotifyAPI = API; spotifyCola.forEach((f) => f(API)); spotifyCola.length = 0 }
-  const cuandoSpotify = (f) => (spotifyAPI ? f(spotifyAPI) : spotifyCola.push(f))
+  // La nomenclatura viene como '801' o '1101': el grado son los dígitos que
+  // quedan al quitar los dos últimos (el número del curso dentro del grado).
+  function grado(nivel) {
+    const n = (nivel ?? '').toString().trim()
+    return /^\d{3,4}$/.test(n) ? n.slice(0, n.length - 2) : n
+  }
 
-  // ---------- Reproducir INLINE ----------
-  function reproducirInline(card) {
-    const id = card.dataset.id, kind = card.dataset.kind, vid = card.dataset.vid
-    const media = card.querySelector('[data-slot="media"]')
-    const btnGrande = card.querySelector('[data-action="grande"]')
+  function tarjetaHtml(p, i) {
+    const nivelCurso = [p.nivel, p.curso].filter(Boolean).join('-')
+    const titulo = p.nombre ?? `Producto ${p.orden}`
+    return `
+      <div class="col-6 col-md-4 col-xl-3 producto-item"
+           data-forma="${slug(p.forma)}"
+           data-formato="${slug(p.tipo)}"
+           data-ecosistema="${slug(p.ecosistema)}"
+           data-localidad="${slug(p.localidad)}"
+           data-colegio="${slug(p.colegio)}"
+           data-curso="${slug(p.codigo_curso)}"
+           data-grado="${esc(grado(p.nivel))}">
+        <div class="card card-producto h-100 d-flex flex-column" ${cardAttrs(p, `p${i}`)}>
+          <div class="card-header">${esc(titulo)}</div>
 
-    pausarOtros(id)
-    activo = id
+          ${mediaAreaHtml(p)}
 
-    // Si ya existe, solo reanudar
-    if (players[id]) {
-      const p = players[id]
-      if (p.kind === 'youtube') p.yt?.playVideo?.()
-      if (p.kind === 'spotify') p.spotify?.resume?.()
+          <div class="p-2 flex-grow-1">
+            <small class="d-block" style="color:var(--gris-texto);">
+              ${p.tipo ? `<span class="badge badge-tipo me-1">${esc(p.tipo)}</span>` : ''}
+              ${p.ecosistema ? `<span class="badge badge-eco">${esc(p.ecosistema)}</span>` : ''}
+            </small>
+            <button class="btn-grande d-none" data-action="grande">
+              <i class="bi bi-arrows-fullscreen"></i> Ver en grande
+            </button>
+          </div>
+
+          <div class="card-footer">
+            <div class="colegio-name">${esc(p.colegio ?? '')}</div>
+            <div class="meta">
+              ${nivelCurso ? `<span><i class="bi bi-mortarboard"></i> ${esc(nivelCurso)}</span>` : ''}
+              ${p.localidad ? `<span><i class="bi bi-geo-alt"></i> ${esc(p.localidad)}</span>` : ''}
+              <span><i class="bi bi-hash"></i> ${esc(p.codigo_curso)}</span>
+            </div>
+          </div>
+        </div>
+      </div>`
+  }
+
+  // El contador se actualiza con lo que quede visible tras aplicar los filtros.
+  function actualizarContador() {
+    const total = cont.querySelectorAll('.producto-item').length
+    const visibles = [...cont.querySelectorAll('.producto-item')]
+      .filter((el) => el.style.display !== 'none').length
+    contador.textContent = visibles === total
+      ? `${total} productos de 158 cursos`
+      : `${visibles} de ${total} productos`
+  }
+
+  async function init() {
+    const { data, error } = await getProductos()
+
+    if (error) {
+      console.error('[productos]', error)
+      cont.innerHTML = '<div class="productos-estado col-12"><p>No se pudieron cargar los productos. Revisa la conexión con la base de datos.</p></div>'
+      return
+    }
+    if (!data || data.length === 0) {
+      cont.innerHTML = '<div class="productos-estado col-12"><p>Todavía no hay productos publicados.</p></div>'
       return
     }
 
-    // Limpiar poster + boton play
-    media.querySelector('.media-poster')?.remove()
-    media.querySelector('.play-btn')?.remove()
+    llenarFiltro('filtro-forma', data.map((p) => p.forma))
+    llenarFiltro('filtro-formato', data.map((p) => p.tipo))
+    llenarFiltro('filtro-ecosistema', data.map((p) => p.ecosistema))
+    llenarFiltro('filtro-localidad', data.map((p) => p.localidad))
+    llenarFiltro('filtro-colegio', data.map((p) => p.colegio))
 
-    if (kind === 'youtube') {
-      const host = document.createElement('div')
-      media.appendChild(host)
-      cuandoYT(() => {
-        players[id] = {
-          kind, card,
-          yt: new YT.Player(host, {
-            videoId: vid,
-            playerVars: { rel: 0, playsinline: 1, modestbranding: 1 },
-            events: {
-              onReady: (e) => e.target.playVideo(),
-              onStateChange: (e) => { if (e.data === YT.PlayerState.PLAYING) { pausarOtros(id); activo = id } },
-            },
-          }),
-        }
-      })
-    } else {
-      const host = document.createElement('div')
-      media.appendChild(host)
-      cuandoSpotify((API) => {
-        API.createController(host, { uri: `spotify:episode:${vid}`, width: '100%', height: '100%' }, (ctrl) => {
-          players[id] = { kind, card, spotify: ctrl }
-          ctrl.addListener('playback_update', (e) => {
-            players[id].pos = (e.data.position || 0) / 1000
-            if (!e.data.isPaused) { pausarOtros(id); activo = id }
-          })
-          ctrl.play()
-        })
-      })
-    }
+    cont.innerHTML = data.map(tarjetaHtml).join('')
 
-    btnGrande.classList.remove('d-none')
+    // Los filtros de main.js trabajan sobre los data-* de cada tarjeta, así que
+    // se inicializan después de pintar la grilla, no antes.
+    initFilters({
+      containerSelector: '#productos-container',
+      itemSelector: '.producto-item',
+      filters: [
+        { selectId: 'filtro-forma', attribute: 'forma' },
+        { selectId: 'filtro-formato', attribute: 'formato' },
+        { selectId: 'filtro-ecosistema', attribute: 'ecosistema' },
+        { selectId: 'filtro-localidad', attribute: 'localidad' },
+        { selectId: 'filtro-colegio', attribute: 'colegio' },
+      ],
+      noResultsMsg: 'No se encontraron productos con los filtros seleccionados.',
+    })
+
+    montarMedia(cont)
+    actualizarContador()
+
+    // La visualización lee las tarjetas del DOM, así que se inicializa cuando
+    // la grilla ya está pintada — no al cargar el script.
+    window.initVizProductos?.()
+    // Al filtrar la grilla, el contador y el diagrama se actualizan juntos.
+    const sincronizar = () => { actualizarContador(); window.vizProductosSync?.() }
+    document.querySelectorAll('.filter-bar select')
+      .forEach((el) => el.addEventListener('change', sincronizar))
+    document.querySelectorAll('.btn-limpiar')
+      .forEach((el) => el.addEventListener('click', () => setTimeout(sincronizar, 0)))
   }
 
-  // ---------- Abrir en GRANDE (continuando por donde iba) ----------
-  function verEnGrande(card) {
-    const id = card.dataset.id, kind = card.dataset.kind, vid = card.dataset.vid
-    const p = players[id]
-    mpTitulo.textContent = card.dataset.titulo || ''
-    mpPlayer.innerHTML = ''
-    mpPlayer.className = 'player-wrap ' + (kind === 'youtube' ? 'video' : 'audio')
-
-    // Segundo actual + pausar el inline
-    let t = 0
-    if (kind === 'youtube' && p?.yt?.getCurrentTime) { t = p.yt.getCurrentTime(); p.yt.pauseVideo() }
-    if (kind === 'spotify') { t = p?.pos || 0; p?.spotify?.pause?.() }
-
-    const host = document.createElement('div')
-    mpPlayer.appendChild(host)
-
-    if (kind === 'youtube') {
-      cuandoYT(() => {
-        const yt = new YT.Player(host, {
-          videoId: vid,
-          playerVars: { rel: 0, playsinline: 1, modestbranding: 1, start: Math.floor(t) },
-          events: { onReady: (e) => { e.target.seekTo(t, true); e.target.playVideo() } },
-        })
-        enModal = { id, kind, player: yt }
-      })
-    } else {
-      cuandoSpotify((API) => {
-        API.createController(host, { uri: `spotify:episode:${vid}`, width: '100%', height: 352 }, (ctrl) => {
-          enModal = { id, kind, player: ctrl }
-          // seek recibe milisegundos
-          ctrl.addListener('ready', () => { ctrl.seek(t); ctrl.play() })
-          ctrl.play()
-        })
-      })
-    }
-
-    modal.show()
-  }
-
-  // ---------- Cerrar popup: pausar y devolver el punto a la tarjeta ----------
-  modalEl.addEventListener('hidden.bs.modal', () => {
-    if (!enModal) { mpPlayer.innerHTML = ''; return }
-    const { id, kind, player } = enModal
-    let t = 0
-    try {
-      if (kind === 'youtube') { t = player.getCurrentTime?.() || 0; player.pauseVideo?.(); player.destroy?.() }
-      if (kind === 'spotify') { t = enModal.pos || 0; player.pause?.() }
-    } catch (e) {}
-
-    // Dejar el inline en ese punto, PAUSADO
-    const p = players[id]
-    try {
-      if (p?.kind === 'youtube' && p.yt?.seekTo) { p.yt.seekTo(t, true); p.yt.pauseVideo() }
-      if (p?.kind === 'spotify' && p.spotify?.seek) { p.spotify.seek(t); p.spotify.pause() }
-    } catch (e) {}
-
-    mpPlayer.innerHTML = ''
-    enModal = null
-  })
-
-  // ---------- Eventos de las tarjetas ----------
-  document.querySelectorAll('.card-producto[data-id]').forEach((card) => {
-    card.querySelector('[data-action="play"]')?.addEventListener('click', () => reproducirInline(card))
-    card.querySelector('[data-action="grande"]')?.addEventListener('click', () => verEnGrande(card))
-  })
-
-  // Portada del podcast desde Spotify (oEmbed)
-  document.querySelectorAll('.card-producto[data-kind="spotify"]').forEach(async (card) => {
-    const vid = card.dataset.vid
-    try {
-      const r = await fetch(`https://open.spotify.com/oembed?url=https://open.spotify.com/episode/${vid}`)
-      const j = await r.json()
-      if (!j.thumbnail_url) return
-      const ph = card.querySelector('.media-poster-audio')
-      if (!ph) return
-      const img = document.createElement('img')
-      img.className = 'media-poster'
-      img.src = j.thumbnail_url
-      img.alt = ''
-      ph.replaceWith(img)
-    } catch (e) { /* se queda el ícono de micrófono */ }
-  })
-})()
+  init()
 </script>
-<script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
 </body>
 </html>

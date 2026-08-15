@@ -208,7 +208,7 @@ de la Ciencia</h1>
       </div>
       <div class="col-6 col-md-3 text-center">
         <div class="stat-circle mx-auto" data-target="158">0</div>
-        <p class="stat-label mx-auto">Cursos de 7° a 11°</p>
+        <p class="stat-label mx-auto">Cursos de 6° a 11°</p>
       </div>
       <div class="col-6 col-md-3 text-center">
 <div class="stat-circle mx-auto" style="font-size:1.2rem;" data-target="5170"  data-sep>0</div>
@@ -370,7 +370,7 @@ de la Ciencia</h1>
     const maxCat=Math.max(...cats.map((c)=>c[1]),1)
     const barras=cats.map(([c,n])=>`<div class="cat-row"><div><div class="cat-bar" style="width:${Math.round(n/maxCat*100)}%;background:${COLOR_CAT(c)};"></div></div><div>${esc(c.replace('Otro, ¿Cuál?','Otro'))} · <strong>${n}</strong></div></div>`).join('')
     const lista=s.dilemas.slice().sort((a,b)=>(a.colegio||'').localeCompare(b.colegio||'','es'))
-      .map((d)=>`<li><a href="bitacora_detalle.html?curso=${encodeURIComponent(d.codigo_curso)}" target="_blank" rel="noopener">${esc(d.colegio)}</a><div class="meta">${esc([d.nivel,d.curso].filter(Boolean).join('-'))} · ${esc(d.codigo_curso)} · ${esc(d.categoria||'—')}</div></li>`).join('')
+      .map((d)=>`<li><a href="bitacora_detalle.html?curso=${encodeURIComponent(d.codigo_curso)}" target="_blank" rel="noopener">${esc(d.colegio)}</a><div class="meta">${esc([d.nivel,d.curso].filter(Boolean).join('-'))} · ${esc(d.categoria||'—')}</div></li>`).join('')
     panel.innerHTML = `
       <h4 style="font-family:var(--font-display);color:var(--terracota);text-transform:capitalize;">${esc((s.nombre||'').toLowerCase())}</h4>
       <div class="row g-3 mb-3">

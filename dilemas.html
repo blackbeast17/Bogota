@@ -9,18 +9,26 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/css/styles.css" rel="stylesheet">
   <style>
-    /* --- Visualizacion del arbol de dilemas (sidebar) --- */
+    /* --- Visualizacion del arbol de dilemas (banda superior) --- */
+    .dilemas-viz-banda { margin-bottom: 2.25rem; }
+    .dilemas-viz-banda .section-title { margin-bottom: 0; }
     .viz-card { cursor: pointer; transition: box-shadow .15s, transform .15s; position: relative;
-      background: var(--gris-claro); border: 1px dashed var(--gris-medio); border-radius: var(--radius, 12px); padding: .5rem; }
-    .viz-card:hover { box-shadow: 0 8px 26px rgba(0,0,0,.10); transform: translateY(-2px); }
+      background: var(--gris-claro); border-radius: var(--radius-lg, 16px); padding: 1rem;
+      display: flex; justify-content: center; }
+    .viz-card:hover { box-shadow: 0 8px 26px rgba(0,0,0,.10); }
     .viz-card svg { pointer-events: none; }          /* el clic abre el modal */
-    .viz-ampliar { position: absolute; top: .5rem; right: .6rem; font-size: .7rem; color: var(--verde-medio); font-weight: 600; }
+    #prev-individuales { width: 100%; max-width: 640px; }
+    .btn-ampliar { border: 1px solid var(--verde-medio); background: transparent; color: var(--verde-medio);
+      border-radius: 50px; font-size: .74rem; font-weight: 600; padding: .3rem .9rem;
+      transition: background .15s, color .15s; }
+    .btn-ampliar:hover { background: var(--verde-medio); color: #fff; }
     .viz-modal-canvas { min-height: 64vh; }
     .viz-modal-canvas svg { width: 100%; }
     .detalle-panel { border-left: 1px solid var(--gris-medio); min-height: 64vh; }
     @media (max-width: 991px){ .detalle-panel { border-left:none; border-top:1px solid var(--gris-medio); min-height:auto; } }
     .detalle-vacio { color: var(--gris-texto); font-size: .9rem; }
-    .leyenda { font-size: .72rem; }
+    .leyenda { font-size: .72rem; display: flex; flex-wrap: wrap; gap: .35rem 1.2rem; }
+    .leyenda .vp-nota { margin-left: auto; font-style: italic; opacity: .8; }
     .leyenda .dot { display:inline-block; width:.7rem; height:.7rem; border-radius:50%; margin-right:.25rem; vertical-align:middle; }
   </style>
 </head>
@@ -76,30 +84,26 @@
 <section class="section dilemas-maqueta">
   <div class="container">
 
-    <div class="dilemas-maqueta-grid">
 
-      <!-- COLUMNA IZQUIERDA: VISUALIZADORES -->
-      <aside class="dilemas-maqueta-sidebar">
+    <!-- ── VISUALIZACIÓN (banda superior) ── -->
+    <div class="dilemas-viz-banda">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+        <h2 class="section-title">Visualización de los dilemas individuales</h2>
+        <button type="button" class="btn-ampliar" data-bs-toggle="modal" data-bs-target="#modalTree">
+          <i class="bi bi-arrows-fullscreen"></i> Ampliar y explorar
+        </button>
+      </div>
 
-        
+      <div class="viz-card" data-bs-toggle="modal" data-bs-target="#modalTree"
+           role="button" tabindex="0" aria-label="Ampliar visualización de dilemas">
+        <div id="prev-individuales"></div>
+      </div>
 
-        <div class="dilemas-viz-bloque">
-          <h2 class="section-title">
-            Visualización de los dilemas individuales
-          </h2>
-            
-          <div class="viz-card" data-bs-toggle="modal" data-bs-target="#modalTree"
-               role="button" tabindex="0" aria-label="Ampliar visualización de dilemas">
-            <span class="viz-ampliar"><i class="bi bi-arrows-fullscreen"></i></span>
-            <div id="prev-individuales"></div>
-          </div>
-          <div class="leyenda mt-2" id="leyenda"></div>
-        </div>
+      <div class="leyenda mt-2" id="leyenda"></div>
+    </div>
 
-      </aside>
-
-      <!-- COLUMNA DERECHA: FILTROS + TARJETAS -->
-      <main class="dilemas-maqueta-content">
+    <!-- ── FILTROS Y TARJETAS ── -->
+    <main class="dilemas-maqueta-content">
 
         <!-- FILTROS (las opciones se llenan con datos reales desde db.js) -->
         <div class="filter-bar mb-2">
@@ -139,9 +143,7 @@
           </div>
         </div>
 
-      </main>
-
-    </div>
+    </main>
 
   </div>
 </section>
@@ -155,7 +157,7 @@
           <h5 class="modal-title mb-0" style="font-family:var(--font-display);">Dilemas individuales</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
-        <div class="leyenda mt-2" id="leyenda"></div>
+        <div class="leyenda mt-2" id="leyenda-modal"></div>
       </div>
       <div class="modal-body">
         <div class="row g-0">
@@ -249,7 +251,7 @@
   function cardHtml(d) {
     const nivelCurso = [d.gradoLabel || d.nivel, d.curso].filter(Boolean).join(' · ')
     return `
-      <div class="col-md-6 col-lg-4 dilema-item">
+      <div class="col-md-6 col-lg-4 col-xl-3 dilema-item">
         <div class="card card-dilema h-100 d-flex flex-column">
           <div class="card-header">Categoría: ${esc(d.categoria ?? '—')}</div>
 
@@ -264,7 +266,7 @@
               <span><i class="bi bi-geo-alt"></i> ${esc(d.localidad ?? '—')}</span>
             </div>
             <div class="meta mt-1" style="opacity:.85;">
-              <span><i class="bi bi-hash"></i> ${esc(d.codigo_curso)}</span>
+             
             </div>
           </div>
         </div>
@@ -444,7 +446,8 @@
   function renderTree(el, dilemas, { size, onLeaf } = {}) {
     el.innerHTML = ''
     const interactivo = !!onLeaf
-    size = size || Math.max(240, Math.min(el.clientWidth || 280, 460))
+    // La preview ya no vive en una columna estrecha, así que puede crecer.
+    size = size || Math.max(240, Math.min(el.clientWidth || 280, 620))
     const radius = size / 2 - 14
 
     const root = d3.hierarchy(anidar(dilemas, NIVELES))
@@ -540,11 +543,14 @@
     }
   }
 
-  function pintarLeyenda(el, dilemas) {
+  function pintarLeyenda(el, dilemas, conNota = false) {
+    if (!el) return
     const cats = [...new Set(dilemas.map((d) => d.categoria).filter(Boolean))]
     el.innerHTML = cats.map((c) =>
-      `<span class="me-3"><span class="dot" style="background:${colorCat(c)}"></span>${escapeHtml(c)}</span>`
-    ).join('')
+      `<span><span class="dot" style="background:${colorCat(c)}"></span>${escapeHtml(c)}</span>`
+    ).join('') + (conNota
+      ? `<span class="vp-nota">Cada punta es el dilema de un curso · haz clic para ampliar y explorarlos uno a uno</span>`
+      : '')
   }
 
   async function initViz() {
@@ -559,7 +565,10 @@
     }
 
     renderTree(prev, filas)   // preview (sin etiquetas, sin panel)
-    pintarLeyenda(document.getElementById('leyenda'), filas)
+    // Ojo: antes las dos leyendas (banda y modal) compartían el id "leyenda",
+    // así que solo se llenaba la primera. Ahora cada una tiene el suyo.
+    pintarLeyenda(document.getElementById('leyenda'), filas, true)
+    pintarLeyenda(document.getElementById('leyenda-modal'), filas)
 
     const detalle = document.getElementById('detalle')
     let listo = false

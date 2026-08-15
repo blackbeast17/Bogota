@@ -12,11 +12,13 @@
 //  y así la tarjeta y el popup usan exactamente el mismo dibujo.
 // ============================================================
 import {
-  getDistribucionParticipacion, getFormatosPopulares, getTematicasEmergentes,
-  participacionLabel, formatoLabel,
+  getDistribucionParticipacion, getTematicasEmergentes,
+  participacionLabel,
   getComprensionDilema, getEcosistemas, getDiferencioSaberes, getCambiosPostura,
   getActoresRaw, getDebate, getReconocimiento, getProblematicas,
   getE2Detalle, getE3Detalle,
+  getDocentesFase, getFormasComunicar, getIntencionVerbos, getPublicosObjetivo,
+  getFormatosFinales,
 } from './db.js'
 
 import {
@@ -260,13 +262,17 @@ async function cargarFase2y3() {
 // ================= Formatos y temas: ahora con visuales propios =================
 const PAL_FORMATOS = ['#9F574F', '#CCA782', '#90B49D', '#CCB364', '#6f9bd1', '#a385c9']
 
+// Cuenta las piezas realmente publicadas (tabla productos). Antes usaba
+// formatos_populares, que refleja lo que los grupos PROYECTARON en el
+// Encuentro 4 — un número mayor que no cuadraba con los productos visibles.
 async function graficaFormatos() {
-  const { data, error } = await getFormatosPopulares()
+  const { data, error } = await getFormatosFinales()
   if (error) return console.error('[formatos]', error)
   if (!data || data.length === 0) return vacio('viz-formatos', 'Sin datos registrados aún.')
+  const top = data.slice(0, 8)
   const specFmt = {
-    labels: data.map((r) => formatoLabel(r.formato)), full: data.map((r) => r.formato),
-    valores: data.map((r) => Number(r.total_grupos || 0)), colors: PAL_FORMATOS,
+    labels: top.map((r) => r.formato), full: top.map((r) => r.formato),
+    valores: top.map((r) => Number(r.total_productos || 0)), colors: PAL_FORMATOS,
   }
   renderDoughnut(box('viz-formatos'), specFmt, null)   // dona clásica — sin detalle por curso para esta métrica
 }
@@ -288,87 +294,174 @@ async function graficaTematicas() {
 
 // ================= BLOBS DE PARTICIPACIÓN (SVG + ruido) =================
 // ============================================================
-//  MÉTRICAS CON DATOS QUEMADOS (*)  — ver assets/js/viz/mock.js
-//  Todas llevan `quemado: true` para que el popup lo advierta.
+//  MÉTRICAS DE LA FASE 3 — ahora desde la base de datos
+//  (antes vivían en viz/mock.js con asterisco rojo)
+//
+//  Sigue quemada una sola: "Aprendizajes en Ciencias Naturales"
+//  (fenómeno natural vs. problemática ambiental). Ningún formulario
+//  pregunta eso y el campo libre del E6 mezcla las dos cosas, así
+//  que inventar la clasificación sería peor que dejar el asterisco.
 // ============================================================
-function cargarQuemadas() {
 
-  // --- Participación DOCENTE por fase (cintas de flujo) ---
-  {
-    const { etapas, series } = MOCK.docentes
-    const total = series.reduce((a, s) => a + s.valores[s.valores.length - 1], 0)
-    registrar('viz-docentes', {
-      titulo: 'Participación docente por fase *',
-      descripcion: 'Cómo evolucionó el involucramiento de los docentes a lo largo de las tres fases. Cada cinta es un nivel de participación; su grosor es la proporción de docentes en esa fase.',
-      total, quemado: true,
-      valorDe: (op) => series.find((s) => s.op === op)?.valores.at(-1) ?? null,
-      render: (el, onPick) => renderFlujo(el, series, etapas, onPick),
-    })
-    const el = document.getElementById('viz-docentes')
-    if (el) { el.classList.add('viz-clickable'); renderFlujo(el, series, etapas, (op) => abrirViz('viz-docentes', op)) }
+const LBL_FASE = { 2: 'Fase 2', 3: 'Fase 3' }
+const LBL_ENC = { 2: 'Enc. 2', 3: 'Enc. 3', 4: 'Enc. 4', 6: 'Enc. 6', 7: 'Enc. 7' }
+
+// --- Participación DOCENTE por fase (cintas de flujo) ---
+// La Fase 1 fue un encuentro de activación sin bitácora, así que el flujo
+// arranca en la Fase 2. El filtro de fases recorta las etapas visibles.
+async function graficaDocentes() {
+  const el = document.getElementById('viz-docentes')
+  if (!el) return
+  const { data, error } = await getDocentesFase()
+  if (error) return console.error('[docentes]', error)
+  if (!data || !data.length) return vacio('viz-docentes', 'Sin datos registrados aún.')
+
+  const ORDEN = [
+    'No participó', 'Estuvo atento', 'Intervino en algunos momentos', 'Participó activamente',
+  ]
+  const rank = (op) => {
+    const i = ORDEN.findIndex((o) => (op || '').startsWith(o))
+    return i < 0 ? 99 : i
   }
 
-  // --- Aprendizajes destacados: dos hojas enfrentadas (sin cambios) ---
-  {
-    const filas = MOCK.aprendizajes
-    const total = filas.reduce((a, b) => a + b.n, 0)
-    registrar('viz-aprendizajes', {
-      titulo: 'Aprendizajes destacados en Ciencias Naturales *',
-      descripcion: 'Si el producto educomunicativo puso el acento en explicar un fenómeno natural o en denunciar una problemática ambiental.',
-      total, quemado: true,
-      valorDe: (op) => filas.find((f) => f.op === op)?.n ?? null,
-      render: (el, onPick) => renderHojas(el, filas, onPick),
-    })
-    const el = document.getElementById('viz-aprendizajes')
-    if (el) { el.classList.add('viz-clickable'); renderHojas(el, filas, (op) => abrirViz('viz-aprendizajes', op)) }
+  const encuentros = [...new Set(data.map((r) => Number(r.encuentro)))].sort((a, b) => a - b)
+  const opciones = [...new Set(data.map((r) => r.opcion))]
+    .filter((o) => o !== 'Sin dato')
+    .sort((a, b) => rank(a) - rank(b))
+
+  function armar(fase) {
+    const encs = encuentros.filter((e) => !fase || Number(data.find((r) => Number(r.encuentro) === e)?.fase) === fase)
+    if (encs.length < 2) return null
+    const etapas = encs.map((e) => LBL_ENC[e] ?? ('Enc. ' + e))
+    // El color va por nivel de participación, con la misma rampa que los blobs
+    // de participación de cursos: es la misma escala semántica (de menos a más
+    // involucramiento), así las dos gráficas de la página se leen igual.
+    // Sin `color`, renderFlujo pinta las cintas de negro.
+    const series = opciones.map((op, i) => ({
+      op,
+      label: op,
+      color: PAL_BLOB[Math.round((i / Math.max(1, opciones.length - 1)) * (PAL_BLOB.length - 1))],
+      valores: encs.map((e) => {
+        const fila = data.find((r) => Number(r.encuentro) === e && r.opcion === op)
+        return Number(fila?.n || 0)
+      }),
+    }))
+    return { etapas, series, encs }
   }
 
-  // --- Formas de comunicar: dona clásica ---
-  {
-    const filas = MOCK.comunicar
-    const total = filas.reduce((a, b) => a + b.n, 0)
-    const specCom = { labels: filas.map((f) => f.nombre), full: filas.map((f) => f.nombre), valores: filas.map((f) => f.n), colors: PAL_FORMATOS }
-    registrar('viz-comunicar', {
-      titulo: 'Formas de comunicar *',
-      descripcion: 'Lenguaje principal del producto educomunicativo: audiovisual, sonoro o gráfico.',
-      total, quemado: true,
-      valorDe: (op) => filas.find((f) => f.nombre === op)?.n ?? null,
-      render: (el, onPick) => renderDoughnut(el, specCom, onPick),
-    })
-    const el = document.getElementById('viz-comunicar')
-    if (el) { el.classList.add('viz-clickable'); renderDoughnut(el, specCom, (op) => abrirViz('viz-comunicar', op)) }
-  }
+  let actual = armar(null)
+  if (!actual) return vacio('viz-docentes', 'Se necesitan al menos dos encuentros para dibujar el flujo.')
 
-  // --- Intención comunicativa (nube de verbos) ---
-  {
-    const tokens = MOCK.intencion
-    const total = tokens.reduce((a, b) => a + b.n, 0)
-    registrar('viz-intencion', {
-      titulo: 'Intención comunicativa *',
-      descripcion: 'Verbos con que los grupos describieron qué querían lograr con su producto. El tamaño y el tono indican cuántas veces se mencionó.',
-      total, quemado: true, nube: true, mostrarTexto: false,
-      valorDe: (w) => tokens.find((t) => norm(t.label) === norm(w))?.n ?? null,
-      render: (el, onPick) => renderNube(el, tokens, onPick),
-    })
-    const el = box('viz-intencion', { nube: true })
-    if (el) renderNube(el, tokens, (w, lbl) => abrirViz('viz-intencion', w, lbl))
-  }
+  registrar('viz-docentes', {
+    titulo: 'Participación docente por encuentro',
+    descripcion: 'Cómo evolucionó el involucramiento de los docentes a lo largo de los encuentros. Cada cinta es un nivel de participación; su grosor es cuántas bitácoras lo reportaron. La Fase 1 no tuvo bitácora, así que el flujo empieza en el Encuentro 2.',
+    total: data.reduce((a, r) => a + Number(r.n || 0), 0),
+    valorDe: (op) => {
+      const s = actual.series.find((x) => x.op === op)
+      return s ? s.valores.reduce((a, b) => a + b, 0) : null
+    },
+    render: (elx, onPick) => renderFlujo(elx, actual.series, actual.etapas, onPick),
+  })
 
-  // --- Públicos objetivos: barras horizontales ---
-  {
-    const filas = MOCK.publicos
-    const total = filas.reduce((a, b) => a + b.n, 0)
-    const specPub = { labels: filas.map((f) => f.label), full: filas.map((f) => f.op), valores: filas.map((f) => f.n), colors: PAL_BLOB, horizontal: true }
-    registrar('viz-publicos', {
-      titulo: 'Públicos objetivos *',
-      descripcion: 'A quién dirigieron los grupos su producto educomunicativo.',
-      total, quemado: true,
-      valorDe: (op) => filas.find((f) => f.op === op)?.n ?? null,
-      render: (el, onPick) => renderBar(el, specPub, onPick),
-    })
-    const el = document.getElementById('viz-publicos')
-    if (el) { el.classList.add('viz-clickable'); renderBar(el, specPub, (op) => abrirViz('viz-publicos', op)) }
+  function pintar() {
+    el.classList.add('viz-clickable')
+    el.innerHTML = ''
+    renderFlujo(el, actual.series, actual.etapas, (op) => abrirViz('viz-docentes', op))
   }
+  pintar()
+
+  const sel = document.getElementById('filtro-fase-docentes')
+  sel?.addEventListener('change', () => {
+    const fase = sel.value ? Number(sel.value) : null
+    if (fase === 1) {
+      el.innerHTML = '<div class="p-3 text-center small text-muted">La Fase 1 fue un encuentro de activación y no tuvo bitácora, así que no hay registro de participación docente.</div>'
+      return
+    }
+    const nuevo = armar(fase)
+    if (!nuevo) {
+      el.innerHTML = '<div class="p-3 text-center small text-muted">Esta fase tiene un solo encuentro con bitácora; el flujo necesita al menos dos.</div>'
+      return
+    }
+    actual = nuevo
+    pintar()
+  })
+  document.querySelectorAll('.btn-limpiar').forEach((b) => b.addEventListener('click', () => {
+    if (!sel) return
+    sel.value = ''
+    actual = armar(null)
+    pintar()
+  }))
+}
+
+// --- Aprendizajes destacados: dos hojas enfrentadas (sigue quemada) ---
+function graficaAprendizajes() {
+  const filas = MOCK.aprendizajes
+  const total = filas.reduce((a, b) => a + b.n, 0)
+  registrar('viz-aprendizajes', {
+    titulo: 'Aprendizajes destacados en Ciencias Naturales *',
+    descripcion: 'Si el producto educomunicativo puso el acento en explicar un fenómeno natural o en denunciar una problemática ambiental. Dato de ejemplo: ningún formulario recoge esta clasificación todavía.',
+    total, quemado: true,
+    valorDe: (op) => filas.find((f) => f.op === op)?.n ?? null,
+    render: (el, onPick) => renderHojas(el, filas, onPick),
+  })
+  const el = document.getElementById('viz-aprendizajes')
+  if (el) { el.classList.add('viz-clickable'); renderHojas(el, filas, (op) => abrirViz('viz-aprendizajes', op)) }
+}
+
+// --- Formas de comunicar: dona clásica ---
+async function graficaComunicar() {
+  const { data, error } = await getFormasComunicar()
+  if (error) return console.error('[comunicar]', error)
+  if (!data || !data.length) return vacio('viz-comunicar', 'Sin datos registrados aún.')
+  const filas = data.map((r) => ({ nombre: r.nombre, n: Number(r.n || 0) }))
+  const total = filas.reduce((a, b) => a + b.n, 0)
+  const specCom = { labels: filas.map((f) => f.nombre), full: filas.map((f) => f.nombre), valores: filas.map((f) => f.n), colors: PAL_FORMATOS }
+  registrar('viz-comunicar', {
+    titulo: 'Formas de comunicar',
+    descripcion: 'Lenguaje principal del producto educomunicativo: audiovisual, sonoro o gráfico.',
+    total,
+    valorDe: (op) => filas.find((f) => f.nombre === op)?.n ?? null,
+    render: (el, onPick) => renderDoughnut(el, specCom, onPick),
+  })
+  const el = document.getElementById('viz-comunicar')
+  if (el) { el.classList.add('viz-clickable'); renderDoughnut(el, specCom, (op) => abrirViz('viz-comunicar', op)) }
+}
+
+// --- Intención comunicativa (nube de verbos) ---
+async function graficaIntencion() {
+  const { data, error } = await getIntencionVerbos()
+  if (error) return console.error('[intencion]', error)
+  if (!data || !data.length) return vacio('viz-intencion', 'Sin datos registrados aún.')
+  const tokens = data.map((r) => ({ label: r.label, n: Number(r.n || 0) }))
+  const total = tokens.reduce((a, b) => a + b.n, 0)
+  registrar('viz-intencion', {
+    titulo: 'Intención comunicativa',
+    descripcion: 'Verbos con que los grupos describieron qué querían lograr con su producto. El tamaño y el tono indican en cuántos productos aparece. Un mismo texto puede aportar varios verbos.',
+    total, nube: true, mostrarTexto: false,
+    valorDe: (w) => tokens.find((t) => norm(t.label) === norm(w))?.n ?? null,
+    render: (el, onPick) => renderNube(el, tokens, onPick),
+  })
+  const el = box('viz-intencion', { nube: true })
+  if (el) renderNube(el, tokens, (w, lbl) => abrirViz('viz-intencion', w, lbl))
+}
+
+// --- Públicos objetivos: barras horizontales ---
+async function graficaPublicos() {
+  const { data, error } = await getPublicosObjetivo()
+  if (error) return console.error('[publicos]', error)
+  if (!data || !data.length) return vacio('viz-publicos', 'Sin datos registrados aún.')
+  const filas = data.map((r) => ({ op: r.op, label: r.label, n: Number(r.n || 0) }))
+  const total = filas.reduce((a, b) => a + b.n, 0)
+  const specPub = { labels: filas.map((f) => f.label), full: filas.map((f) => f.op), valores: filas.map((f) => f.n), colors: PAL_BLOB, horizontal: true }
+  registrar('viz-publicos', {
+    titulo: 'Públicos objetivos',
+    descripcion: 'A quién dirigieron los grupos su producto educomunicativo.',
+    total,
+    valorDe: (op) => filas.find((f) => f.op === op)?.n ?? null,
+    render: (el, onPick) => renderBar(el, specPub, onPick),
+  })
+  const el = document.getElementById('viz-publicos')
+  if (el) { el.classList.add('viz-clickable'); renderBar(el, specPub, (op) => abrirViz('viz-publicos', op)) }
 }
 
 // ================= Arranque =================
@@ -384,8 +477,12 @@ async function init() {
   cargarFase2y3()
   graficaFormatos()
   graficaTematicas()
+  graficaDocentes()
+  graficaComunicar()
+  graficaIntencion()
+  graficaPublicos()
 
-  // Datos quemados (*)
-  cargarQuemadas()
+  // Único dato quemado que queda (*)
+  graficaAprendizajes()
 }
 init()

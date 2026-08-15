@@ -28,6 +28,42 @@
     }
     .ied-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
     @media (max-width: 767px) { .ied-foto { width: 100%; height: 180px; } }
+
+    /* ── Tarjetas de producto (mismo lenguaje que productos.html) ── */
+    .card-producto .media-area { height: 200px; position: relative; overflow: hidden; }
+    .media-poster { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+    .media-poster-audio { display:flex; align-items:center; justify-content:center;
+      background:var(--verde-bg); color:var(--verde-medio); font-size:2.6rem; }
+    .card-producto .media-area .play-btn { position:relative; z-index:2; cursor:pointer;
+      background:rgba(255,255,255,.92); transition:transform .15s; }
+    .card-producto .media-area .play-btn:hover { transform:scale(1.08); }
+    .media-area iframe { position:absolute; inset:0; width:100%; height:100%; border:0; z-index:3; }
+    .btn-grande { margin-top:.4rem; border:1px solid var(--verde-medio); background:transparent;
+      color:var(--verde-medio); border-radius:50px; font-size:.72rem; font-weight:600;
+      padding:.2rem .7rem; transition:background .15s,color .15s; }
+    .btn-grande:hover { background:var(--verde-medio); color:#fff; }
+    .badge-tipo { background: var(--gris-claro); color: var(--negro); font-size: .7rem; }
+    .badge-eco  { background: var(--verde-bg); color: var(--verde-oscuro); font-size: .7rem; }
+    .producto-meta-box { font-size:.78rem; color:var(--gris-texto); line-height:1.35;
+      padding:.6rem .75rem .75rem; border-top:1px solid var(--gris-claro); background:var(--blanco); }
+    .producto-meta-box strong { color:var(--verde-oscuro); }
+    /* Las piezas gráficas (Flickr) son historietas y líneas de tiempo apaisadas:
+       recortarlas a un cuadro fijo se come el contenido, mejor caben enteras. */
+    .card-producto[data-kind="flickr"] .media-area { height:auto; min-height:180px; background:var(--gris-claro); }
+    .card-producto[data-kind="flickr"] .media-poster { position:relative; height:auto; object-fit:contain; }
+    .card-producto[data-kind="flickr"] .media-area .play-btn { position:absolute; inset:0; margin:auto;
+      width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+    #modalProducto .modal-body { padding:0; }
+    #modalProducto .player-wrap { position:relative; width:100%; background:#000; }
+    #modalProducto .player-wrap.video { aspect-ratio:16/9; }
+    #modalProducto .player-wrap.audio { background:transparent; padding:1rem; }
+    #modalProducto .player-wrap iframe { width:100%; height:100%; border:0; display:block; }
+    #modalProducto .player-wrap.audio iframe { height:352px; border-radius:12px; }
+    #modalProducto .player-wrap.juego { height: min(78vh, 760px); background:#000; }
+    #modalProducto .player-wrap.juego iframe { height: calc(100% - 34px); }
+    #modalProducto .player-fallback { height:34px; display:flex; align-items:center; justify-content:center;
+      font-size:.78rem; background:var(--gris-claro); color:var(--gris-texto); }
+    #modalProducto .player-fallback a { color:var(--verde-medio); margin-left:.3rem; }
   </style>
 </head>
 <body>
@@ -103,16 +139,34 @@
   </div>
 </footer>
 
+<!-- ============ POPUP DE REPRODUCCIÓN ============ -->
+<div class="modal fade" id="modalProducto" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" data-slot="titulo" style="font-family:var(--font-display);"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div data-slot="player" class="player-wrap video"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/main.js"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
 
 <!-- ============ CARGA DEL DETALLE DESDE SUPABASE ============ -->
 <script type="module">
   import {
     getBitacorasDeCurso,
-    formatoLabel,
+    getProductosDeCurso,
     esc,
   } from './assets/js/db.js'
+  import { mediaAreaHtml, cardAttrs, montarMedia } from './assets/js/media.js'
 
   const params = new URLSearchParams(location.search)
   const codigoCurso = params.get('curso')
@@ -144,41 +198,50 @@
       </div>`
   }
 
-  // Tabla de formatos a partir de respuestas.formatos {slug:n} + formato_otro_detalle
-  function formatosHtml(resp) {
-    const base = Object.entries(resp?.formatos ?? {})
-      .filter(([, v]) => Number(v) > 0)
-      .map(([k, v]) => ({ nombre: formatoLabel(k), grupos: Number(v) }))
-    const otros = (resp?.formato_otro_detalle ?? [])
-      .filter((o) => o.formato)
-      .map((o) => ({ nombre: `${o.formato} (otro)`, grupos: Number(o.cantidad) || 0 }))
-    const filas = [...base, ...otros]
-    if (filas.length === 0) return ''
+  // Tabla de formatos. Cuenta las piezas que de verdad se publicaron (tabla
+  // `productos`), no lo que los grupos proyectaron en el Encuentro 4: ese
+  // conteo era mayor y no cuadraba con las tarjetas de abajo.
+  function formatosHtml(productos) {
+    const conteo = new Map()
+    productos.forEach((p) => {
+      const nombre = p.tipo ?? p.forma ?? 'Sin formato registrado'
+      conteo.set(nombre, (conteo.get(nombre) ?? 0) + 1)
+    })
+    if (conteo.size === 0) return ''
+    const filas = [...conteo.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'es'))
     return `
-      <p class="fw-bold mt-3" style="color:var(--dorado);font-family:var(--font-display);">Formatos elegidos por los grupos</p>
+      <p class="fw-bold mt-3" style="color:var(--dorado);font-family:var(--font-display);">Formatos de los productos que creamos</p>
       <div class="table-responsive mb-4" style="max-width:460px;">
         <table class="table tabla-formatos mb-0">
-          <thead><tr><th>Formato</th><th class="text-center">Grupos</th></tr></thead>
+          <thead><tr><th>Formato</th><th class="text-center">Piezas</th></tr></thead>
           <tbody>
-            ${filas.map((f) => `<tr><td>${esc(f.nombre)}</td><td class="text-center">${f.grupos}</td></tr>`).join('')}
+            ${filas.map(([nombre, n]) => `<tr><td>${esc(nombre)}</td><td class="text-center">${n}</td></tr>`).join('')}
           </tbody>
         </table>
       </div>`
   }
 
   // ---------- Utilidad: busca la primera fila que trae un campo con dato ----------
-  // Las respuestas viven repartidas en distintos encuentros (dilema_final en E2,
-  // actores en E3, formatos más adelante); en vez de asumir un número de
+  // Las respuestas viven repartidas en distintos encuentros (actores en E3,
+  // formatos en E4, dilema_final en E6); en vez de asumir un número de
   // encuentro fijo, buscamos la fila que de verdad trae el campo con contenido.
-  function filaConCampo(data, campo) {
-    return data.find((r) => {
+  // `preferir` fija el encuentro que manda cuando el campo existe en varios:
+  // `dilema_final` está tanto en E2 (el dilema inicial) como en E6 (el que el
+  // curso trabajó de verdad), y el que se muestra es el del E6.
+  function filaConCampo(data, campo, preferir = null) {
+    const traeDato = (r) => {
       const v = r.respuestas?.[campo]
       if (v == null) return false
       if (typeof v === 'string') return v.trim() !== ''
       if (Array.isArray(v)) return v.length > 0
       if (typeof v === 'object') return Object.keys(v).length > 0
       return true
-    })
+    }
+    if (preferir != null) {
+      const fija = data.find((r) => Number(r.encuentro_numero) === preferir && traeDato(r))
+      if (fija) return fija
+    }
+    return data.find(traeDato)
   }
 
   // ---------- Fase 1. Activación de la curiosidad ----------
@@ -198,10 +261,10 @@
   }
 
   // ---------- Fase 2. Comprensión ----------
-  // El dilema viene del Encuentro 2; los actores del juego de roles, del Encuentro 3
+  // El dilema definitivo viene del Encuentro 6; los actores del juego de roles, del Encuentro 3
   // (así los agrupa el propio "Datos descriptivos" del sitio bajo Fase 2).
   function fase2Html(data) {
-    const dilema = filaConCampo(data, 'dilema_final')?.respuestas?.dilema_final
+    const dilema = filaConCampo(data, 'dilema_final', 6)?.respuestas?.dilema_final
     const actores = filaConCampo(data, 'actores')?.respuestas?.actores
 
     return `
@@ -230,32 +293,29 @@
         <div class="actores-box">${esc(actores)}</div>` : ''}`
   }
 
-  // Video temporal para cursos con Encuentro 6 registrado: mientras no exista un
-  // enlace real por producto, mostramos este de referencia en las dos tarjetas.
-  const VIDEO_DEMO_ID = 'Epcpsv9OgAI'
-
   // ---------- Fase 3. Empoderamiento/acción ----------
-  function fase3Html(data, tieneE6) {
-    const filaFormatos = filaConCampo(data, 'formatos')
-    const tabla = filaFormatos ? formatosHtml(filaFormatos.respuestas) : ''
+  // Los productos ya no son un video de referencia: salen de la tabla
+  // `productos` (vista productos_publicos), con su embebido real y con el
+  // público objetivo e intención comunicativa que registró el equipo.
+  function fase3Html(data, productos) {
+    const tabla = formatosHtml(productos)
 
-    // Sin Encuentro 6 todavía no hay nada que mostrar: ni cajas vacías ni un
+    // Sin productos publicados no hay nada que mostrar: ni cajas vacías ni un
     // texto que prometa "los encuentras a continuación" sin nada debajo.
-    const seccionProductos = tieneE6 ? `
+    const seccionProductos = productos.length ? `
       <p class="section-lead">
         <strong>En las siguientes dos sesiones, continuamos con la producción y posproducción de nuestros
         productos:</strong> finalmente, de todas las creaciones que conseguimos en los diferentes grupos,
-        seleccionamos los dos productos educomunicativos que mejor representan nuestro proceso, los cuales
+        seleccionamos los productos educomunicativos que mejor representan nuestro proceso, los cuales
         encuentras a continuación.
       </p>
-      <div class="row g-3 mt-2">
-        ${productoPlaceholderHtml(VIDEO_DEMO_ID)}
-        ${productoPlaceholderHtml(VIDEO_DEMO_ID)}
+      <div class="row g-3 mt-2" id="productos-curso">
+        ${productos.map(productoHtml).join('')}
       </div>` : `
       <p class="section-lead">
         <strong>En las siguientes dos sesiones, continuamos con la producción y posproducción de nuestros
         productos:</strong> de todas las creaciones que conseguimos en los diferentes grupos, seleccionaremos
-        los dos productos educomunicativos que mejor representen nuestro proceso. Muy pronto estarán
+        los productos educomunicativos que mejor representen nuestro proceso. Muy pronto estarán
         disponibles aquí.
       </p>`
 
@@ -279,24 +339,35 @@
       ${seccionProductos}`
   }
 
-  // Tarjeta de producto: solo se llama cuando SÍ hay Encuentro 6, así que
-  // siempre trae video real — ya no existe la variante de placeholder gris.
-  // El público/intención comunicativa aún no están definidos con el equipo
-  // pedagógico (quedaron marcados así en la revisión con Lina) — por eso van
-  // con asterisco, no con datos inventados.
-  function productoPlaceholderHtml(videoId) {
-    const viz = `<div class="producto-viz-video">
-           <iframe src="https://www.youtube.com/embed/${esc(videoId)}"
-                   title="Producto educomunicativo" frameborder="0"
-                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                   referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-         </div>`
+  // El campo de público objetivo viene del formulario con los ejemplos pegados
+  // ("Comunidad educativa (interna) Ejemplos: Estudiantes y padres…").
+  // En la tarjeta solo queremos la categoría.
+  function publicoCorto(txt) {
+    return (txt ?? '').split(/\s*Ejemplos?\s*:/i)[0].trim()
+  }
+
+  // Tarjeta de producto. Mismo componente que productos.html, en dos columnas.
+  function productoHtml(p, i) {
+    const titulo = p.nombre ?? `Producto ${p.orden}`
     return `
       <div class="col-md-6">
-        ${viz}
-        <div class="producto-meta-box">
-          <div><strong>Público objetivo:</strong> por definir <span class="ast" title="Dato pendiente de definir con el equipo pedagógico">*</span></div>
-          <div><strong>Intención comunicativa:</strong> por definir <span class="ast" title="Dato pendiente de definir con el equipo pedagógico">*</span></div>
+        <div class="card card-producto h-100 d-flex flex-column" ${cardAttrs(p, `d${i}`)}>
+          <div class="card-header">${esc(titulo)}</div>
+          ${mediaAreaHtml(p)}
+          <div class="p-2">
+            <small class="d-block" style="color:var(--gris-texto);">
+              ${p.tipo ? `<span class="badge badge-tipo me-1">${esc(p.tipo)}</span>` : ''}
+              ${p.ecosistema ? `<span class="badge badge-eco">${esc(p.ecosistema)}</span>` : ''}
+            </small>
+            <button class="btn-grande d-none" data-action="grande">
+              <i class="bi bi-arrows-fullscreen"></i> Ver en grande
+            </button>
+          </div>
+          <div class="producto-meta-box mt-auto">
+            ${p.publico_objetivo ? `<div><strong>Público objetivo:</strong> ${esc(publicoCorto(p.publico_objetivo))}</div>` : ''}
+            ${p.intencion_comunicativa ? `<div class="mt-1"><strong>Intención comunicativa:</strong> ${esc(p.intencion_comunicativa)}</div>` : ''}
+            ${p.enlace_publico ? `<div class="mt-2"><a href="${esc(p.enlace_publico)}" target="_blank" rel="noopener">Abrir el original <i class="bi bi-box-arrow-up-right"></i></a></div>` : ''}
+          </div>
         </div>
       </div>`
   }
@@ -327,18 +398,20 @@
     document.getElementById('breadcrumb-curso').textContent =
       `${primera.colegio} — ${primera.codigo_curso}`
 
-    // Ojo: bitacoras_resumen puede traer una fila por cada encuentro aunque el
-    // tutor todavía no la haya diligenciado — por eso no basta con que la fila
-    // exista, exigimos que además traiga contenido real en `respuestas`.
-    const filaE6 = data.find((r) => Number(r.encuentro_numero) === 6)
-    const tieneE6 = !!filaE6 && filaE6.respuestas && Object.keys(filaE6.respuestas).length > 0
+    // Los productos viven en su propia tabla, no en las respuestas de la
+    // bitácora: si el curso todavía no tiene piezas publicadas, la Fase 3
+    // muestra el mensaje de "muy pronto" en vez de tarjetas vacías.
+    const { data: productos, error: errProd } = await getProductosDeCurso(codigoCurso)
+    if (errProd) console.error('[detalle/productos]', errProd)
 
     cont.innerHTML =
       heroHtml(primera) +
       `<p class="section-lead mb-4">Proceso registrado por el equipo tutor a lo largo de los encuentros de la estrategia.</p>` +
       fase1Html() +
       fase2Html(data) +
-      fase3Html(data, tieneE6)
+      fase3Html(data, productos ?? [])
+
+    montarMedia(cont)
   }
 
   init()

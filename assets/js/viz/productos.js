@@ -1,142 +1,317 @@
 // ============================================================
-//  viz-productos.js — Individual (ortográfica) <-> Red (equirectangular)
-//  + zoom/pan + al acercarte, el círculo se convierte en una
-//    mini-tarjeta con el video/audio real (iframe bajo demanda).
+//  viz/productos.js — Diagrama de arcos de los productos educomunicativos
 //
-//  Usa el mismo truco del notebook de Bostock (orthographic-to-
-//  equirectangular): una función "raw" que mezcla las salidas de
-//  dos proyecciones para un mismo punto (lon,lat). Las coordenadas
-//  no son geográficas reales — cada producto recibe una posición
-//  simbólica según su ecosistema — pero la mecánica de proyección
-//  y de zoom es real, escrita a mano (sin D3, sin dependencias).
+//  Cada producto es un punto sobre el eje horizontal. Los arcos que salen
+//  hacia arriba son las relaciones entre piezas: mismo curso, mismo colegio,
+//  mismo formato y mismo ecosistema. El color del arco es el ecosistema del
+//  que sale, y las barras bajo el eje miden cuántas conexiones tiene cada una.
 //
-//  Lee las tarjetas .producto-item que YA existen en el DOM, así
-//  que escala con solo agregar más tarjetas al HTML.
+//  El orden del eje es lo que hace legible el dibujo: agrupados por localidad,
+//  las relaciones de formato y ecosistema cruzan la ciudad y forman los arcos
+//  largos; agrupados por ecosistema (botón), se invierte y son las de colegio
+//  las que cruzan.
+//
+//  Se llama desde productos.html con window.initVizProductos() cuando la
+//  grilla ya está pintada — las tarjetas llegan de Supabase, así que al cargar
+//  el script todavía no existen.
 // ============================================================
-(function () {
+window.initVizProductos = function initVizProductos() {
   const items = [...document.querySelectorAll('#productos-container .producto-item')]
   const cont = document.getElementById('viz-productos-red')
   if (!items.length || !cont) return
 
-  const PAL_ECO = { humedal: '#6f9bd1', paramo: '#8aa87e', rio: '#5b8fbf', cerro: '#9a8a6b', embalse: '#4f92a8', parque: '#6fa564' }
-  const LBL_ECO = { humedal: 'Humedal', paramo: 'Páramo', rio: 'Río', cerro: 'Cerro', embalse: 'Embalse', parque: 'Parque urbano' }
+  cont.innerHTML = ''
+
+  const PAL_ECO = {
+    humedal: '#5b8fbf', rio: '#4fa3a8', paramo: '#8aa87e', cerro: '#a8794f',
+    'parque-urbano': '#6fa564', parque: '#6fa564', embalse: '#4f92a8', otro: '#a385c9',
+  }
+  const LBL_ECO = {
+    humedal: 'Humedal', rio: 'Río', paramo: 'Páramo', cerro: 'Cerro',
+    'parque-urbano': 'Parque urbano', parque: 'Parque urbano', embalse: 'Embalse', otro: 'Otro',
+  }
   const colorEco = (e) => PAL_ECO[e] || '#b0a58c'
   const labelEco = (e) => LBL_ECO[e] || (e ? e.charAt(0).toUpperCase() + e.slice(1) : 'Otro')
   const esc = (s) => (s ?? '').toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+  const bonito = (s) => (s || '').replace(/-/g, ' ').replace(/^\w/, (c) => c.toUpperCase())
 
-  // ---------- 1) Leer los nodos desde el DOM ----------
+  // ---------- 1) Nodos, leídos del DOM ----------
   const NODES = items.map((el, i) => {
     const card = el.querySelector('.card-producto')
     return {
+      i,
       id: card?.dataset.id || ('p' + i), el, card,
       titulo: card?.dataset.titulo || el.querySelector('.card-header')?.textContent?.trim() || 'Producto',
+      colegioNombre: el.querySelector('.colegio-name')?.textContent?.trim() || '',
       eco: el.dataset.ecosistema || 'otro',
-      formato: el.dataset.formato || '', colegio: el.dataset.colegio || '',
-      localidad: el.dataset.localidad || '', grado: el.dataset.grado || '',
-      kind: card?.dataset.kind || 'youtube', vid: card?.dataset.vid || '',
-      poster: card?.querySelector('.media-poster')?.getAttribute('src') || '',
+      formato: el.dataset.formato || '',
+      colegio: el.dataset.colegio || '',
+      localidad: el.dataset.localidad || '',
+      curso: el.dataset.curso || '',
     }
   })
-  if (NODES.length < 2) return
+  if (NODES.length < 3) return
 
-  // ---------- 2) Coordenadas simbólicas (lon, lat en radianes) ----------
-  const grupos = {}
-  NODES.forEach((n) => { (grupos[n.eco] = grupos[n.eco] || []).push(n) })
-  const ecos = Object.keys(grupos)
-  const LMAX = 65 * Math.PI / 180
-  const PMAX = 42 * Math.PI / 180
-
-  ecos.forEach((eco, gi) => {
-    const lonCentro = ecos.length > 1 ? (-LMAX * 0.72) + (gi / (ecos.length - 1)) * (LMAX * 1.44) : 0
-    const grupo = grupos[eco]
-    grupo.forEach((n, k) => {
-      const t = grupo.length > 1 ? (k / (grupo.length - 1) - 0.5) : 0
-      n.lon = lonCentro + t * (LMAX * 0.30)
-      n.lat = (((k * 41) % 5) / 5 - 0.5) * PMAX * 0.85
-    })
-  })
-
-  // ---------- 3) Las dos proyecciones + su mezcla ----------
-  const orthoRaw = (lon, lat) => [Math.cos(lat) * Math.sin(lon), Math.sin(lat)]
-  const equiRaw  = (lon, lat) => [lon / LMAX, lat / PMAX]
-  const rawBlend = (lon, lat, a) => {
-    const po = orthoRaw(lon, lat), pe = equiRaw(lon, lat)
-    return [po[0] * (1 - a) + pe[0] * a, po[1] * (1 - a) + pe[1] * a]
-  }
-
-  const W = 380, H = 300, cx = W / 2, cy = H / 2 + 6, R = 118
-  const proyectar = (lon, lat, a) => {
-    const [x, y] = rawBlend(lon, lat, a)
-    return [cx + x * R, cy - y * R]
-  }
-
-  // ---------- 4) "Esfera" (perímetro del dominio) y gratícula ----------
-  function perimetro() {
-    const pts = [], N = 24
-    for (let i = 0; i <= N; i++) pts.push([-LMAX + (2 * LMAX) * (i / N), -PMAX])
-    for (let i = 0; i <= N; i++) pts.push([LMAX, -PMAX + (2 * PMAX) * (i / N)])
-    for (let i = 0; i <= N; i++) pts.push([LMAX - (2 * LMAX) * (i / N), PMAX])
-    for (let i = 0; i <= N; i++) pts.push([-LMAX, PMAX - (2 * PMAX) * (i / N)])
-    return pts
-  }
-  const PERIM = perimetro()
-  const MERIDIANOS = []
-  for (let d = -60; d <= 60; d += 30) {
-    const lon = d * Math.PI / 180, pts = []
-    for (let i = 0; i <= 20; i++) pts.push([lon, -PMAX + (2 * PMAX) * (i / 20)])
-    MERIDIANOS.push(pts)
-  }
-  const PARALELOS = []
-  for (let d = -30; d <= 30; d += 30) {
-    const lat = d * Math.PI / 180, pts = []
-    for (let i = 0; i <= 20; i++) pts.push([-LMAX + (2 * LMAX) * (i / 20), lat])
-    PARALELOS.push(pts)
-  }
-  const GRATICULA = [...MERIDIANOS, ...PARALELOS]
-
-  // ---------- 5) Conexiones entre productos ----------
-  // Orden de prioridad: colegio > formato > grado (todas "fuertes" si cruzan
-  // ecosistema) > localidad (más débil, es un criterio más amplio).
+  // ---------- 2) Conexiones ----------
+  // Dentro de un curso o de un colegio son pocas piezas, así que se unen todas
+  // con todas. Formato y ecosistema tienen grupos de decenas: unir todos los
+  // pares daría ~17.000 arcos, así que cada pieza se ata solo a las siguientes
+  // del grupo. El dibujo se ve igual de tupido y el navegador respira.
   const EDGES = []
-  for (let i = 0; i < NODES.length; i++) {
-    for (let j = i + 1; j < NODES.length; j++) {
-      const A = NODES[i], B = NODES[j]
-      const cruza = A.eco !== B.eco
-      if (!cruza) { EDGES.push({ a: A, b: B, tipo: 'cluster' }); continue }
-      if (A.colegio && A.colegio === B.colegio) { EDGES.push({ a: A, b: B, tipo: 'fuerte', why: 'mismo colegio' }); continue }
-      if (A.formato && A.formato === B.formato) { EDGES.push({ a: A, b: B, tipo: 'fuerte', why: 'mismo formato' }); continue }
-      if (A.grado && A.grado === B.grado) { EDGES.push({ a: A, b: B, tipo: 'fuerte', why: 'mismo grado (' + A.grado + '°)' }); continue }
-      if (A.localidad && A.localidad === B.localidad) EDGES.push({ a: A, b: B, tipo: 'localidad', why: 'misma localidad' })
-    }
-  }
-  const ESTILO = { cluster: { width: 0.6, op: 0.12 }, localidad: { width: 1.0, op: 0.38 }, fuerte: { width: 1.8, op: 0.62 } }
+  const vistas = new Set()
 
-  // ---------- 6) Dibujar ----------
+  function unir(a, b, tipo) {
+    if (a === b) return
+    const clave = a < b ? a + '|' + b : b + '|' + a
+    if (vistas.has(clave)) return
+    vistas.add(clave)
+    EDGES.push({ a, b, tipo })
+  }
+
+  function agrupar(campo) {
+    const g = new Map()
+    NODES.forEach((n) => {
+      if (!n[campo]) return
+      if (!g.has(n[campo])) g.set(n[campo], [])
+      g.get(n[campo]).push(n.i)
+    })
+    return [...g.values()]
+  }
+
+  function todosLosPares(campo, tipo) {
+    agrupar(campo).forEach((g) => {
+      for (let i = 0; i < g.length; i++) for (let j = i + 1; j < g.length; j++) unir(g[i], g[j], tipo)
+    })
+  }
+
+  function vecinos(campo, tipo, k) {
+    agrupar(campo).forEach((g) => {
+      for (let i = 0; i < g.length; i++) {
+        for (let d = 1; d <= k && i + d < g.length; d++) unir(g[i], g[i + d], tipo)
+      }
+    })
+  }
+
+  todosLosPares('curso', 'curso')
+  todosLosPares('colegio', 'colegio')
+  vecinos('formato', 'formato', 3)
+  vecinos('eco', 'eco', 2)
+
+  const ESTILO = {
+    curso: { w: 1.1, op: 0.55 },
+    colegio: { w: 0.8, op: 0.34 },
+    formato: { w: 0.6, op: 0.20 },
+    eco: { w: 0.5, op: 0.14 },
+  }
+
+  // Grado de conexión de cada pieza, para las barras bajo el eje.
+  const grado = new Array(NODES.length).fill(0)
+  EDGES.forEach((e) => { grado[e.a]++; grado[e.b]++ })
+  const gradoMax = Math.max(1, ...grado)
+
+  // ---------- 3) Orden del eje ----------
+  const ORDENES = {
+    territorio: {
+      etiqueta: 'Agrupados por localidad',
+      clave: (n) => [n.localidad, n.colegio, n.curso, n.id].join('|'),
+      bandas: 'localidad',
+    },
+    ecosistema: {
+      etiqueta: 'Agrupados por ecosistema',
+      clave: (n) => [n.eco, n.localidad, n.colegio, n.id].join('|'),
+      bandas: 'eco',
+    },
+  }
+  let modo = 'territorio'
+  let orden = []
+
+  function reordenar() {
+    const cfg = ORDENES[modo]
+    orden = NODES.slice().sort((a, b) => cfg.clave(a).localeCompare(cfg.clave(b), 'es'))
+    orden.forEach((n, pos) => { n.pos = pos })
+  }
+
+  // ---------- 4) Lienzo ----------
   const NS = 'http://www.w3.org/2000/svg'
+  const W = 1200, H = 470
+  const MX = 24            // margen lateral
+  const Y_EJE = 372        // línea base
+  const ALTO_ARCO = 330    // techo de los arcos
+  const ALTO_BARRA = 82
+
   const svg = document.createElementNS(NS, 'svg')
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`)
+  svg.setAttribute('class', 'vp-arcos')
   cont.appendChild(svg)
 
-  const zoomG = document.createElementNS(NS, 'g')
-  svg.appendChild(zoomG)
+  const gBandas = document.createElementNS(NS, 'g')
+  const gArcos = document.createElementNS(NS, 'g')
+  const gBarras = document.createElementNS(NS, 'g')
+  const gNodos = document.createElementNS(NS, 'g')
+  svg.append(gBandas, gArcos, gBarras, gNodos)
 
-  const pathPerim = document.createElementNS(NS, 'path')
-  pathPerim.setAttribute('fill', '#fff'); pathPerim.setAttribute('stroke', '#a89f8c'); pathPerim.setAttribute('stroke-width', '1')
-  zoomG.appendChild(pathPerim)
+  const eje = document.createElementNS(NS, 'line')
+  eje.setAttribute('stroke', '#cfc6b4'); eje.setAttribute('stroke-width', '1')
+  svg.appendChild(eje)
 
-  const gratEls = GRATICULA.map(() => {
+  const x = (pos) => MX + (pos / (NODES.length - 1)) * (W - MX * 2)
+
+  // Un arco por relación. `ry` se recorta para que los arcos largos no se
+  // salgan del lienzo: son elipses, no semicírculos.
+  const arcoEls = EDGES.map((e) => {
     const p = document.createElementNS(NS, 'path')
-    p.setAttribute('fill', 'none'); p.setAttribute('stroke', '#ddd6c4'); p.setAttribute('stroke-width', '0.6')
-    zoomG.appendChild(p)
+    p.setAttribute('fill', 'none')
+    p.setAttribute('stroke', colorEco(NODES[e.a].eco))
+    p.setAttribute('stroke-width', String(ESTILO[e.tipo].w))
+    p.setAttribute('class', 'vp-arco')
+    gArcos.appendChild(p)
     return p
   })
 
-  const lineEls = EDGES.map((e) => {
-    const l = document.createElementNS(NS, 'line')
-    l.setAttribute('stroke', '#54461E'); l.setAttribute('stroke-width', ESTILO[e.tipo].width)
-    zoomG.appendChild(l)
-    return l
+  const barraEls = NODES.map(() => {
+    const r = document.createElementNS(NS, 'rect')
+    r.setAttribute('class', 'vp-barra')
+    gBarras.appendChild(r)
+    return r
   })
+
+  const nodoEls = NODES.map((n) => {
+    const c = document.createElementNS(NS, 'circle')
+    c.setAttribute('r', '2.2')
+    c.setAttribute('fill', colorEco(n.eco))
+    c.setAttribute('class', 'vp-punto')
+    gNodos.appendChild(c)
+    return c
+  })
+
+  // Etiquetas de banda (localidad o ecosistema) bajo las barras.
+  let bandaEls = []
+  function pintarBandas() {
+    bandaEls.forEach((el) => el.remove())
+    bandaEls = []
+    const campo = ORDENES[modo].bandas
+    let inicio = 0
+    for (let i = 1; i <= orden.length; i++) {
+      const cambio = i === orden.length || orden[i][campo] !== orden[inicio][campo]
+      if (!cambio) continue
+      const n0 = orden[inicio], n1 = orden[i - 1]
+      const x0 = x(n0.pos), x1 = x(n1.pos)
+      if (x1 - x0 > 26) {
+        const t = document.createElementNS(NS, 'text')
+        t.setAttribute('x', ((x0 + x1) / 2).toFixed(1))
+        t.setAttribute('y', String(Y_EJE + ALTO_BARRA + 16))
+        t.setAttribute('text-anchor', 'middle')
+        t.setAttribute('class', 'vp-banda')
+        t.textContent = campo === 'eco' ? labelEco(n0.eco) : bonito(n0.localidad)
+        gBandas.appendChild(t)
+        bandaEls.push(t)
+      }
+      if (i < orden.length) {
+        const sep = document.createElementNS(NS, 'line')
+        const xs = (x1 + x(orden[i].pos)) / 2
+        sep.setAttribute('x1', xs.toFixed(1)); sep.setAttribute('x2', xs.toFixed(1))
+        sep.setAttribute('y1', String(Y_EJE)); sep.setAttribute('y2', String(Y_EJE + ALTO_BARRA))
+        sep.setAttribute('class', 'vp-sep')
+        gBandas.appendChild(sep)
+        bandaEls.push(sep)
+      }
+      inicio = i
+    }
+  }
+
+  function render() {
+    reordenar()
+    eje.setAttribute('x1', String(MX - 8)); eje.setAttribute('x2', String(W - MX + 8))
+    eje.setAttribute('y1', String(Y_EJE)); eje.setAttribute('y2', String(Y_EJE))
+
+    NODES.forEach((n, i) => {
+      const px = x(n.pos)
+      nodoEls[i].setAttribute('cx', px.toFixed(1))
+      nodoEls[i].setAttribute('cy', String(Y_EJE))
+      const h = 4 + (grado[i] / gradoMax) * (ALTO_BARRA - 8)
+      barraEls[i].setAttribute('x', (px - 1.3).toFixed(1))
+      barraEls[i].setAttribute('y', String(Y_EJE))
+      barraEls[i].setAttribute('width', '2.6')
+      barraEls[i].setAttribute('height', h.toFixed(1))
+      barraEls[i].setAttribute('fill', colorEco(n.eco))
+    })
+
+    EDGES.forEach((e, i) => {
+      const xa = x(NODES[e.a].pos), xb = x(NODES[e.b].pos)
+      const x0 = Math.min(xa, xb), x1 = Math.max(xa, xb)
+      const rx = Math.max(1, (x1 - x0) / 2)
+      const ry = Math.min(rx, ALTO_ARCO)
+      arcoEls[i].setAttribute('d', `M${x0.toFixed(1)},${Y_EJE} A${rx.toFixed(1)},${ry.toFixed(1)} 0 0 1 ${x1.toFixed(1)},${Y_EJE}`)
+      arcoEls[i].setAttribute('opacity', String(ESTILO[e.tipo].op))
+    })
+
+    pintarBandas()
+  }
+
+  // ---------- 5) Leyenda ----------
+  const ecosPresentes = [...new Set(NODES.map((n) => n.eco))].sort()
+  const ley = document.getElementById('viz-productos-leyenda')
+  if (ley) {
+    ley.innerHTML = ecosPresentes
+      .map((e) => `<span><span class="dot" style="background:${colorEco(e)}"></span>${labelEco(e)}</span>`)
+      .join('') + '<span class="vp-nota">Cada arco une dos piezas relacionadas · la barra bajo el eje es cuántas conexiones tiene</span>'
+  }
+
+  // ---------- 6) Resaltado ----------
+  // Con ~2.000 arcos no conviene reescribir opacidades una por una en cada
+  // movimiento del mouse: se atenúa todo con una clase en el <svg> y solo se
+  // marcan los pocos arcos que tocan la pieza señalada.
+  const arcosDe = new Map()
+  EDGES.forEach((e, i) => {
+    if (!arcosDe.has(e.a)) arcosDe.set(e.a, [])
+    if (!arcosDe.has(e.b)) arcosDe.set(e.b, [])
+    arcosDe.get(e.a).push(i)
+    arcosDe.get(e.b).push(i)
+  })
+
+  const tip = document.createElement('div')
+  tip.className = 'vp-tip'
+  cont.appendChild(tip)
+
+  let resaltado = null
+
+  function limpiar() {
+    if (resaltado == null) return
+    svg.classList.remove('vp-atenuado')
+    ;(arcosDe.get(resaltado) || []).forEach((i) => arcoEls[i].classList.remove('vp-hl'))
+    nodoEls[resaltado].classList.remove('vp-hl')
+    barraEls[resaltado].classList.remove('vp-hl')
+    tip.classList.remove('visible')
+    resaltado = null
+  }
+
+  function resaltar(i) {
+    if (resaltado === i) return
+    limpiar()
+    resaltado = i
+    svg.classList.add('vp-atenuado')
+    ;(arcosDe.get(i) || []).forEach((j) => arcoEls[j].classList.add('vp-hl'))
+    nodoEls[i].classList.add('vp-hl')
+    barraEls[i].classList.add('vp-hl')
+
+    const n = NODES[i]
+    tip.innerHTML = `<strong>${esc(n.titulo)}</strong><span>${esc(n.colegioNombre)} · ${esc(labelEco(n.eco))} · ${grado[i]} conexiones</span>`
+    const rect = cont.getBoundingClientRect()
+    const px = (x(n.pos) / W) * rect.width
+    tip.style.left = Math.max(90, Math.min(rect.width - 90, px)) + 'px'
+    tip.classList.add('visible')
+  }
+
+  function nodoEn(clientX) {
+    const rect = svg.getBoundingClientRect()
+    const vx = ((clientX - rect.left) / rect.width) * W
+    let mejor = null, mejorD = Infinity
+    NODES.forEach((n, i) => {
+      const d = Math.abs(x(n.pos) - vx)
+      if (d < mejorD) { mejorD = d; mejor = i }
+    })
+    return mejorD < 10 ? mejor : null
+  }
 
   function irACard(n) {
     n.el.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -146,155 +321,64 @@
     setTimeout(() => n.card?.classList.remove('vp-highlight'), 1500)
   }
 
-  const nodeEls = NODES.map((n) => {
-    const g = document.createElementNS(NS, 'g')
-    g.setAttribute('class', 'vp-node')
-    const c = document.createElementNS(NS, 'circle')
-    c.setAttribute('r', '6.5'); c.setAttribute('fill', colorEco(n.eco))
-    const t = document.createElementNS(NS, 'title')
-    t.textContent = n.titulo + ' — ' + labelEco(n.eco)
-    g.appendChild(c); g.appendChild(t)
-    g.addEventListener('click', () => irACard(n))
-    zoomG.appendChild(g)
-    return g
+  svg.addEventListener('mousemove', (ev) => {
+    const i = nodoEn(ev.clientX)
+    if (i == null) limpiar()
+    else resaltar(i)
+  })
+  svg.addEventListener('mouseleave', limpiar)
+  svg.addEventListener('click', (ev) => {
+    const i = nodoEn(ev.clientX)
+    if (i != null) irACard(NODES[i])
   })
 
-  const cerrado = (pts, a) => 'M' + pts.map(([lo, la]) => proyectar(lo, la, a).map((v) => v.toFixed(1)).join(',')).join('L') + 'Z'
-  const abierto = (pts, a) => 'M' + pts.map(([lo, la]) => proyectar(lo, la, a).map((v) => v.toFixed(1)).join(',')).join('L')
-
-  function render(a) {
-    pathPerim.setAttribute('d', cerrado(PERIM, a))
-    gratEls.forEach((p, i) => p.setAttribute('d', abierto(GRATICULA[i], a)))
-    NODES.forEach((n) => { const [x, y] = proyectar(n.lon, n.lat, a); n.x = x; n.y = y })
-    nodeEls.forEach((g, i) => g.setAttribute('transform', `translate(${NODES[i].x.toFixed(1)},${NODES[i].y.toFixed(1)})`))
-    lineEls.forEach((l, i) => {
-      const e = EDGES[i]
-      l.setAttribute('x1', e.a.x.toFixed(1)); l.setAttribute('y1', e.a.y.toFixed(1))
-      l.setAttribute('x2', e.b.x.toFixed(1)); l.setAttribute('y2', e.b.y.toFixed(1))
-      l.setAttribute('opacity', (ESTILO[e.tipo].op * a).toFixed(2))
-    })
-    document.getElementById('vp-modo').textContent = a < 0.5 ? 'Individual (ortográfica)' : 'Red (equirectangular)'
-    posicionarFO()
-  }
-
-  // ---------- 7) Leyenda ----------
-  const ley = document.getElementById('viz-productos-leyenda')
-  ley.innerHTML = ecos.map((e) => `<span><span class="dot" style="background:${colorEco(e)}"></span>${labelEco(e)}</span>`).join('')
-
-  // ---------- 8) ZOOM / PAN (a mano, sin librerías) ----------
-  let tx = 0, ty = 0, k = 1
-  const K_MIN = 1, K_MAX = 6, UMBRAL_EXPANDIR = 2.3
-  function aplicarTransform() { zoomG.setAttribute('transform', `translate(${tx},${ty}) scale(${k})`) }
-
-  svg.addEventListener('wheel', (ev) => {
+  // Teclado: recorrer las piezas con las flechas, sin depender del mouse.
+  svg.setAttribute('tabindex', '0')
+  svg.setAttribute('role', 'img')
+  svg.setAttribute('aria-label', `Diagrama de arcos con ${NODES.length} productos educomunicativos y sus relaciones`)
+  svg.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter' && resaltado != null) { irACard(NODES[resaltado]); return }
+    if (ev.key !== 'ArrowRight' && ev.key !== 'ArrowLeft') return
     ev.preventDefault()
-    const rect = svg.getBoundingClientRect()
-    const px = (ev.clientX - rect.left) / rect.width * W
-    const py = (ev.clientY - rect.top) / rect.height * H
-    const factor = Math.exp(-ev.deltaY * 0.0015)
-    const nk = Math.max(K_MIN, Math.min(K_MAX, k * factor))
-    tx = px - (px - tx) * (nk / k)
-    ty = py - (py - ty) * (nk / k)
-    k = nk
-    aplicarTransform()
-    actualizarExpansion()
-  }, { passive: false })
-
-  let arrastrando = false, lastX = 0, lastY = 0
-  svg.addEventListener('mousedown', (ev) => { arrastrando = true; lastX = ev.clientX; lastY = ev.clientY })
-  window.addEventListener('mousemove', (ev) => {
-    if (!arrastrando) return
-    const rect = svg.getBoundingClientRect()
-    tx += (ev.clientX - lastX) / rect.width * W
-    ty += (ev.clientY - lastY) / rect.height * H
-    lastX = ev.clientX; lastY = ev.clientY
-    aplicarTransform()
-    actualizarExpansion()
+    const actual = resaltado == null ? -1 : NODES[resaltado].pos
+    const siguiente = Math.max(0, Math.min(NODES.length - 1, actual + (ev.key === 'ArrowRight' ? 1 : -1)))
+    resaltar(orden[siguiente].i)
   })
-  window.addEventListener('mouseup', () => { arrastrando = false })
-  svg.addEventListener('dblclick', () => { tx = 0; ty = 0; k = 1; aplicarTransform(); colapsar() })
 
-  // ---------- 9) Al acercarte lo suficiente, el círculo -> mini-tarjeta ----------
-  let expandido = null, foEl = null
-
-  function colapsar() {
-    if (!expandido) return
-    if (foEl) { foEl.remove(); foEl = null }
-    const idx = NODES.indexOf(expandido)
-    if (idx >= 0) nodeEls[idx].style.display = ''
-    expandido = null
-  }
-
-  function posicionarFO() {
-    if (!foEl || !expandido) return
-    foEl.setAttribute('x', (expandido.x - 26).toFixed(1))
-    foEl.setAttribute('y', (expandido.y - 26).toFixed(1))
-  }
-
-  function expandir(n) {
-    colapsar()
-    const idx = NODES.indexOf(n)
-    nodeEls[idx].style.display = 'none'
-    const SIZE = 52
-    const fo = document.createElementNS(NS, 'foreignObject')
-    fo.setAttribute('x', (n.x - SIZE / 2).toFixed(1))
-    fo.setAttribute('y', (n.y - SIZE / 2).toFixed(1))
-    fo.setAttribute('width', SIZE); fo.setAttribute('height', SIZE)
-    const posterHtml = n.poster ? `<img src="${esc(n.poster)}" alt="">` : `<div class="vp-mini-audio">&#9835;</div>`
-    fo.innerHTML = `<div xmlns="http://www.w3.org/1999/xhtml" class="vp-mini-card">
-      ${posterHtml}
-      <button type="button" class="vp-mini-play" aria-label="Reproducir">&#9654;</button>
-      <div class="vp-mini-titulo">${esc(n.titulo)}</div>
-    </div>`
-    zoomG.appendChild(fo)
-    foEl = fo; expandido = n
-
-    fo.querySelector('.vp-mini-play').addEventListener('click', (ev) => {
-      ev.stopPropagation()
-      const iframe = document.createElement('iframe')
-      iframe.setAttribute('allow', 'autoplay; encrypted-media')
-      iframe.style.cssText = 'width:100%;height:100%;border:0;'
-      iframe.src = n.kind === 'youtube'
-        ? `https://www.youtube.com/embed/${n.vid}?autoplay=1&playsinline=1`
-        : `https://open.spotify.com/embed/episode/${n.vid}`
-      const tarjeta = fo.querySelector('.vp-mini-card')
-      tarjeta.innerHTML = ''
-      tarjeta.appendChild(iframe)
+  // ---------- 7) Sincronía con los filtros de la grilla ----------
+  // Si el usuario filtra la grilla, las piezas ocultas se apagan aquí también.
+  window.vizProductosSync = function vizProductosSync() {
+    let hayFiltro = false
+    NODES.forEach((n, i) => {
+      const oculto = n.el.style.display === 'none'
+      if (oculto) hayFiltro = true
+      nodoEls[i].classList.toggle('vp-off', oculto)
+      barraEls[i].classList.toggle('vp-off', oculto)
+    })
+    EDGES.forEach((e, i) => {
+      const off = hayFiltro && (NODES[e.a].el.style.display === 'none' || NODES[e.b].el.style.display === 'none')
+      arcoEls[i].classList.toggle('vp-off', off)
     })
   }
 
-  function actualizarExpansion() {
-    if (k < UMBRAL_EXPANDIR) { colapsar(); return }
-    const wx = (W / 2 - tx) / k, wy = (H / 2 - ty) / k
-    let mejor = null, mejorD = Infinity
-    NODES.forEach((n) => { const d = Math.hypot(n.x - wx, n.y - wy); if (d < mejorD) { mejorD = d; mejor = n } })
-    if (mejor && mejorD < 40) { if (expandido !== mejor) expandir(mejor) }
-    else colapsar()
-  }
-
-  // ---------- 10) Botón: alterna entre las dos proyecciones, animado ----------
-  render(0)
-  let alpha = 0, animando = false
+  // ---------- 8) Botón: cambia el orden del eje ----------
   const btn = document.getElementById('vp-play')
-  const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
+  const modoLbl = document.getElementById('vp-modo')
+  if (modoLbl) modoLbl.textContent = ORDENES[modo].etiqueta
 
-  function actualizarBoton() {
-    btn.textContent = alpha < 0.5 ? 'Ver como red (equirectangular)' : 'Ver individual (ortográfica)'
+  if (btn) {
+    const nuevo = btn.cloneNode(true)
+    btn.replaceWith(nuevo)
+    nuevo.textContent = 'Reagrupar por ecosistema'
+    nuevo.addEventListener('click', () => {
+      limpiar()
+      modo = modo === 'territorio' ? 'ecosistema' : 'territorio'
+      render()
+      window.vizProductosSync?.()
+      nuevo.textContent = modo === 'territorio' ? 'Reagrupar por ecosistema' : 'Reagrupar por localidad'
+      if (modoLbl) modoLbl.textContent = ORDENES[modo].etiqueta
+    })
   }
-  actualizarBoton()
 
-  btn.addEventListener('click', () => {
-    if (animando) return
-    colapsar()
-    const desde = alpha, hasta = alpha < 0.5 ? 1 : 0
-    const dur = 1600, t0 = performance.now()
-    animando = true; btn.disabled = true
-    ;(function frame(now) {
-      const t = Math.min(1, (now - t0) / dur)
-      alpha = desde + (hasta - desde) * easeInOutCubic(t)
-      render(alpha)
-      if (t < 1) requestAnimationFrame(frame)
-      else { animando = false; btn.disabled = false; alpha = hasta; render(alpha); actualizarBoton() }
-    })(t0)
-  })
-})()
+  render()
+}
